@@ -45,12 +45,9 @@ async def start_handler(_, message: Message) -> None:
             "└───╼"
         )
         
-        # Bot username for Add Me button
         bot_obj = await bot.get_me()
-        bot_username = bot_obj.username
-
         kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton("⛩️ ᴧᴅᴅ мᴇ ʙᴧʙʏ ⛩️", url=f"https://t.me/{bot_username}?startgroup=true")],
+            [InlineKeyboardButton("⛩️ ᴧᴅᴅ мᴇ ʙᴧʙʏ ⛩️", url=f"https://t.me/{bot_obj.username}?startgroup=true")],
             [
                 InlineKeyboardButton("🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP),
                 InlineKeyboardButton("🍹 ᴜᴘᴅᴀᴛᴇs 🍹",  url=config.UPDATES_CHANNEL),
@@ -58,7 +55,7 @@ async def start_handler(_, message: Message) -> None:
             [InlineKeyboardButton("🏩 ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅs 🏩", callback_data="show_help")],
             [
                 InlineKeyboardButton("🫧 ᴏᴡɴᴇʀ 🫧",  url=f"tg://openmessage?user_id={config.OWNER_ID}"),
-                InlineKeyboardButton("🍡 sᴏᴜʀᴄᴇ 🍡", url="https://github.com/TeamDevil05"),
+                InlineKeyboardButton("🍡 sᴏᴜʀᴄᴇ 🍡", url="https://github.com/TeamDevil05/AlphaMusic"),
             ],
         ])
 
@@ -69,7 +66,36 @@ async def start_handler(_, message: Message) -> None:
             reply_markup=kb,
             message_effect_id=random.choice(EFFECT_ID),
         )
+
+        # Logger Notification for Private Start
+        if config.LOGGER_ID:
+            try:
+                await bot.send_message(
+                    config.LOGGER_ID,
+                    f"<b>#ɴᴇᴡ_ᴜsᴇʀ_sᴛᴀʀᴛᴇᴅ</b>\n\n"
+                    f"<b>❍ ɴᴀᴍᴇ:</b> {name}\n"
+                    f"<b>❍ ɪᴅ:</b> <code>{uid}</code>\n"
+                    f"<b>❍ ᴜsᴇʀɴᴀᴍᴇ:</b> @{message.from_user.username or 'N/A'}",
+                    parse_mode=ParseMode.HTML,
+                )
+            except:
+                pass
+
     else:
         # Group logic
         await message.reply_text(f"❍ ʜᴇʏ {name}, ᴛʜɪs ɪs {config.BOT_NAME}. I'm Alive!")
         
+        # Logger Notification for Group Start
+        if config.LOGGER_ID:
+            try:
+                await bot.send_message(
+                    config.LOGGER_ID,
+                    f"<b>#ɴᴇᴡ_ɢʀᴏᴜᴘ_ᴀᴅᴅᴇᴅ</b>\n\n"
+                    f"<b>❍ ɢʀᴏᴜᴘ ɴᴀᴍᴇ:</b> {message.chat.title}\n"
+                    f"<b>❍ ɢʀᴏᴜᴘ ɪᴅ:</b> <code>{chat_id}</code>\n"
+                    f"<b>❍ ᴀᴅᴅᴇᴅ ʙʏ:</b> {name}",
+                    parse_mode=ParseMode.HTML,
+                )
+            except:
+                pass
+                
