@@ -41,7 +41,7 @@ async def start_handler(_, message: Message) -> None:
             "┝───╼\n"
             "❍ **ᴄʟɪᴄᴋ ʜᴇʟᴘ ғᴏʀ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs.**\n"
             "┝───╼\n"
-            f"❍ **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » [sʜɪᴢᴜ-ᴍᴜsɪᴄ™]({config.SUPPORT_GROUP})**\n"
+            f"❍ **ᴘᴏᴡᴇʀᴇᴅ ʙʏ » [Aʟᴘʜᴀ-Mᴜsɪᴄ™]({config.SUPPORT_GROUP})**\n"
             "└───╼"
         )
         
@@ -58,7 +58,7 @@ async def start_handler(_, message: Message) -> None:
             [InlineKeyboardButton("🏩 ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅs 🏩", callback_data="show_help")],
             [
                 InlineKeyboardButton("🫧 ᴏᴡɴᴇʀ 🫧",  url=f"tg://openmessage?user_id={config.OWNER_ID}"),
-                InlineKeyboardButton("🍡 sᴏᴜʀᴄᴇ 🍡", url="https://github.com/TeamDevil05/AlphaMusic"),
+                InlineKeyboardButton("🍡 sᴏᴜʀᴄᴇ 🍡", url="https://github.com/TeamDevil05"),
             ],
         ])
 
