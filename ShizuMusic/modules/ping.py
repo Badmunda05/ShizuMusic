@@ -90,7 +90,7 @@ async def ping_cmd(client, message: Message) -> None:
 <b>❍ ᴅɪsᴋ :</b> <code>{disk_str}</code>
 <b>❍ ᴘʏᴛɢᴄ :</b> <code>{pytg}ms</code>
 
-<b>❍ 𝖡ʏ » <a href="{config.SUPPORT_GROUP}">sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>
+<b>❍ 𝖡ʏ » <a href="{config.SUPPORT_GROUP}">Aʟᴘʜᴀ_Mᴜsɪᴄ™</a></b>
 """
 
     await message.reply_photo(
