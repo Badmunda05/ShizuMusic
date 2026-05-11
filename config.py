@@ -16,14 +16,14 @@ MONGO_DB_URL    = os.environ["MONGO_DB_URL"]
 OWNER_ID        = int(os.environ["OWNER_ID"])
 
 # ── Optional ──────────────────────────────────────────────────────────────────
-BOT_NAME         = os.getenv("BOT_NAME", "Shizu Music")
-BOT_LINK         = os.getenv("BOT_LINK", "https://t.me/ShizuMusicBot")
-UPDATES_CHANNEL  = os.getenv("UPDATES_CHANNEL", "https://t.me/PBX_UPDATE")
-SUPPORT_GROUP    = os.getenv("SUPPORT_GROUP", "https://t.me/PBXCHATS")
-LOGGER_ID        = int(os.getenv("LOGGER_ID", "0"))
-START_ANIMATION  = os.getenv("START_ANIMATION", "https://telegra.ph/file/1a3c152717eb9d2e94dc2.mp4",)
-PING_IMG_URL     = os.getenv("PING_IMG_URL", "https://files.catbox.moe/ddzvc0.jpg",)
-SESSION_NAME     = os.getenv("SESSION_NAME", "ShizuMusic")
+BOT_NAME         = os.getenv("BOT_NAME", "⎯⎯‌꯭𝆺꯭𝅥 𝐀𝐥𝐩𝐡𝐚 𝐌𝐮𝐬𝐢𝐜 ‌𝆺꯭𝅥🌷")
+BOT_LINK         = os.getenv("BOT_LINK", "https://t.me/AIpha_MusicBot")
+UPDATES_CHANNEL  = os.getenv("UPDATES_CHANNEL", "https://t.me/AIpha_World")
+SUPPORT_GROUP    = os.getenv("SUPPORT_GROUP", "https://t.me/Alpha_WorId")
+LOGGER_ID        = int(os.getenv("LOGGER_ID", "-1003850857973"))
+START_ANIMATION  = os.getenv("START_ANIMATION", "https://files.catbox.moe/71vlji.mp4",)
+PING_IMG_URL     = os.getenv("PING_IMG_URL", "https://files.catbox.moe/hkgj00.jpg",)
+SESSION_NAME     = os.getenv("SESSION_NAME", "AlphaMusic")
 PORT             = int(os.getenv("PORT", 10000))
 
 # ── Limits ────────────────────────────────────────────────────────────────────
