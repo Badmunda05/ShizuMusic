@@ -56,7 +56,7 @@ async def start_handler(_, message: Message) -> None:
             "<b>├────────────────────▣</b>\n"
             "<b>│❍ ᴄʟɪᴄᴋ ʜᴇʟᴘ ғᴏʀ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs.</b>\n"
             "<b>├────────────────────▣</b>\n"
-            f"<b>│❍ ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>\n"
+            f"<b>│❍ ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/Alpha_XChats'>Aʟᴘʜᴀ-Mᴜsɪᴄ™</a></b>\n"
             "<b>╰────────────────────▣</b>"
         )
         kb = InlineKeyboardMarkup([
@@ -68,7 +68,7 @@ async def start_handler(_, message: Message) -> None:
             [InlineKeyboardButton("🏩 ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅs 🏩", callback_data="show_help")],
             [
                 InlineKeyboardButton("🫧 ᴏᴡɴᴇʀ 🫧",  url=f"tg://user?id={config.OWNER_ID}"),
-                InlineKeyboardButton("🍡 sᴏᴜʀᴄᴇ 🍡", url="https://github.com/Badmunda05/ShizuMusic/fork"),
+                InlineKeyboardButton("🍡 sᴏᴜʀᴄᴇ 🍡", url="0"),
             ],
         ])
 
