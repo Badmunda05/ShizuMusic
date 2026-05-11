@@ -215,7 +215,7 @@ async def _go_back(cbq: CallbackQuery) -> None:
         "<b>├────────────────────▣</b>\n"
         "<b>│❍ ᴀ ғᴀsᴛ & ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ʙᴏᴛ.</b>\n"
         "<b>├────────────────────▣</b>\n"
-        f"<b>│❍ 𝖯ᴏᴡᴇʀᴇᴅ 𝖡ʏ » <a href=t.me/Alpha_XChats>sʜɪᴢᴜ-ᴍᴜ𝛅𝛊ᴄ™</a></b>\n"
+        f"<b>│❍ 𝖯ᴏᴡᴇʀᴇᴅ 𝖡ʏ » <a href=t.me/Alpha_XChats>Aʟᴘʜᴀ-Mᴜsɪᴄ™</a></b>\n"
         "<b>╰────────────────────▣</b>"
     )
     kb = InlineKeyboardMarkup([
@@ -230,7 +230,10 @@ async def _go_back(cbq: CallbackQuery) -> None:
             InlineKeyboardButton("🍡 sᴏᴜʀᴄᴇ 🍡", url="https://github.com"),
         ],
     ])
-    await cbq.message.edit_caption(caption=caption, parse_mode=ParseMode.HTML, reply_markup=kb)
+    try:
+        await cbq.message.edit_caption(caption=caption, parse_mode=ParseMode.HTML, reply_markup=kb)
+    except:
+        await cbq.message.edit_text(text=caption, parse_mode=ParseMode.HTML, reply_markup=kb)
 
 
 async def _show_help(cbq: CallbackQuery) -> None:
@@ -241,11 +244,11 @@ async def _show_help(cbq: CallbackQuery) -> None:
         ],
         [InlineKeyboardButton("⌯ ʜᴏᴍᴇ ⌯",    callback_data="go_back")],
         ])
-    await cbq.message.edit_text(
-        "<b>📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ :</b>",
-        parse_mode=ParseMode.HTML,
-        reply_markup=kb,
-    )
+    help_text = "<b>📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ :</b>"
+    try:
+        await cbq.message.edit_caption(caption=help_text, parse_mode=ParseMode.HTML, reply_markup=kb)
+    except:
+        await cbq.message.edit_text(text=help_text, parse_mode=ParseMode.HTML, reply_markup=kb)
 
 
 async def _help_section(cbq: CallbackQuery, data: str) -> None:
@@ -275,8 +278,9 @@ async def _help_section(cbq: CallbackQuery, data: str) -> None:
             "<b>╰────────────────────▣</b>"
         ),
     }
-    await cbq.message.edit_text(
-        texts.get(data, "?"),
-        parse_mode=ParseMode.HTML,
-        reply_markup=back,
-    )
+    help_string = texts.get(data, "?")
+    try:
+        await cbq.message.edit_caption(caption=help_string, parse_mode=ParseMode.HTML, reply_markup=back)
+    except:
+        await cbq.message.edit_text(text=help_string, parse_mode=ParseMode.HTML, reply_markup=back)
+        
