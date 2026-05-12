@@ -146,7 +146,7 @@ async def play_song(chat_id: int, message: Message, song: dict) -> None:
     total   = parse_dur(song.get("duration", "0:00"))
     caption = (
         "<blockquote>"
-        "<b>🎧 Sʜɪᴢᴜ Mᴜsɪᴄ</b>\n\n"
+        "<b>🎧 Aʟᴘʜᴀ Mᴜsɪᴄ</b>\n\n"
         f"<b>❍ ᴛɪᴛʟᴇ :</b> {short(song['title'])}\n"
         f"<b>❍ ᴅᴜʀ   :</b> {song.get('duration', '?')}\n"
         f"<b>❍ ʙʏ    :</b> {song['requester']}"
