@@ -32,7 +32,7 @@
 
 <div align="center">
 
-## 👤 Developer
+## 👤 ᴅᴇᴠᴇʟᴏᴘᴇʀ
 
 <img src="https://avatars.githubusercontent.com/TeamDevil05" width="110" style="border-radius:50%;" /><br>
 **𝖠𝖫𝖯𝖧𝖠** — Developer of AlphaMusic<br>
