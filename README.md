@@ -1,18 +1,18 @@
 <div align="center">
 <h3 align="center">
-<img src="https://readme-typing-svg.herokuapp.com?color=00BFFF&center=true&vCenter=true&width=500&lines=🎵+SHIZUMUSIC+BOT+💕;⚡+FAST+•+SMOOTH+•+POWERFUL+⚡;🎧+TELEGRAM+VC+MUSIC+BOT+🎶">
+<img src="https://readme-typing-svg.herokuapp.com?color=00BFFF&center=true&vCenter=true&width=500&lines=🎵+ALPHAMUSIC+BOT+💕;⚡+FAST+•+SMOOTH+•+POWERFUL+⚡;🎧+TELEGRAM+VC+MUSIC+BOT+🎶">
 </h3>
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
   
 <p align="center">
-<a href="https://t.me/PBXCHATS">
-<img src="https://i.ibb.co/qYbmh3w1/x.jpg" width="600">
+<a href="https://t.me/Alpha_XChats">
+<img src="https://files.catbox.moe/8620m6.png" width="600">
 </a>
 </p>
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Orbitron&weight=900&size=36&duration=3000&pause=1000&color=00BFFF&center=true&vCenter=true&width=700&lines=🎵+ShizuMusic+Bot;First+Open-Source+VC+Music+Bot;Fast+•+Smooth+•+Powerful" alt="ShizuMusic" />
+<img src="https://readme-typing-svg.herokuapp.com?font=Orbitron&weight=900&size=36&duration=3000&pause=1000&color=00BFFF&center=true&vCenter=true&width=700&lines=🎵+AlphaMusic+Bot;First+Open-Source+VC+Music+Bot;Fast+•+Smooth+•+Powerful" alt="AlphaMusic" />
 
 <br>
 
@@ -21,7 +21,7 @@
   Works Fully Free on Render, Koyeb & More &nbsp;•&nbsp; Zero VPS Cost<br>
   Fast • Smooth • Powerful<br>
   Powered by <b>Pyrogram</b> & <b>Py-TgCalls</b><br>
-  Developed by — <b>PBX</b>
+  Developed by — <b>ALPHA</b>
 </p>
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
@@ -35,7 +35,7 @@
 ## 👤 Developer
 
 <img src="https://avatars.githubusercontent.com/Badmunda05" width="110" style="border-radius:50%;" /><br>
-**PBX** — Developer of ShizuMusic<br>
+**𝖠𝖫𝖯𝖧𝖠** — Developer of AlphaMusic<br>
 
 [![Telegram](https://img.shields.io/badge/Telegram-PBX-%2326A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/PBX_BOT)
 [![GitHub](https://img.shields.io/badge/GitHub-Badmunda05-%23181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Badmunda05)
@@ -48,7 +48,7 @@
 
 ## 📊 Visitors
 
-<img src="https://profile-counter.glitch.me/Badmunda05/count.svg" />
+<img src="https://profile-counter.glitch.me/TeamDevil05/count.svg" />
 
 </div>
 
