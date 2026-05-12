@@ -37,8 +37,8 @@
 <img src="https://avatars.githubusercontent.com/TeamDevil05" width="110" style="border-radius:50%;" /><br>
 **𝖠𝖫𝖯𝖧𝖠** — Developer of AlphaMusic<br>
 
-[![Telegram](https://img.shields.io/badge/Telegram-PBX-%2326A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/PBX_BOT)
-[![GitHub](https://img.shields.io/badge/GitHub-Badmunda05-%23181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Badmunda05)
+[![Telegram](https://img.shields.io/badge/Telegram-ALPHA-%2326A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/Alpha_Monu)
+[![GitHub](https://img.shields.io/badge/GitHub-TeamDevil05-%23181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/TeamDevil05)
 
 </div>
 
