@@ -1,6 +1,6 @@
 <div align="center">
 <h3 align="center">
-<img src="https://readme-typing-svg.herokuapp.com?color=00BFFF&center=true&vCenter=true&width=500&lines=🎵+ALPHAMUSIC+BOT+💕;⚡+FAST+•+SMOOTH+•+POWERFUL+⚡;🎧+TELEGRAM+VC+MUSIC+BOT+🎶">
+<img src="https://readme-typing-svg.herokuapp.com?color=00BFFF&center=true&vCenter=true&width=500&lines=🎵+ALPHAMUSIC+BOT+💞;⚡+FAST+•+SMOOTH+•+POWERFUL+⚡;🎧+TELEGRAM+VC+MUSIC+BOT+🎶">
 </h3>
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
   
@@ -12,7 +12,7 @@
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Orbitron&weight=900&size=36&duration=3000&pause=1000&color=00BFFF&center=true&vCenter=true&width=700&lines=🎵+AlphaMusic+Bot;First+Open-Source+VC+Music+Bot;Fast+•+Smooth+•+Powerful" alt="AlphaMusic" />
+<img src="https://readme-typing-svg.herokuapp.com?font=Orbitron&weight=900&size=36&duration=3000&pause=1000&color=00BFFF&center=true&vCenter=true&width=700&lines=🎵+AlphaMusic+Bot+🎧;First+Open-Source+VC+Music+Bot;Fast+•+Smooth+•+Powerful" alt="AlphaMusic" />
 
 <br>
 
@@ -34,7 +34,7 @@
 
 ## 👤 Developer
 
-<img src="https://avatars.githubusercontent.com/Badmunda05" width="110" style="border-radius:50%;" /><br>
+<img src="https://avatars.githubusercontent.com/TeamDevil05" width="110" style="border-radius:50%;" /><br>
 **𝖠𝖫𝖯𝖧𝖠** — Developer of AlphaMusic<br>
 
 [![Telegram](https://img.shields.io/badge/Telegram-PBX-%2326A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/PBX_BOT)
