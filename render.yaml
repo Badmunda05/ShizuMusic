@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: AlphaMusicBot
+    name: ShizuMusicBot
     env: python
     plan: free
 
