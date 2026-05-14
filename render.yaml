@@ -42,10 +42,10 @@ services:
         sync: false
 
       - key: START_ANIMATION
-        value: https://telegra.ph/file/1a3c152717eb9d2e94dc2.mp4
+        value: https://files.catbox.moe/ellkdm.mp4
 
       - key: PING_IMG_URL
-        value: https://files.catbox.moe/ddzvc0.jpg
+        value: https://files.catbox.moe/hkgj00.jpg
 
       - key: PYTHON_VERSION
         value: 3.10.13
