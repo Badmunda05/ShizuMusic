@@ -17,91 +17,87 @@ from ShizuMusic.utils.permissions import is_user_authorized
 
 
 # ─────────────────────────────────────────────
-# STOP / END
+# STOP — Playback + Queue + AutoPlay Clear
 # ─────────────────────────────────────────────
-@bot.on_message(filters.group & filters.command(["stop", "end"]))
+@bot.on_message(filters.group & filters.command(["stop"]))
 async def stop_cmd(_, message: Message) -> None:
 
+    # Admin check
     if not await is_user_authorized(message):
-
         await message.reply(
-            """
-<b>❍ ᴀᴅᴍɪɴ ᴏɴʟʏ</b>
-<b>❍ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ɪs ғᴏʀ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs.</b>
-""",
+            "<b>❍ ᴀᴅᴍɪɴ ᴏɴʟʏ</b>",
             parse_mode=ParseMode.HTML,
         )
         return
 
     chat_id = message.chat.id
 
+    # leave_vc also clears autoplay state
     await leave_vc(chat_id)
 
     await message.reply(
-        """
-<b>❍ ᴘʟᴀʏʙᴀᴄᴋ sᴛᴏᴘᴘᴇᴅ</b>
-<b>❍ ǫᴜᴇᴜᴇ ᴄʟᴇᴀʀᴇᴅ</b>
-<b>❍ ʟᴇғᴛ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ</b>
-""",
+        "<b>❍ ᴘʟᴀʏʙᴀᴄᴋ ꜱᴛᴏᴘᴘᴇᴅ</b>\n"
+        "<b>❍ Qᴜᴇᴜᴇ ᴄʟᴇᴀʀᴇᴅ</b>\n"
+        "<b>❍ ʟᴇꜰᴛ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ</b>",
         parse_mode=ParseMode.HTML,
     )
 
 
 # ─────────────────────────────────────────────
-# CLEAR QUEUE
+# CLEAR QUEUE (Without Leaving VC)
 # ─────────────────────────────────────────────
 @bot.on_message(filters.group & filters.command("clear"))
 async def clear_cmd(_, message: Message) -> None:
 
+    # Admin check
     if not await is_user_authorized(message):
-
         await message.reply(
-            """
-<b>❍ ᴀᴅᴍɪɴ ᴏɴʟʏ</b>
-<b>❍ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ɪs ғᴏʀ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs.</b>
-""",
+            "<b>❍ ᴀᴅᴍɪɴ ᴏɴʟʏ</b>",
             parse_mode=ParseMode.HTML,
         )
         return
 
     chat_id = message.chat.id
 
-    if not queue_size(chat_id):
+    # Stop autoplay while clearing queue
+    try:
+        from ShizuMusic.core.autoplay import stop_autoplay
+        stop_autoplay(chat_id)
 
+    except Exception:
+        pass
+
+    # Queue empty
+    if not queue_size(chat_id):
         await message.reply(
-            """
-<b>❍ ǫᴜᴇᴜᴇ ɪs ᴇᴍᴘᴛʏ</b>
-<b>❍ ɴᴏ sᴏɴɢs ɪɴ ǫᴜᴇᴜᴇ.</b>
-""",
+            "<b>❍ Qᴜᴇᴜᴇ ɪꜱ ᴇᴍᴘᴛʏ</b>",
             parse_mode=ParseMode.HTML,
         )
         return
 
+    # Clear queue
     clear_queue(chat_id)
 
     await message.reply(
-        """
-<b>❍ ǫᴜᴇᴜᴇ ᴄʟᴇᴀʀᴇᴅ</b>
-<b>❍ ᴀʟʟ ᴘᴇɴᴅɪɴɢ sᴏɴɢs ʀᴇᴍᴏᴠᴇᴅ.</b>
-""",
+        "<b>❍ Qᴜᴇᴜᴇ ᴄʟᴇᴀʀᴇᴅ</b>\n"
+        "<b>❍ ᴀʟʟ ꜱᴏɴɢꜱ ʀᴇᴍᴏᴠᴇᴅ</b>",
         parse_mode=ParseMode.HTML,
     )
 
 
 # ─────────────────────────────────────────────
-# REBOOT CHAT STATE
+# REBOOT
 # ─────────────────────────────────────────────
 @bot.on_message(filters.command("reboot"))
 async def reboot_cmd(_, message: Message) -> None:
 
     chat_id = message.chat.id
 
+    # Leave VC and reset states
     await leave_vc(chat_id)
 
     await message.reply(
-        """
-<b>❍ ᴄʜᴀᴛ ʀᴇʙᴏᴏᴛᴇᴅ</b>
-<b>❍ ᴀʟʟ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ sᴛᴀᴛᴇs ʀᴇsᴇᴛ.</b>
-""",
+        "<b>❍ ᴄʜᴀᴛ ʀᴇʙᴏᴏᴛᴇᴅ</b>\n"
+        "<b>❍ ᴀʟʟ ꜱᴛᴀᴛᴇꜱ ʀᴇꜱᴇᴛ</b>",
         parse_mode=ParseMode.HTML,
-    )
+        )
