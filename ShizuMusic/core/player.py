@@ -11,7 +11,7 @@ import time
 
 from pyrogram.enums import ParseMode
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from pytgcalls.types import AudioQuality, MediaStream
+from pytgcalls.types import AudioQuality, MediaStream, VideoQuality
 
 import config
 from ShizuMusic import LOGGER, bot, call_py
@@ -100,17 +100,29 @@ async def play_song(chat_id: int, message: Message, song: dict) -> None:
         )
         return
 
+    is_video = song.get("video", False)
+
     # Play — auto-create VC if needed
     for attempt in range(2):
         try:
-            await call_py.play(
-                chat_id,
-                MediaStream(
-                    media_path,
-                    audio_parameters=AudioQuality.HIGH,
-                    video_flags=MediaStream.Flags.IGNORE,
-                ),
-            )
+            if is_video:
+                await call_py.play(
+                    chat_id,
+                    MediaStream(
+                        media_path,
+                        audio_parameters=AudioQuality.HIGH,
+                        video_parameters=VideoQuality.HD_720p,
+                    ),
+                )
+            else:
+                await call_py.play(
+                    chat_id,
+                    MediaStream(
+                        media_path,
+                        audio_parameters=AudioQuality.HIGH,
+                        video_flags=MediaStream.Flags.IGNORE,
+                    ),
+                )
             break
         except Exception as e:
             err = str(e).lower()
