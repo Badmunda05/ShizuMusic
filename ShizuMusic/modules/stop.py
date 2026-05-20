@@ -19,7 +19,7 @@ from ShizuMusic.utils.permissions import is_user_authorized
 # ─────────────────────────────────────────────
 # STOP — Playback + Queue + AutoPlay Clear
 # ─────────────────────────────────────────────
-@bot.on_message(filters.group & filters.command(["stop"]))
+@bot.on_message(filters.group & filters.command(["stop", "end"]))
 async def stop_cmd(_, message: Message) -> None:
 
     # Admin check
