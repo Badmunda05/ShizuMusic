@@ -1,25 +1,47 @@
 # --------------------------------------------------------------------------------
 #  ShizuMusic © 2026
 #  Developed by Bad Munda ❤️
-#
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
 # --------------------------------------------------------------------------------
 
 import asyncio
+import random
 import time
 
 from pyrogram.enums import ParseMode
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from pytgcalls.types import AudioQuality, MediaStream, VideoQuality
+from pyrogram.raw.functions.phone import CreateGroupCall
+from pyrogram.types import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+)
+
+from pytgcalls.types import (
+    AudioQuality,
+    MediaStream,
+    VideoQuality,
+)
 
 import config
-from ShizuMusic import LOGGER, bot, call_py
-from ShizuMusic.utils.formatters import fmt_time, parse_dur, progress_bar, short
+
+from ShizuMusic import (
+    LOGGER,
+    assistant,
+    bot,
+    call_py,
+)
+
+from ShizuMusic.utils.formatters import (
+    parse_dur,
+    progress_bar,
+    short,
+)
+
 from ShizuMusic.utils.youtube import resolve_stream
 
 
-# ── Progress updater ──────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
+# PROGRESS UPDATER
+# ─────────────────────────────────────────────
 
 async def _update_progress(
     chat_id: int,
@@ -28,92 +50,208 @@ async def _update_progress(
     total: float,
     caption: str,
 ) -> None:
-    btns = [
-        InlineKeyboardButton("▷",   callback_data="resume"),
-        InlineKeyboardButton("II",  callback_data="pause"),
+
+    buttons = [
+        InlineKeyboardButton("▷", callback_data="resume"),
+        InlineKeyboardButton("II", callback_data="pause"),
         InlineKeyboardButton("‣‣I", callback_data="skip"),
-        InlineKeyboardButton("▢",   callback_data="stop"),
+        InlineKeyboardButton("▢", callback_data="stop"),
     ]
+
     while True:
-        elapsed = min(time.time() - start_t, total)
-        bar = progress_bar(elapsed, total)
-        kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton(bar, callback_data="noop")],
-            btns,
-        ])
+
+        elapsed = min(
+            time.time() - start_t,
+            total,
+        )
+
+        bar = progress_bar(
+            elapsed,
+            total,
+        )
+
+        keyboard = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        bar,
+                        callback_data="noop",
+                    )
+                ],
+                buttons,
+            ]
+        )
+
         try:
-            await bot.edit_message_caption(chat_id, msg.id, caption=caption, reply_markup=kb)
+
+            await bot.edit_message_caption(
+                chat_id,
+                msg.id,
+                caption=caption,
+                reply_markup=keyboard,
+            )
+
         except Exception as e:
+
             if "MESSAGE_NOT_MODIFIED" not in str(e):
                 break
+
         if elapsed >= total:
             break
+
         await asyncio.sleep(18)
 
 
-# ── VC auto-start helper ──────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
+# AUTO START VC
+# ─────────────────────────────────────────────
 
-async def _ensure_vc(chat_id: int) -> None:
-    """Create voice chat via assistant if not already active."""
-    from ShizuMusic import assistant
-    import random
+async def _ensure_vc(chat_id: int) -> bool:
+
     try:
+
         await assistant.invoke(
-            __import__("pyrogram.raw.functions.phone", fromlist=["CreateGroupCall"])
-            .CreateGroupCall(
+            CreateGroupCall(
                 peer=await assistant.resolve_peer(chat_id),
-                random_id=random.randint(10000, 99999),
+                random_id=random.randint(
+                    10000,
+                    99999,
+                ),
             )
         )
-        LOGGER.info(f"[VC] Created voice chat in {chat_id}")
+
+        LOGGER.info(
+            f"[VC] Started in {chat_id}"
+        )
+
         await asyncio.sleep(2)
+
+        return True
+
     except Exception as e:
+
         err = str(e).lower()
-        if "already" in err or "groupcall_already_started" in err:
-            pass
-        else:
-            LOGGER.warning(f"[VC] Could not create VC: {e}")
+
+        # VC already started
+        if (
+            "already" in err
+            or "groupcall_already_started" in err
+        ):
+            return True
+
+        # Admin permission missing
+        if (
+            "chat_admin_required" in err
+            or "admin" in err
+        ):
+
+            await bot.send_message(
+                chat_id,
+                "<b>❍ ᴠᴄ ꜱᴛᴀʀᴛ ᴘᴇʀᴍɪssɪᴏɴ ᴍɪssɪɴɢ</b>\n\n"
+                "<b>❍ ɢɪᴠᴇ ᴀssɪsᴛᴀɴᴛ :</b>\n"
+                "• <code>Manage Video Chats</code>\n"
+                "• <code>Admin Rights</code>",
+                parse_mode=ParseMode.HTML,
+            )
+
+            return False
+
+        LOGGER.warning(f"[VC ERROR] {e}")
+
+        return False
 
 
-# ── Main play function ────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
+# MAIN PLAY FUNCTION
+# ─────────────────────────────────────────────
 
-async def play_song(chat_id: int, message: Message, song: dict) -> None:
+async def play_song(
+    chat_id: int,
+    message: Message,
+    song: dict,
+) -> bool:
+
     url = song.get("url")
+
     if not url:
-        return
+        return False
 
-    loading_text = f"<b>❍ ʟᴏᴀᴅɪɴɢ :</b> {short(song['title'])}"
-    try:
-        await message.edit(loading_text, parse_mode=ParseMode.HTML)
-    except Exception:
-        message = await bot.send_message(chat_id, loading_text, parse_mode=ParseMode.HTML)
+    loading = (
+        f"<b>❍ ʟᴏᴀᴅɪɴɢ :</b> "
+        f"{short(song['title'])}"
+    )
 
-    # Resolve audio
     try:
-        media_path = await resolve_stream(url)
-    except Exception as e:
-        await bot.send_message(
-            chat_id,
-            f"<b>❍ ᴅᴏᴡɴʟᴏᴀᴅ ғᴀɪʟᴇᴅ</b>\n\n<code>{e}</code>\n\n"
-            "<i>ᴩʟᴇᴀsᴇ ᴛʀʏ /play ᴀɢᴀɪɴ</i>",
+
+        await message.edit(
+            loading,
             parse_mode=ParseMode.HTML,
         )
-        return
+
+    except Exception:
+
+        message = await bot.send_message(
+            chat_id,
+            loading,
+            parse_mode=ParseMode.HTML,
+        )
+
+    # ─────────────────────────────────────────
+    # RESOLVE STREAM
+    # ─────────────────────────────────────────
+
+    try:
+
+        media_path = await resolve_stream(url)
+
+    except Exception as e:
+
+        await bot.send_message(
+            chat_id,
+            f"<b>❍ ᴅᴏᴡɴʟᴏᴀᴅ ғᴀɪʟᴇᴅ</b>\n\n"
+            f"<code>{e}</code>",
+            parse_mode=ParseMode.HTML,
+        )
+
+        return False
 
     is_video = song.get("video", False)
 
-    # ── Auto-apply effects if effecton is enabled for this chat ──────────────
-    if not is_video:
-        try:
-            from ShizuMusic.modules.effects import maybe_apply_effects
-            media_path = await maybe_apply_effects(chat_id, media_path)
-        except Exception as fx_err:
-            LOGGER.warning(f"[Effects] Auto-apply skipped: {fx_err}")
+    # ─────────────────────────────────────────
+    # EFFECTS
+    # ─────────────────────────────────────────
 
-    # Play — auto-create VC if needed
-    for attempt in range(2):
+    if not is_video:
+
         try:
+
+            from ShizuMusic.modules.effects import (
+                maybe_apply_effects,
+            )
+
+            media_path = await maybe_apply_effects(
+                chat_id,
+                media_path,
+            )
+
+        except Exception as fx_err:
+
+            LOGGER.warning(
+                f"[Effects] {fx_err}"
+            )
+
+    # ─────────────────────────────────────────
+    # PLAY STREAM
+    # ─────────────────────────────────────────
+
+    played = False
+
+    for attempt in range(2):
+
+        try:
+
             if is_video:
+
                 await call_py.play(
                     chat_id,
                     MediaStream(
@@ -122,7 +260,9 @@ async def play_song(chat_id: int, message: Message, song: dict) -> None:
                         video_parameters=VideoQuality.HD_720p,
                     ),
                 )
+
             else:
+
                 await call_py.play(
                     chat_id,
                     MediaStream(
@@ -131,87 +271,204 @@ async def play_song(chat_id: int, message: Message, song: dict) -> None:
                         video_flags=MediaStream.Flags.IGNORE,
                     ),
                 )
+
+            played = True
             break
+
         except Exception as e:
+
             err = str(e).lower()
-            vc_missing = any(k in err for k in (
-                "groupcallnotfound", "not_in_group_call",
-                "groupcall_forbidden", "not in group call",
-                "no active group call",
-            ))
+
+            vc_missing = any(
+                x in err
+                for x in (
+                    "groupcallnotfound",
+                    "not_in_group_call",
+                    "groupcall_forbidden",
+                    "not in group call",
+                    "no active group call",
+                )
+            )
+
+            # BUG FIX 1
+            # Auto create VC then retry play
             if vc_missing and attempt == 0:
-                LOGGER.info(f"[VC] Not active in {chat_id} — creating…")
-                await _ensure_vc(chat_id)
-                continue
+
+                LOGGER.info(
+                    f"[VC] Creating VC in {chat_id}"
+                )
+
+                ok = await _ensure_vc(chat_id)
+
+                if ok:
+                    await asyncio.sleep(2)
+                    continue
+
+                return False
+
+            # BUG FIX 2
+            # Clean admin error text
+            if (
+                "chat_admin_required" in err
+                or "admin" in err
+            ):
+
+                await bot.send_message(
+                    chat_id,
+                    "<b>❍ ᴀssɪsᴛᴀɴᴛ ɴᴜ ᴀᴅᴍɪɴ ʙɴᴀᴏ</b>\n\n"
+                    "• <code>Manage Video Chats</code>\n"
+                    "• <code>Delete Messages</code>",
+                    parse_mode=ParseMode.HTML,
+                )
+
+                return False
+
+            LOGGER.error(f"[PLAY ERROR] {e}")
+
             await bot.send_message(
                 chat_id,
-                f"<b>❍ ᴘʟᴀʏʙᴀᴄᴋ ғᴀɪʟᴇᴅ :</b> <code>{e}</code>\n\n"
-                "<i>ᴍᴀᴋᴇ ꜱᴜʀᴇ ᴀꜱꜱɪꜱᴛᴀɴᴛ ɪꜱ ɪɴ ᴛʜᴇ ɢʀᴏᴜᴩ ᴀɴᴅ ᴠᴄ ᴄᴀɴ ʙᴇ ꜱᴛᴀʀᴛᴇᴅ.</i>",
+                "<b>❍ ᴘʟᴀʏʙᴀᴄᴋ ғᴀɪʟᴇᴅ</b>",
                 parse_mode=ParseMode.HTML,
             )
-            return
 
-    # ── Reset seek state: new song starts at position 0 ──────────────────────
+            return False
+
+    if not played:
+        return False
+
+    # ─────────────────────────────────────────
+    # RESET SEEK
+    # ─────────────────────────────────────────
+
     try:
-        from ShizuMusic.modules.seek import set_seek_state
+
+        from ShizuMusic.modules.seek import (
+            set_seek_state,
+        )
+
         set_seek_state(chat_id, 0)
+
     except Exception:
         pass
 
-    # ── DB: track play count ──────────────────────────────────────────────────
+    # ─────────────────────────────────────────
+    # DB TRACKING
+    # ─────────────────────────────────────────
+
     try:
-        from ShizuMusic.database import add_served_chat, add_served_user, increment_play_count
+
+        from ShizuMusic.database import (
+            add_served_chat,
+            add_served_user,
+            increment_play_count,
+        )
+
         add_served_chat(chat_id)
-        requester_id = song.get("requester_id")
+
+        requester_id = song.get(
+            "requester_id"
+        )
+
         if requester_id:
             add_served_user(requester_id)
-        increment_play_count(chat_id)
-    except Exception as db_err:
-        LOGGER.warning(f"[DB] play_song tracking failed: {db_err}")
 
-    # Build now-playing UI
-    total   = parse_dur(song.get("duration", "0:00"))
+        increment_play_count(chat_id)
+
+    except Exception as db_err:
+
+        LOGGER.warning(
+            f"[DB] {db_err}"
+        )
+
+    # ─────────────────────────────────────────
+    # NOW PLAYING UI
+    # ─────────────────────────────────────────
+
+    total = parse_dur(
+        song.get("duration", "0:00")
+    )
+
     caption = (
         "<blockquote>"
         "<b>🎧 Sʜɪᴢᴜ Mᴜsɪᴄ</b>\n\n"
-        f"<b>❍ ᴛɪᴛʟᴇ :</b> {short(song['title'])}\n"
-        f"<b>❍ ᴅᴜʀ   :</b> {song.get('duration', '?')}\n"
-        f"<b>❍ ʙʏ    :</b> {song['requester']}"
+        f"<b>❍ ᴛɪᴛʟᴇ :</b> "
+        f"{short(song['title'])}\n"
+        f"<b>❍ ᴅᴜʀ :</b> "
+        f"{song.get('duration', '?')}\n"
+        f"<b>❍ ʙʏ :</b> "
+        f"{song['requester']}"
         "</blockquote>"
     )
-    btns = [
-        InlineKeyboardButton("▷",   callback_data="resume"),
-        InlineKeyboardButton("II",  callback_data="pause"),
+
+    buttons = [
+        InlineKeyboardButton("▷", callback_data="resume"),
+        InlineKeyboardButton("II", callback_data="pause"),
         InlineKeyboardButton("‣‣I", callback_data="skip"),
-        InlineKeyboardButton("▢",   callback_data="stop"),
+        InlineKeyboardButton("▢", callback_data="stop"),
     ]
-    bar = progress_bar(0, total)
-    kb  = InlineKeyboardMarkup([
-        [InlineKeyboardButton(bar, callback_data="noop")],
-        btns,
-    ])
+
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    progress_bar(0, total),
+                    callback_data="noop",
+                )
+            ],
+            buttons,
+        ]
+    )
 
     thumb = song.get("thumbnail")
+
     try:
+
         pmsg = await message.reply_photo(
-            photo=thumb, caption=caption, reply_markup=kb, parse_mode=ParseMode.HTML
+            photo=thumb,
+            caption=caption,
+            reply_markup=keyboard,
+            parse_mode=ParseMode.HTML,
         )
+
     except Exception:
-        pmsg = await bot.send_message(chat_id, caption, reply_markup=kb, parse_mode=ParseMode.HTML)
+
+        pmsg = await bot.send_message(
+            chat_id,
+            caption,
+            reply_markup=keyboard,
+            parse_mode=ParseMode.HTML,
+        )
 
     try:
         await message.delete()
     except Exception:
         pass
 
-    asyncio.create_task(_update_progress(chat_id, pmsg, time.time(), total, caption))
+    asyncio.create_task(
+        _update_progress(
+            chat_id,
+            pmsg,
+            time.time(),
+            total,
+            caption,
+        )
+    )
+
+    # ─────────────────────────────────────────
+    # LOGGER
+    # ─────────────────────────────────────────
 
     if config.LOGGER_ID:
-        asyncio.create_task(bot.send_message(
-            config.LOGGER_ID,
-            "<b>#ɴᴏᴡᴘʟᴀʏɪɴɢ</b>\n"
-            f"• <b>ᴛɪᴛʟᴇ :</b> {song.get('title')}\n"
-            f"• <b>ᴅᴜʀ   :</b> {song.get('duration')}\n"
-            f"• <b>ʙʏ    :</b> {song.get('requester')}",
-            parse_mode=ParseMode.HTML,
-        ))
+
+        asyncio.create_task(
+            bot.send_message(
+                config.LOGGER_ID,
+                "<b>#ɴᴏᴡᴘʟᴀʏɪɴɢ</b>\n"
+                f"• <b>ᴛɪᴛʟᴇ :</b> {song.get('title')}\n"
+                f"• <b>ᴅᴜʀ :</b> {song.get('duration')}\n"
+                f"• <b>ʙʏ :</b> {song.get('requester')}",
+                parse_mode=ParseMode.HTML,
+            )
+        )
+
+    return True
