@@ -56,6 +56,11 @@ def is_connected() -> bool:
     return _db is not None
 
 
+def get_mongo_client() -> Optional[MongoClient]:
+    """Return the raw MongoClient (used for dbstats in /stats command)."""
+    return _client
+
+
 # ── Collections ────────────────────────────────────────────────────────────────
 
 def _col(name: str):
@@ -65,6 +70,8 @@ def _col(name: str):
 
 
 # ── Served Chats ───────────────────────────────────────────────────────────────
+# FIX: All served chat/user data is stored in MongoDB only.
+# There is NO in-memory set/list — so bot restarts never reset counts to 0.
 
 def add_served_chat(chat_id: int) -> None:
     col = _col("served_chats")
@@ -81,9 +88,21 @@ def get_served_chats() -> list:
     if col is None:
         return []
     try:
-        return [doc["_id"] for doc in col.find()]
-    except Exception:
+        return [doc["_id"] for doc in col.find({}, {"_id": 1})]
+    except Exception as e:
+        logger.error(f"[DB] get_served_chats: {e}")
         return []
+
+
+def get_served_chats_count() -> int:
+    col = _col("served_chats")
+    if col is None:
+        return 0
+    try:
+        return col.count_documents({})
+    except Exception as e:
+        logger.error(f"[DB] get_served_chats_count: {e}")
+        return 0
 
 
 def remove_served_chat(chat_id: int) -> None:
@@ -113,9 +132,21 @@ def get_served_users() -> list:
     if col is None:
         return []
     try:
-        return [doc["_id"] for doc in col.find()]
-    except Exception:
+        return [doc["_id"] for doc in col.find({}, {"_id": 1})]
+    except Exception as e:
+        logger.error(f"[DB] get_served_users: {e}")
         return []
+
+
+def get_served_users_count() -> int:
+    col = _col("served_users")
+    if col is None:
+        return 0
+    try:
+        return col.count_documents({})
+    except Exception as e:
+        logger.error(f"[DB] get_served_users_count: {e}")
+        return 0
 
 
 # ── Blocked Chats (ban) ────────────────────────────────────────────────────────
@@ -155,9 +186,19 @@ def get_banned_chats() -> list:
     if col is None:
         return []
     try:
-        return [doc["_id"] for doc in col.find()]
+        return [doc["_id"] for doc in col.find({}, {"_id": 1})]
     except Exception:
         return []
+
+
+def get_banned_chats_count() -> int:
+    col = _col("banned_chats")
+    if col is None:
+        return 0
+    try:
+        return col.count_documents({})
+    except Exception:
+        return 0
 
 
 # ── Assistant Joined Chats ─────────────────────────────────────────────────────
@@ -214,14 +255,10 @@ def get_total_plays() -> int:
 # ── Broadcast Chats ────────────────────────────────────────────────────────────
 
 def add_broadcast_chat(chat_id: int, chat_type: str) -> None:
-
     col = _col("broadcast")
-
     if col is None:
         return
-
     try:
-
         col.update_one(
             {"_id": int(chat_id)},
             {
@@ -233,103 +270,43 @@ def add_broadcast_chat(chat_id: int, chat_type: str) -> None:
             },
             upsert=True,
         )
-
     except Exception as e:
-
-        logger.error(
-            f"[DB] add_broadcast_chat: {e}"
-        )
+        logger.error(f"[DB] add_broadcast_chat: {e}")
 
 
 def get_broadcast_chats() -> list:
-
     col = _col("broadcast")
-
     if col is None:
         return []
-
     try:
-
-        return list(
-            col.find(
-                {},
-                {
-                    "_id": 1,
-                    "chat_id": 1,
-                    "type": 1,
-                },
-            )
-        )
-
+        return list(col.find({}, {"_id": 1, "chat_id": 1, "type": 1}))
     except Exception as e:
-
-        logger.error(
-            f"[DB] get_broadcast_chats: {e}"
-        )
-
+        logger.error(f"[DB] get_broadcast_chats: {e}")
         return []
 
 
 def get_broadcast_count() -> dict:
-
     col = _col("broadcast")
-
     if col is None:
-        return {
-            "total": 0,
-            "private": 0,
-            "groups": 0,
-        }
-
+        return {"total": 0, "private": 0, "groups": 0}
     try:
-
-        total = col.count_documents({})
-
-        private = col.count_documents(
-            {"type": "private"}
-        )
-
-        groups = col.count_documents(
-            {"type": "group"}
-        )
-
-        return {
-            "total": total,
-            "private": private,
-            "groups": groups,
-        }
-
+        total   = col.count_documents({})
+        private = col.count_documents({"type": "private"})
+        groups  = col.count_documents({"type": "group"})
+        return {"total": total, "private": private, "groups": groups}
     except Exception as e:
-
-        logger.error(
-            f"[DB] get_broadcast_count: {e}"
-        )
-
-        return {
-            "total": 0,
-            "private": 0,
-            "groups": 0,
-        }
+        logger.error(f"[DB] get_broadcast_count: {e}")
+        return {"total": 0, "private": 0, "groups": 0}
 
 
 def remove_broadcast_chat(chat_id: int) -> None:
-
     col = _col("broadcast")
-
     if col is None:
         return
-
     try:
-
-        col.delete_one(
-            {"_id": int(chat_id)}
-        )
-
+        col.delete_one({"_id": int(chat_id)})
     except Exception as e:
-
-        logger.error(
-            f"[DB] remove_broadcast_chat: {e}"
-        )
+        logger.error(f"[DB] remove_broadcast_chat: {e}")
 
 
 # ── Chat Effects (speed / bass / effects_on) ───────────────────────────────────
