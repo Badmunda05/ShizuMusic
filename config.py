@@ -25,7 +25,7 @@ PING_IMG_URL     = os.getenv("PING_IMG_URL", "https://files.catbox.moe/ddzvc0.jp
 SESSION_NAME     = os.getenv("SESSION_NAME", "ShizuMusic")
 PORT             = int(os.getenv("PORT", 10000))
 
-── Start ───────────────────────────────────────────────────────────────────────
+#── Start ───────────────────────────────────────────────────────────────────────
 START_ANIMATIONS = [
     "https://telegra.ph/file/1a3c152717eb9d2e94dc2.mp4",
     "https://graph.org/file/ba7699c28dab379b518ca.mp4",
