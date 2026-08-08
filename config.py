@@ -16,13 +16,13 @@ MONGO_DB_URL    = os.environ["MONGO_DB_URL"]
 OWNER_ID        = int(os.environ["OWNER_ID"])
 
 # ── Optional ──────────────────────────────────────────────────────────────────
-BOT_NAME         = os.getenv("BOT_NAME", "Shizu Music")
+BOT_NAME         = os.getenv("BOT_NAME", "Lyra Music")
 BOT_LINK         = os.getenv("BOT_LINK", "https://t.me/ShizuMusicBot")
 UPDATES_CHANNEL  = os.getenv("UPDATES_CHANNEL", "https://t.me/PBX_UPDATE")
 SUPPORT_GROUP    = os.getenv("SUPPORT_GROUP", "https://t.me/PBXCHATS")
 LOGGER_ID        = int(os.getenv("LOGGER_ID", "0"))
 PING_IMG_URL     = os.getenv("PING_IMG_URL", "https://files.catbox.moe/ddzvc0.jpg",)
-SESSION_NAME     = os.getenv("SESSION_NAME", "ShizuMusic")
+SESSION_NAME     = os.getenv("SESSION_NAME", "LyraMusic")
 PORT             = int(os.getenv("PORT", 10000))
 
 # ── NSFW Moderation API ─────────────────────────────────────────────────────
