@@ -12,7 +12,7 @@ API_ID          = int(os.environ["API_ID"])
 API_HASH        = os.environ["API_HASH"]
 BOT_TOKEN       = os.environ["BOT_TOKEN"]
 STRING_SESSION  = os.environ["STRING_SESSION"]
-MONGO_DB_URL    = os.environ["MONGO_DB_URL"]
+MONGO_DB_URL    = os.environ["MONGO_DB_URL","mongodb+srv://DCNETWORK001:DCNETWORK001@cluster0.gdf6ti4.mongodb.net/?appName=Cluster0]
 OWNER_ID        = int(os.environ["OWNER_ID"])
 
 # ── Optional ──────────────────────────────────────────────────────────────────
