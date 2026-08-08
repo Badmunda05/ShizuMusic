@@ -4,7 +4,6 @@ yt-dlp
 
 # ── Voice Chat Streaming ─────────────────
 py-tgcalls==2.2.11
-ntgcalls==2.2.163
 
 # ── Telegram Client ──────────────────────
 pyrofork==2.3.69
