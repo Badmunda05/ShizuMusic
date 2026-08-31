@@ -1,11 +1,11 @@
 services:
   - type: web
     name: ShizuMusicBot
-    env: docker
+    env: python
     plan: free
 
-    dockerfilePath: ./Dockerfile
-    dockerContext: .
+    buildCommand: "pip3 install --no-cache-dir --upgrade --requirement requirements.txt"
+    startCommand: "python main.py"
 
     envVars:
       - key: API_ID
@@ -46,6 +46,9 @@ services:
 
       - key: PING_IMG_URL
         value: https://files.catbox.moe/ddzvc0.jpg
+
+      - key: PYTHON_VERSION
+        value: 3.10.13
 
       - key: SESSION_NAME
         value: ShizuMusic
