@@ -1,3 +1,18 @@
+# --------------------------------------------------------------------------------
+#  ShizuMusic © 2026
+#  Developed by Bad Munda ❤️
+#
+#  Unauthorized copying, editing, re-uploading or removing credits
+#  from this source code is strictly prohibited.
+# --------------------------------------------------------------------------------
+#
+#  /testrich — owner-only diagnostic command. Sends a real rich test message
+#  (heading + table + collapsible details) into the chat, waits, then edits
+#  it. Reminder: "no exception raised" isn't proof it worked — a silently
+#  ignored kwarg wouldn't raise either. Always check what actually rendered
+#  in Telegram, not just whether this command finished without error.
+# --------------------------------------------------------------------------------
+
 import asyncio
 import inspect
 
@@ -137,3 +152,93 @@ async def test_rich_handler(_, message: Message) -> None:
             "text actually changed.",
             parse_mode=ParseMode.HTML,
         )
+
+    await asyncio.sleep(2)
+
+    # ── Live test #3: every tag from the official formatting example ────────────
+    # Sent as raw HTML (not via the rich_ui.py helpers) so this is a direct,
+    # unmodified test of the tags themselves — if one breaks, it tells us
+    # whether rich_ui.py's own builders (e.g. rich_button) need fixing to
+    # match, rather than hiding a mismatch behind the helper.
+    #
+    # NOTE ON tg-button's "type" ATTRIBUTE: rich_ui.py's rich_button() builds
+    # <tg-button url="..."> / <tg-button callback_data="..."> WITHOUT a
+    # type="..." attribute. This test uses type="..." explicitly (matching
+    # the official example you showed). If test #3a renders correctly and
+    # rich_button()'s output doesn't, that's the fix needed in rich_ui.py —
+    # this test is what will tell us either way.
+    await bot.send_message(
+        chat_id,
+        "<b>🧪 Test #3a — text formatting + media/layout tags</b>\n"
+        "(map / collage / slideshow use Telegram's own example URLs — expect "
+        "those specific ones to possibly fail to load as images/video, that's "
+        "normal; the point is whether the *blocks* render as maps/collages "
+        "at all, not whether that exact demo photo loads)",
+        parse_mode=ParseMode.HTML,
+    )
+
+    test_html_3a = (
+        "<p><u>underlined text</u>, <ins>underlined text</ins></p>"
+        "<p>H<sub>2</sub>O and E=mc<sup>2</sup></p>"
+        '<p><a name="chapter-1"></a>Anchor set above (jump target — not '
+        "independently visible, just shouldn't error)</p>"
+        "<aside>Pull quote<cite>The Author</cite></aside>"
+        "<details open><summary>Title</summary>Content</details>"
+        '<tg-map lat="41.9" long="12.5" zoom="14"/>'
+        '<tg-collage><img src="https://telegram.org/img/t_logo.png"/>'
+        "<figcaption>Caption<cite>The Author</cite></figcaption></tg-collage>"
+        '<tg-slideshow><img src="https://telegram.org/img/t_logo.png"/>'
+        "<figcaption>Slideshow caption<cite>The Author</cite></figcaption>"
+        "</tg-slideshow>"
+    )
+    sent_3a = await rich_send(bot, chat_id, test_html_3a)
+    await bot.send_message(
+        chat_id,
+        "<b>✔️ Test #3a sent</b>" if sent_3a else "<b>✘ Test #3a failed to send</b>",
+        parse_mode=ParseMode.HTML,
+    )
+
+    await asyncio.sleep(1)
+
+    await bot.send_message(
+        chat_id,
+        "<b>🧪 Test #3b — every &lt;tg-button&gt; type + tg-time + tg-emoji</b>\n"
+        "web_app only works in private chats; login_url needs a domain set "
+        "via @BotFather on this bot; switch_inline_query needs inline mode "
+        "enabled. Expect those specific buttons to be the likely failure "
+        "points, not the whole message.",
+        parse_mode=ParseMode.HTML,
+    )
+
+    test_html_3b = (
+        "<p>Inline buttons:<br/>"
+        '<tg-button type="url" style="success" url="https://t.me">url</tg-button> '
+        '<tg-button type="url" url="tg://user?id=777000">user</tg-button><br/>'
+        '<tg-button type="callback_data" style="link" data="testrich_cb">'
+        "callback with the date "
+        '<tg-time unix="1647531900" format="wDT">22:45 tomorrow</tg-time> '
+        "and the custom emoji "
+        '<tg-emoji emoji-id="5368324170671202286">👍</tg-emoji>'
+        "</tg-button><br/>"
+        '<tg-button type="web_app" style="danger" url="https://telegram.org">'
+        "Mini App (private chats only)</tg-button><br/>"
+        '<tg-button type="login_url" url="https://t.me" forward-text="forward text" '
+        'request-write-access>login (needs a domain set via @BotFather)</tg-button><br/>'
+        '<tg-button type="switch_inline_query" style="primary" query="inline">'
+        "inline</tg-button> "
+        '<tg-button type="switch_inline_query_current_chat" query="inline 2">'
+        "inline 2</tg-button> "
+        '<tg-button type="switch_inline_query_chosen_chat" query="inline 3" '
+        'allow-user-chats allow-bot-chats allow-group-chats allow-channel-chats>'
+        "inline 3</tg-button><br/>"
+        '<tg-button type="copy_text" text="...copy">Copy</tg-button> '
+        '<tg-button type="disabled">Disabled</tg-button>'
+        "</p>"
+    )
+    sent_3b = await rich_send(bot, chat_id, test_html_3b)
+    await bot.send_message(
+        chat_id,
+        "<b>✔️ Test #3b sent</b> — tap each button and note which ones actually "
+        "fire vs. do nothing/error." if sent_3b else "<b>✘ Test #3b failed to send</b>",
+        parse_mode=ParseMode.HTML,
+    )
