@@ -87,3 +87,58 @@ async def test_rich_handler(_, message: Message) -> None:
         f"✅ Rich message test sent successfully.\n\n"
         f"Message ID: `{sent.id}`"
     )
+
+
+# --------------------------------------------------------------------------------
+#  ShizuMusic © 2026
+#  Rich menu example — tg-button style="primary"/"success"/"danger"
+# --------------------------------------------------------------------------------
+
+from pyrogram import filters
+from pyrogram.types import Message
+
+import config
+from ShizuMusic import bot
+from ShizuMusic.modules.block import user_allowed
+from ShizuMusic.utils.rich_ui import (
+    rich_heading,
+    rich_button,
+    rich_send,
+)
+
+OWNER_ID = config.OWNER_ID
+
+
+@bot.on_message(filters.command("menu") & user_allowed)
+async def rich_menu_handler(_, message: Message) -> None:
+
+    try:
+        await message.delete()
+    except Exception:
+        pass
+
+    chat_id = message.chat.id
+
+    # Buttons are built with rich_button() and embedded directly in the HTML —
+    # NOT passed as reply_markup. That's what gives each one its own color.
+    menu_html = (
+        rich_heading("📋 Main Menu", level=3)
+        + "<p>"
+        + rich_button("🎵 Play", callback_data="menu_play", style="primary")   # blue
+        + " "
+        + rich_button("⚙️ Settings", callback_data="menu_settings", style="success")  # green
+        + " "
+        + rich_button("🗑 Stop", callback_data="menu_stop", style="danger")    # red
+        + "</p>"
+        + "<p>"
+        + rich_button("🍬 Support", url=getattr(config, "SUPPORT_GROUP", "https://t.me"), style="primary")
+        + " "
+        + rich_button("🍹 Updates", url=getattr(config, "UPDATES_CHANNEL", "https://t.me"), style="success")
+        + "</p>"
+    )
+
+    sent = await rich_send(bot, chat_id, menu_html)
+
+    if sent is None:
+        await bot.send_message(chat_id, "❌ Menu send failed.")
+        
