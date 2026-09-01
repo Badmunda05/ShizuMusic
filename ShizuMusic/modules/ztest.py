@@ -106,14 +106,3 @@ async def test_rich_handler(_, message: Message) -> None:
             "❌ Rich message test failed."
         )
         return
-
-    await bot.send_message(
-        chat_id,
-        f"✅ Rich message test sent successfully.\n\n"
-        f"Message ID: `{sent.id}`\n\n"
-        "Check the message above:\n"
-        "• Below the bubble: plain rows, but now colored — blue Support, "
-        "green Updates — via the native InlineKeyboardButton `style=` kwarg.\n"
-        "• Inside the bubble, right under the table: the embedded "
-        "<tg-button> pair — is that ALSO colored, or plain/missing?"
-    )
