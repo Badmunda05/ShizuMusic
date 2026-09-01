@@ -62,4 +62,4 @@ COOLDOWN             = 10     # seconds between /play per chat
 #    ".js",
 #    ".go",
 #    ".php",
-]
+#]
