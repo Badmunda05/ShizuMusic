@@ -18,7 +18,7 @@ import inspect
 
 from pyrogram import filters
 from pyrogram.enums import ParseMode
-from pyrogram.types import Message
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 import config
 from ShizuMusic import bot
@@ -95,7 +95,15 @@ async def test_rich_handler(_, message: Message) -> None:
             parse_mode=ParseMode.HTML,
         )
 
-    # ── Live test #1: send ───────────────────────────────────────────────────────
+    # ── Live test #1: send (with buttons — see the edit test below for the
+    #    actual "buttons cut on edit" fix) ────────────────────────────────────
+    test_kb = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("🍬 Support", url=getattr(config, "SUPPORT_GROUP", "https://t.me")),
+            InlineKeyboardButton("🍹 Updates", url=getattr(config, "UPDATES_CHANNEL", "https://t.me")),
+        ],
+    ])
+
     test_html_1 = (
         rich_heading("🧪 Rich message test #1", level=3)
         + "<p>If this shows as a real heading (bigger/bold, on its own line — "
@@ -108,7 +116,7 @@ async def test_rich_handler(_, message: Message) -> None:
                         "tapped 'Tap to expand', collapsible details work too.</p>")
     )
 
-    sent = await rich_send(bot, chat_id, test_html_1)
+    sent = await rich_send(bot, chat_id, test_html_1, reply_markup=test_kb)
     if sent is None:
         await bot.send_message(
             chat_id,
@@ -129,14 +137,21 @@ async def test_rich_handler(_, message: Message) -> None:
     await asyncio.sleep(3)
 
     # ── Live test #2: edit ────────────────────────────────────────────────────────
+    # THE "BUTTONS CUT ON EDIT" FIX: Telegram's edit_message_text (rich or plain)
+    # does NOT keep the previous message's reply_markup automatically — if you
+    # don't pass reply_markup again on the edit call, the buttons disappear.
+    # The original version of this test called rich_edit(sent, test_html_2)
+    # with no reply_markup at all, which is exactly why the keyboard vanished
+    # after the edit. Re-passing test_kb below keeps the buttons attached.
     test_html_2 = (
         rich_heading("🧪 Rich message test #2 (edited)", level=3)
         + "<p>This replaced test #1 via <code>rich_edit()</code>. If the "
-          "message above changed in place — same message, new content — "
-          "editing rich content works.</p>"
+          "message above changed in place — same message, new content, "
+          "<b>and the Support/Updates buttons are still there</b> — editing "
+          "rich content + keeping buttons works.</p>"
     )
 
-    edited = await rich_edit(sent, test_html_2)
+    edited = await rich_edit(sent, test_html_2, reply_markup=test_kb)
     if edited is None:
         await bot.send_message(
             chat_id,
@@ -149,7 +164,8 @@ async def test_rich_handler(_, message: Message) -> None:
         await bot.send_message(
             chat_id,
             "<b>✔️ rich_edit did not raise.</b> Confirm above that the message "
-            "text actually changed.",
+            "text changed AND the Support/Updates buttons are still visible "
+            "(that's the part that was 'cut' before).",
             parse_mode=ParseMode.HTML,
         )
 
@@ -240,5 +256,57 @@ async def test_rich_handler(_, message: Message) -> None:
         chat_id,
         "<b>✔️ Test #3b sent</b> — tap each button and note which ones actually "
         "fire vs. do nothing/error." if sent_3b else "<b>✘ Test #3b failed to send</b>",
+        parse_mode=ParseMode.HTML,
+    )
+
+    await asyncio.sleep(2)
+
+    # ── Live test #4: embedded tg-button (inside the bubble) + classic
+    #    reply_markup (separate rows below the bubble) on the SAME message —
+    #    no edit this time, just one send, so the two button styles can be
+    #    compared directly like in your reference screenshots:
+    #      • tg-button tags in the HTML body render as pill buttons INSIDE
+    #        the message bubble, right after the text.
+    #      • reply_markup=InlineKeyboardMarkup(...) renders as full-width
+    #        button rows BELOW the bubble, same as any classic message.
+    #    They're two independent mechanisms — a message can use either, or
+    #    both at once, as tested here.
+    await bot.send_message(
+        chat_id,
+        "<b>🧪 Test #4 — embedded tg-button (in-bubble) + classic reply_markup "
+        "(below-bubble) on one message</b>\n"
+        "Look for TWO different button styles: small pill buttons inside the "
+        "text itself, and full-width rows below the message.",
+        parse_mode=ParseMode.HTML,
+    )
+
+    test_html_4 = (
+        rich_heading("🧪 Test #4", level=3)
+        + "<p>Everything below the divider is a <tg-button> tag embedded "
+          "directly in this rich message's HTML — it should render "
+          "<b>inside this bubble</b>, not as a separate keyboard.</p>"
+        + "<p>"
+        + '<tg-button type="url" style="success" url="https://t.me">'
+        "In-bubble: url</tg-button> "
+        '<tg-button type="callback_data" style="primary" data="testrich_inbubble">'
+        "In-bubble: callback</tg-button>"
+        + "</p>"
+    )
+
+    classic_kb = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("Below-bubble: url", url="https://t.me"),
+            InlineKeyboardButton("Below-bubble: callback", callback_data="testrich_belowbubble"),
+        ],
+    ])
+
+    sent_4 = await rich_send(bot, chat_id, test_html_4, reply_markup=classic_kb)
+    await bot.send_message(
+        chat_id,
+        "<b>✔️ Test #4 sent</b> — go look: are there really two visually "
+        "distinct button groups (in-bubble pills + below-bubble rows), or "
+        "did the tg-button tags just get stripped/ignored and only the "
+        "classic reply_markup buttons showed up?" if sent_4 else
+        "<b>✘ Test #4 failed to send</b>",
         parse_mode=ParseMode.HTML,
     )
