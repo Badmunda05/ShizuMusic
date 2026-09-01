@@ -7,8 +7,9 @@ py-tgcalls==2.2.11
 ntgcalls
 
 # ── Telegram Client ──────────────────────
-pyrofork==2.3.69
+https://github.com/KurimuzonAkuma/kurigram/archive/refs/heads/dev.zip
 tgcrypto==1.2.5
+httpx[http2]==0.28.1
 
 # ── Async & Networking ───────────────────
 aiohttp==3.13.5
