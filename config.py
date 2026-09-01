@@ -52,14 +52,14 @@ QUEUE_LIMIT          = 20
 COOLDOWN             = 10     # seconds between /play per chat
 
 
-BLOCKED_EXTENSIONS = [
-    ".zip",
-    ".rar",
-    ".7z",
-    ".apk",
-    ".exe",
-    ".py",
-    ".js",
-    ".go",
-    ".php",
+#BLOCKED_EXTENSIONS = [
+#    ".zip",
+#    ".rar",
+#    ".7z",
+#    ".apk",
+#    ".exe",
+#    ".py",
+#    ".js",
+#    ".go",
+#    ".php",
 ]
