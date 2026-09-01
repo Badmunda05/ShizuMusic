@@ -3,7 +3,7 @@
 #  Developed by Bad Munda ❤️
 # --------------------------------------------------------------------------------
 
-from pyrogram import filters
+from pyrogram import enums, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 import config
@@ -34,30 +34,40 @@ async def test_rich_handler(_, message: Message) -> None:
 
     chat_id = message.chat.id
 
-    # Buttons
+    # Buttons — style= is a REAL InlineKeyboardButton kwarg (confirmed against
+    # kurigram's source: pyrogram/types/bots_and_keyboards/inline_keyboard_button.py),
+    # backed by enums.ButtonStyle. No tg-button/HTML trick needed for color —
+    # this colors the classic reply_markup buttons directly.
+    #   DEFAULT = normal grey · PRIMARY = dark blue · DANGER = red · SUCCESS = green
     test_kb = InlineKeyboardMarkup([
         [
             InlineKeyboardButton(
                 "🍬 Support",
-                url=getattr(config, "SUPPORT_GROUP", "https://t.me")
+                url=getattr(config, "SUPPORT_GROUP", "https://t.me"),
+                style=enums.ButtonStyle.PRIMARY,
             ),
             InlineKeyboardButton(
                 "🍹 Updates",
-                url=getattr(config, "UPDATES_CHANNEL", "https://t.me")
+                url=getattr(config, "UPDATES_CHANNEL", "https://t.me"),
+                style=enums.ButtonStyle.SUCCESS,
             ),
         ]
     ])
 
     # Rich Message Test #1
     #
-    # Two different button styles on purpose, so you can compare them:
-    #   - test_kb (below)      -> classic reply_markup, renders as plain rows
-    #                              BELOW the message bubble.
-    #   - the <tg-button> pair  -> embedded directly in the rich HTML content,
-    #     in test_html below       should render as colored pill buttons
-    #                              INSIDE the bubble (blue "Support",
-    #                              green "Updates") — like the Support™ /
-    #                              BabiesIQ™ pills in the reference screenshot.
+    # Two independent, both-colored button mechanisms on purpose, so you can
+    # compare them directly:
+    #   - test_kb (above)       -> classic reply_markup with the native
+    #                              style= kwarg. Renders as colored rows
+    #                              BELOW the message bubble (blue Support,
+    #                              green Updates) — no HTML/tg-button needed.
+    #   - the <tg-button> pair   -> embedded directly in the rich HTML content,
+    #     in test_html below        should render as colored pill buttons
+    #                              INSIDE the bubble instead.
+    # If both show up colored in their respective spot, both mechanisms work.
+    # If only the below-bubble ones are colored, tg-button styling isn't
+    # supported yet on this build and style= is the one to actually use.
     test_html = (
         rich_heading("🧪 Rich message test #1", level=3)
         + "<p>If this shows as a real heading (bigger/bold, on its own line — "
@@ -101,10 +111,9 @@ async def test_rich_handler(_, message: Message) -> None:
         chat_id,
         f"✅ Rich message test sent successfully.\n\n"
         f"Message ID: `{sent.id}`\n\n"
-        "Check the message above for TWO different button looks:\n"
-        "• Colored pill buttons (blue Support, green Updates) *inside* the "
-        "bubble, right under the table — those are the embedded <tg-button> "
-        "tags.\n"
-        "• Plain rows *below* the bubble — that's the classic reply_markup "
-        "keyboard."
+        "Check the message above:\n"
+        "• Below the bubble: plain rows, but now colored — blue Support, "
+        "green Updates — via the native InlineKeyboardButton `style=` kwarg.\n"
+        "• Inside the bubble, right under the table: the embedded "
+        "<tg-button> pair — is that ALSO colored, or plain/missing?"
     )
