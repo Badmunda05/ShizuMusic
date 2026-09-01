@@ -94,8 +94,8 @@ async def test_rich_handler(_, message: Message) -> None:
 #  Rich menu example — tg-button style="primary"/"success"/"danger"
 # --------------------------------------------------------------------------------
 
-from pyrogram import filters
-from pyrogram.types import Message
+from pyrogram import filters, Client
+from pyrogram.types import Message, CallbackQuery
 
 import config
 from ShizuMusic import bot
@@ -104,6 +104,7 @@ from ShizuMusic.utils.rich_ui import (
     rich_heading,
     rich_button,
     rich_send,
+    rich_reply,
 )
 
 OWNER_ID = config.OWNER_ID
@@ -119,8 +120,8 @@ async def rich_menu_handler(_, message: Message) -> None:
 
     chat_id = message.chat.id
 
-    # Buttons are built with rich_button() and embedded directly in the HTML —
-    # NOT passed as reply_markup. That's what gives each one its own color.
+    # Build menu with rich styled buttons using <tg-button> tags
+    # These render as colored inline buttons in the message (requires Bot API 10.3+)
     menu_html = (
         rich_heading("📋 Main Menu", level=3)
         + "<p>"
@@ -141,4 +142,34 @@ async def rich_menu_handler(_, message: Message) -> None:
 
     if sent is None:
         await bot.send_message(chat_id, "❌ Menu send failed.")
-        
+        return
+
+    await bot.send_message(chat_id, f"✅ Menu sent! (Message ID: {sent.id})")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Callback handlers for menu buttons
+# ─────────────────────────────────────────────────────────────────────────────
+
+@bot.on_callback_query(filters.regex("^menu_play"))
+async def menu_play_cb(client: Client, callback_query: CallbackQuery) -> None:
+    await rich_reply(
+        callback_query,
+        rich_heading("🎵 Now Playing", level=3) + "<p>Music playback started!</p>"
+    )
+
+
+@bot.on_callback_query(filters.regex("^menu_settings"))
+async def menu_settings_cb(client: Client, callback_query: CallbackQuery) -> None:
+    await rich_reply(
+        callback_query,
+        rich_heading("⚙️ Settings", level=3) + "<p>Settings panel opened.</p>"
+    )
+
+
+@bot.on_callback_query(filters.regex("^menu_stop"))
+async def menu_stop_cb(client: Client, callback_query: CallbackQuery) -> None:
+    await rich_reply(
+        callback_query,
+        rich_heading("🗑 Stopped", level=3) + "<p>Playback stopped.</p>"
+    )
