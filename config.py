@@ -26,13 +26,13 @@ SESSION_NAME     = os.getenv("SESSION_NAME", "ShizuMusic")
 PORT             = int(os.getenv("PORT", 10000))
 
 # ── NSFW Moderation API ─────────────────────────────────────────────────────
-NSFW_API_URL = os.getenv("NSFW_API_URL", "https://ai-moderation-api-khyr.onrender.com")
-NSFW_API_KEY = os.getenv("NSFW_API_KEY", "nsfwBad")
+#NSFW_API_URL = os.getenv("NSFW_API_URL", "https://ai-moderation-api-khyr.onrender.com")
+#NSFW_API_KEY = os.getenv("NSFW_API_KEY", "nsfwBad")
 
 # Custom detection thresholds — sent with every /detect/upload call.
-NSFW_THRESHOLDS = {
-    "porn": float(os.getenv("NSFW_THRESHOLD_PORN", "0.7")),
-    "sexy": float(os.getenv("NSFW_THRESHOLD_SEXY", "0.8")),
+#NSFW_THRESHOLDS = {
+#    "porn": float(os.getenv("NSFW_THRESHOLD_PORN", "0.7")),
+#    "sexy": float(os.getenv("NSFW_THRESHOLD_SEXY", "0.8")),
 }
 
 #── Start ───────────────────────────────────────────────────────────────────────
