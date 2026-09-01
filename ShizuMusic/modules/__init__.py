@@ -24,4 +24,5 @@ ALL_MODULES = [
     "callbacks",
     "start",
     "seek",
+    "ztest",
 ]
