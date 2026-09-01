@@ -5,35 +5,8 @@
 #  Unauthorized copying, editing, re-uploading or removing credits
 #  from this source code is strictly prohibited.
 # --------------------------------------------------------------------------------
-#
-#  NOTE ON THE NEW "RICH MESSAGE" TAGS (aside / details / tg-button / tg-map /
-#  tg-collage / tg-slideshow / tg-time) — Bot API 10.3, Aug 2026:
-#
-#  - <u>, <ins>, <sub>, <sup>, and <tg-emoji> are classic HTML formatting
-#    entities that already work today with plain parse_mode=HTML. Those are
-#    used directly below with full confidence.
-#
-#  - <aside>, <details>/<summary>, <tg-map>, <tg-collage>, <tg-slideshow>,
-#    <tg-button>, <tg-time> belong to the new *rich message* content type
-#    (same family as the Go `InputRichMessage` you showed me) — NOT plain
-#    text formatting. Whether pyrofork==2.3.69 (pinned in requirements.txt)
-#    already exposes a send method for this is something I can't verify —
-#    it's past my training cutoff and I don't have search here. So this
-#    file:
-#       1. Builds the new-style rich HTML as rich_html string constants.
-#       2. Tries to send it via `bot.send_rich_message` IF that attribute
-#          exists on your installed pyrofork Client (hasattr guard below —
-#          this is a guess at the method name, check pyrofork's actual
-#          changelog/`dir(bot)` and fix the call if the real name differs).
-#       3. Falls back to the original, guaranteed-working
-#          reply_animation + InlineKeyboardMarkup flow if step 2 isn't
-#          available or throws.
-#
-#  Set config.USE_RICH_MESSAGES = True once you've confirmed step 2 actually
-#  works on your pyrofork build — until then this safely no-ops to classic.
-# --------------------------------------------------------------------------------
+#--------------------------------------------
 
-import asyncio
 import random
 
 from pyrogram import filters
@@ -45,8 +18,15 @@ from ShizuMusic import bot
 from config import START_ANIMATIONS
 from ShizuMusic.modules.block import user_allowed
 from ShizuMusic.utils.db import add_broadcast_chat, add_served_chat, add_served_user
-
-RICH_MODE = getattr(config, "USE_RICH_MESSAGES", False)
+from ShizuMusic.utils.rich_ui import (
+    RICH_AVAILABLE,
+    rich_button,
+    rich_details,
+    rich_esc,
+    rich_heading,
+    rich_note,
+    rich_reply,
+)
 
 # ── Message effect IDs (Telegram premium effects) ─────────────────────────────
 EFFECT_ID = [
@@ -56,31 +36,72 @@ EFFECT_ID = [
     5159385139981059251,
 ]
 
+# Plain-text short caption for the animation itself — captions can't be rich.
+_ANIMATION_CAPTION = "🥀 sʜɪᴢᴜ-ᴍᴜsɪᴄ™"
 
-async def send_adaptive(message: Message, *, rich_html: str, animation, classic_caption: str,
-                         classic_kb: InlineKeyboardMarkup, effect_id=None):
-    """
-    Try the new rich-message send path first (if enabled + available on this
-    pyrofork build), otherwise fall back to the classic animation+caption+
-    InlineKeyboardMarkup flow that is known to work today.
-    """
-    if RICH_MODE and hasattr(bot, "send_rich_message"):
-        try:
-            kwargs = {}
-            if effect_id:
-                kwargs["message_effect_id"] = effect_id
-            return await bot.send_rich_message(
-                chat_id=message.chat.id,
-                html=rich_html,
-                **kwargs,
-            )
-        except Exception as e:
-            print(f"[rich-message] send failed, falling back to classic: {e}")
 
-    kwargs = dict(caption=classic_caption, parse_mode=ParseMode.HTML, reply_markup=classic_kb)
-    if effect_id:
-        kwargs["message_effect_id"] = effect_id
-    return await message.reply_animation(animation, **kwargs)
+def _classic_start_private(uid, name):
+    caption = (
+        "<b>╭────────────────────▣</b>\n"
+        f"<b>│❍ ʜᴇʏ</b> <a href='tg://user?id={uid}'>{name}</a>, 🥀\n"
+        f"<b>│❍ ᴛʜɪs ɪs {config.BOT_NAME} !</b>\n"
+        "<b>├────────────────────▣</b>\n"
+        "<b>│❍ ᴀ ғᴀsᴛ & ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ</b>\n"
+        "<b>│ ᴍᴜsɪᴄ ᴘʟᴀʏᴇʀ ʙᴏᴛ ᴡɪᴛʜ</b>\n"
+        "<b>│ sᴏᴍᴇ ᴀᴡᴇsᴏᴍᴇ ғᴇᴀᴛᴜʀᴇs.</b>\n"
+        "<b>├────────────────────▣</b>\n"
+        "<b>│❍ ᴄʟɪᴄᴋ ʜᴇʟᴘ ғᴏʀ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs.</b>\n"
+        "<b>├────────────────────▣</b>\n"
+        f"<b>│❍ ᴘᴏᴡᴇʀᴇᴅ ʙʏ » "
+        f"<a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>\n"
+        "<b>╰────────────────────▣</b>"
+    )
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton("⛩️ ᴧᴅᴅ мᴇ ʙᴧʙʏ ⛩️",
+                              url=f"{config.BOT_LINK}?startgroup=true")],
+        [
+            InlineKeyboardButton("🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP),
+            InlineKeyboardButton("🍹 ᴜᴘᴅᴀᴛᴇs 🍹",  url=config.UPDATES_CHANNEL),
+        ],
+        [InlineKeyboardButton("🏩 ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅs 🏩",
+                              callback_data="show_help")],
+        [
+            InlineKeyboardButton("🫧 ᴏᴡɴᴇʀ 🫧",
+                                 url=f"tg://user?id={config.OWNER_ID}"),
+            InlineKeyboardButton("🍡 sᴏᴜʀᴄᴇ 🍡",
+                                 url="https://github.com/Badmunda05/ShizuMusic/fork"),
+        ],
+    ])
+    return caption, kb
+
+
+def _rich_start_private_html(uid, name):
+    button_row1 = " ".join([
+        rich_button("⛩️ Add me baby", url=f"{config.BOT_LINK}?startgroup=true", style="success"),
+    ])
+    button_row2 = " ".join([
+        rich_button("🍬 Support", url=config.SUPPORT_GROUP),
+        rich_button("🍹 Updates", url=config.UPDATES_CHANNEL),
+    ])
+    button_row3 = rich_button("🏩 Help & Commands", callback_data="show_help", style="primary")
+    button_row4 = " ".join([
+        rich_button("🫧 Owner", url=f"tg://user?id={config.OWNER_ID}"),
+        rich_button("🍡 Source", url="https://github.com/Badmunda05/ShizuMusic/fork"),
+    ])
+
+    return (
+        rich_heading(f"Hey {rich_esc(name)} 🥀", level=3)
+        + f"<p>This is <b>{rich_esc(config.BOT_NAME)}</b> — a fast &amp; powerful "
+          "Telegram music player bot.</p>"
+        + rich_details(
+            "What can I do?",
+            "<p>Play music in group voice chats from YouTube, Spotify, and "
+            "more. Tap Help below for the full command list.</p>",
+            open=True,
+        )
+        + rich_note(f"Powered by <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
+        + f"<p>{button_row1}<br/>{button_row2}<br/>{button_row3}<br/>{button_row4}</p>"
+    )
 
 
 # ── /start ────────────────────────────────────────────────────────────────────
@@ -109,75 +130,32 @@ async def start_handler(_, message: Message) -> None:
     # ── Private ───────────────────────────────────────────────────────────────
     if chat_type == ChatType.PRIVATE:
 
-        # Classic caption (guaranteed to render) — kept exactly as before,
-        # just with <u> added (already-supported tag) on the tagline.
-        classic_caption = (
-            "<b>╭────────────────────▣</b>\n"
-            f"<b>│❍ ʜᴇʏ</b> <a href='tg://user?id={uid}'>{name}</a>, 🥀\n"
-            f"<b>│❍ ᴛʜɪs ɪs <u>{config.BOT_NAME}</u> !</b>\n"
-            "<b>├────────────────────▣</b>\n"
-            "<b>│❍ ᴀ ғᴀsᴛ & ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ</b>\n"
-            "<b>│ ᴍᴜsɪᴄ ᴘʟᴀʏᴇʀ ʙᴏᴛ ᴡɪᴛʜ</b>\n"
-            "<b>│ sᴏᴍᴇ ᴀᴡᴇsᴏᴍᴇ ғᴇᴀᴛᴜʀᴇs.</b>\n"
-            "<b>├────────────────────▣</b>\n"
-            "<b>│❍ ᴄʟɪᴄᴋ ʜᴇʟᴘ ғᴏʀ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs.</b>\n"
-            "<b>├────────────────────▣</b>\n"
-            f"<b>│❍ ᴘᴏᴡᴇʀᴇᴅ ʙʏ » "
-            f"<a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>\n"
-            "<b>╰────────────────────▣</b>"
-        )
-        classic_kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton("⛩️ ᴧᴅᴅ мᴇ ʙᴧʙʏ ⛩️",
-                                  url=f"{config.BOT_LINK}?startgroup=true")],
-            [
-                InlineKeyboardButton("🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP),
-                InlineKeyboardButton("🍹 ᴜᴘᴅᴀᴛᴇs 🍹",  url=config.UPDATES_CHANNEL),
-            ],
-            [InlineKeyboardButton("🏩 ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅs 🏩",
-                                  callback_data="show_help")],
-            [
-                InlineKeyboardButton("🫧 ᴏᴡɴᴇʀ 🫧",
-                                     url=f"tg://user?id={config.OWNER_ID}"),
-                InlineKeyboardButton("🍡 sᴏᴜʀᴄᴇ 🍡",
-                                     url="https://github.com/Badmunda05/ShizuMusic/fork"),
-            ],
-        ])
+        if RICH_AVAILABLE:
+            # Animation for visual flair — captions can't carry rich tags,
+            # so keep it short and let the follow-up rich message do the work.
+            try:
+                await message.reply_animation(
+                    animation,
+                    caption=_ANIMATION_CAPTION,
+                    message_effect_id=random.choice(EFFECT_ID),
+                )
+            except Exception:
+                pass
 
-        # Experimental rich-message version — pull-quote greeting via <aside>,
-        # collapsible feature list via <details>, buttons embedded inline via
-        # <tg-button> instead of a separate InlineKeyboardMarkup. Only sent if
-        # RICH_MODE + bot.send_rich_message actually exist (see send_adaptive).
-        rich_html = (
-            f"<h3>Hey {name} 🥀</h3>\n"
-            f"<p>This is <b><u>{config.BOT_NAME}</u></b>!</p>\n"
-            "<aside>A fast &amp; powerful Telegram music player bot with "
-            "some awesome features.<cite>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</cite></aside>\n"
-            "<details open><summary>What can I do?</summary>"
-            "<p>Play music in group voice chats from YouTube, Spotify, and "
-            "more &mdash; tap Help below for the full command list.</p>"
-            "</details>\n"
-            "<p>"
-            f"<tg-button type=\"url\" style=\"success\" "
-            f"url=\"{config.BOT_LINK}?startgroup=true\">⛩️ Add me baby</tg-button> "
-            f"<tg-button type=\"url\" url=\"{config.SUPPORT_GROUP}\">🍬 Support</tg-button> "
-            f"<tg-button type=\"url\" url=\"{config.UPDATES_CHANNEL}\">🍹 Updates</tg-button><br/>"
-            "<tg-button type=\"callback_data\" style=\"primary\" data=\"show_help\">"
-            "🏩 Help &amp; Commands</tg-button><br/>"
-            f"<tg-button type=\"url\" url=\"tg://user?id={config.OWNER_ID}\">🫧 Owner</tg-button> "
-            "<tg-button type=\"url\" url=\"https://github.com/Badmunda05/ShizuMusic/fork\">"
-            "🍡 Source</tg-button>"
-            "</p>\n"
-            f"<p>Powered by <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></p>"
-        )
-
-        sent = await send_adaptive(
-            message,
-            rich_html=rich_html,
-            animation=animation,
-            classic_caption=classic_caption,
-            classic_kb=classic_kb,
-            effect_id=random.choice(EFFECT_ID),
-        )
+            sent = await rich_reply(
+                message,
+                _rich_start_private_html(uid, name),
+                quote=False,
+            )
+        else:
+            classic_caption, classic_kb = _classic_start_private(uid, name)
+            sent = await message.reply_animation(
+                animation,
+                caption=classic_caption,
+                parse_mode=ParseMode.HTML,
+                reply_markup=classic_kb,
+                message_effect_id=random.choice(EFFECT_ID),
+            )
 
         try:
             add_broadcast_chat(chat_id, "private")
@@ -201,43 +179,50 @@ async def start_handler(_, message: Message) -> None:
     else:
         chat_title = message.chat.title or "ᴛʜɪs ᴄʜᴀᴛ"
 
-        classic_caption = (
-            f"❍ ʜᴇʏ <a href='tg://user?id={uid}'>{name}</a>,\n"
-            f"ᴛʜɪs ɪs <b><u>{config.BOT_NAME}</u></b>\n\n"
-            f"ᴛʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ ɪɴ <b>{chat_title}</b>.\n"
-            f"{name} ᴄᴀɴ ɴᴏᴡ ᴘʟᴀʏ sᴏɴɢs ʜᴇʀᴇ."
-        )
-        classic_kb = InlineKeyboardMarkup([
-            [
-                InlineKeyboardButton("⛩️ ᴧᴅᴅ мᴇ ʙᴧʙʏ ⛩️",
-                                     url=f"{config.BOT_LINK}?startgroup=true"),
-                InlineKeyboardButton("🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP),
-            ],
-            [InlineKeyboardButton("🏩 ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅs 🏩",
-                                  callback_data="show_help")],
-        ])
+        if RICH_AVAILABLE:
+            try:
+                await message.reply_animation(animation, caption=_ANIMATION_CAPTION)
+            except Exception:
+                pass
 
-        rich_html = (
-            f"<p>❍ Hey <a href='tg://user?id={uid}'>{name}</a>, this is "
-            f"<b><u>{config.BOT_NAME}</u></b></p>\n"
-            f"<aside>Thanks for adding me in {chat_title}. {name} can now "
-            "play songs here.<cite>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</cite></aside>\n"
-            "<p>"
-            f"<tg-button type=\"url\" style=\"success\" "
-            f"url=\"{config.BOT_LINK}?startgroup=true\">⛩️ Add me baby</tg-button> "
-            f"<tg-button type=\"url\" url=\"{config.SUPPORT_GROUP}\">🍬 Support</tg-button><br/>"
-            "<tg-button type=\"callback_data\" style=\"primary\" data=\"show_help\">"
-            "🏩 Help &amp; Commands</tg-button>"
-            "</p>"
-        )
-
-        sent = await send_adaptive(
-            message,
-            rich_html=rich_html,
-            animation=animation,
-            classic_caption=classic_caption,
-            classic_kb=classic_kb,
-        )
+            html = (
+                f"<p>❍ Hey <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, this is "
+                f"<b>{rich_esc(config.BOT_NAME)}</b></p>"
+                + rich_note(
+                    f"Thanks for adding me in {rich_esc(chat_title)}. "
+                    f"{rich_esc(name)} can now play songs here."
+                )
+                + "<p>"
+                + rich_button("⛩️ Add me baby", url=f"{config.BOT_LINK}?startgroup=true", style="success")
+                + " "
+                + rich_button("🍬 Support", url=config.SUPPORT_GROUP)
+                + "<br/>"
+                + rich_button("🏩 Help & Commands", callback_data="show_help", style="primary")
+                + "</p>"
+            )
+            sent = await rich_reply(message, html, quote=False)
+        else:
+            classic_caption = (
+                f"❍ ʜᴇʏ <a href='tg://user?id={uid}'>{name}</a>,\n"
+                f"ᴛʜɪs ɪs <b>{config.BOT_NAME}</b>\n\n"
+                f"ᴛʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ ɪɴ <b>{chat_title}</b>.\n"
+                f"{name} ᴄᴀɴ ɴᴏᴡ ᴘʟᴀʏ sᴏɴɢs ʜᴇʀᴇ."
+            )
+            classic_kb = InlineKeyboardMarkup([
+                [
+                    InlineKeyboardButton("⛩️ ᴧᴅᴅ мᴇ ʙᴧʙʏ ⛩️",
+                                         url=f"{config.BOT_LINK}?startgroup=true"),
+                    InlineKeyboardButton("🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP),
+                ],
+                [InlineKeyboardButton("🏩 ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅs 🏩",
+                                      callback_data="show_help")],
+            ])
+            sent = await message.reply_animation(
+                animation,
+                caption=classic_caption,
+                parse_mode=ParseMode.HTML,
+                reply_markup=classic_kb,
+            )
 
         admin_msg = (
             "<b>╭──────────────────────▣</b>\n"
@@ -289,6 +274,34 @@ async def help_handler(_, message: Message) -> None:
     except Exception:
         pass
 
+    animation = random.choice(START_ANIMATIONS)
+
+    if RICH_AVAILABLE:
+        try:
+            await message.reply_animation(animation, caption=_ANIMATION_CAPTION)
+        except Exception:
+            pass
+
+        rows = [
+            [("Admin", "help_admin"), ("A-Play", "help_autoplay"), ("G-Cast", "help_gcast")],
+            [("Bl-Chat", "help_blchat"), ("Bl-Users", "help_blusers"), ("Ping", "help_ping")],
+            [("Play", "help_play"), ("Speed", "help_speed"), ("Info", "help_info")],
+        ]
+        button_html = "".join(
+            "<p>" + " ".join(rich_button(text, callback_data=cb) for text, cb in row) + "</p>"
+            for row in rows
+        )
+        button_html += f"<p>{rich_button('⌯ Close ⌯', callback_data='close_help', style='danger')}</p>"
+
+        html = (
+            rich_heading(f"Hey {rich_esc(name)} 🥀", level=3)
+            + "<p>📜 Choose a category:</p>"
+            + button_html
+            + rich_note(f"Powered by <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
+        )
+        sent = await rich_reply(message, html, quote=False)
+        return
+
     classic_kb = InlineKeyboardMarkup([
         [
             InlineKeyboardButton("ᴧᴅᴍɪɴ",    callback_data="help_admin"),
@@ -309,45 +322,18 @@ async def help_handler(_, message: Message) -> None:
             InlineKeyboardButton("⌯ ᴄʟᴏsᴇ ⌯", callback_data="close_help"),
         ],
     ])
-
-    animation = random.choice(START_ANIMATIONS)
-
-    classic_caption = (
-        "<b>╭────────────────────▣</b>\n"
-        f"<b>│❍ ʜᴇʏ</b> <a href='tg://user?id={uid}'>{name}</a>, 🥀\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ :</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        f"<b>│❍ ᴘᴏᴡᴇʀᴇᴅ ʙʏ » "
-        f"<a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>\n"
-        "<b>╰────────────────────▣</b>"
-    )
-
-    # Category buttons grouped in rows via <tg-button>, each category still
-    # maps to the same help_* callback_data your callbacks.py already handles.
-    rich_html = (
-        f"<h3>Hey {name} 🥀</h3>\n"
-        "<p>📜 Choose a category:</p>\n"
-        "<p>"
-        "<tg-button type=\"callback_data\" data=\"help_admin\">Admin</tg-button> "
-        "<tg-button type=\"callback_data\" data=\"help_autoplay\">Autoplay</tg-button> "
-        "<tg-button type=\"callback_data\" data=\"help_gcast\">Gcast</tg-button><br/>"
-        "<tg-button type=\"callback_data\" data=\"help_blchat\">Bl-Chat</tg-button> "
-        "<tg-button type=\"callback_data\" data=\"help_blusers\">Bl-Users</tg-button> "
-        "<tg-button type=\"callback_data\" data=\"help_ping\">Ping</tg-button><br/>"
-        "<tg-button type=\"callback_data\" data=\"help_play\">Play</tg-button> "
-        "<tg-button type=\"callback_data\" data=\"help_speed\">Speed</tg-button> "
-        "<tg-button type=\"callback_data\" data=\"help_info\">Info</tg-button><br/>"
-        "<tg-button type=\"callback_data\" style=\"danger\" data=\"close_help\">"
-        "⌯ Close ⌯</tg-button>"
-        "</p>\n"
-        f"<p>Powered by <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></p>"
-    )
-
-    sent = await send_adaptive(
-        message,
-        rich_html=rich_html,
-        animation=animation,
-        classic_caption=classic_caption,
-        classic_kb=classic_kb,
+    sent = await message.reply_animation(
+        animation,
+        caption=(
+            "<b>╭────────────────────▣</b>\n"
+            f"<b>│❍ ʜᴇʏ</b> <a href='tg://user?id={uid}'>{name}</a>, 🥀\n"
+            "<b>├────────────────────▣</b>\n"
+            "<b>│📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ :</b>\n"
+            "<b>├────────────────────▣</b>\n"
+            f"<b>│❍ ᴘᴏᴡᴇʀᴇᴅ ʙʏ » "
+            f"<a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>\n"
+            "<b>╰────────────────────▣</b>"
+        ),
+        parse_mode=ParseMode.HTML,
+        reply_markup=classic_kb,
     )
