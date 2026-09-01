@@ -1,33 +1,3 @@
-"""utils/rich_ui.py — Bot API 10.2 Rich Message helpers (Kurigram >= 2.2.25).
-
-Shared, reusable builders + safe senders for native Telegram Rich Blocks.
-
-Why this module exists
-----------------------
-Bot API 10.2 introduces server-side parsed *rich messages*: HTML supporting
-``<h1>``-``<h6>``, ``<table>``, ``<details>``/``<summary>``, ``<mark>``,
-``<sub>``/``<sup>`` on top of the classic inline tags. That HTML is only
-understood when it travels inside ``InputRichMessage(html=...)`` — the
-client-side parser used for ordinary ``text=``/``caption=`` arguments silently
-drops those tags. So every rich block must go through the helpers below.
-
-Hard rules encoded here (learned from the API surface):
-  * ``Message.edit_text()`` does **not** accept ``rich_message``. Use
-    ``Client.edit_message_text(chat_id=..., message_id=..., rich_message=...)``
-    or ``CallbackQuery.edit_message_text(rich_message=...)``.
-  * Captions can never be rich (``edit_message_caption`` / ``send_photo`` have
-    no ``rich_message`` parameter).
-  * ``send_rich_message_draft()`` is a ~30 s ephemeral preview. It **must** be
-    followed by a real ``send_rich_message()`` or the output is lost.
-  * Ephemeral delivery (``receiver_user_id=``) only works in groups /
-    supergroups; in private chats we transparently fall back to a normal send.
-  * ``InputRichMessage`` with neither ``html`` nor ``markdown`` raises.
-
-Every sender degrades gracefully: if the server rejects the rich HTML (or the
-running Kurigram build predates 10.2) the helper falls back to the plain-text
-path so no handler can regress.
-"""
-
 from __future__ import annotations
 
 import html as _html
