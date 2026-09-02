@@ -5,7 +5,13 @@
 #  Unauthorized copying, editing, re-uploading or removing credits
 #  from this source code is strictly prohibited.
 # --------------------------------------------------------------------------------
-
+#
+#  Text content is ShizuMusic's own (same features as the old ASCII-box
+#  version) — only the STRUCTURE changed, matching the reference bot's
+#  pattern: heading, a collapsible "Key Features" table, a "Why choose"
+#  list, all via rich_ui's block helpers so it actually renders as
+#  headings/tables/collapsible sections instead of plain lines.
+# --------------------------------------------------------------------------------
 
 import random
 
@@ -18,7 +24,14 @@ from ShizuMusic import bot
 from config import START_ANIMATIONS
 from ShizuMusic.modules.block import user_allowed
 from ShizuMusic.utils.db import add_broadcast_chat, add_served_chat, add_served_user
-from ShizuMusic.utils.rich_ui import rich_send
+from ShizuMusic.utils.rich_ui import (
+    rich_details,
+    rich_esc,
+    rich_heading,
+    rich_note,
+    rich_send,
+    rich_table,
+)
 
 # ── Message effect IDs (Telegram premium effects) ─────────────────────────────
 EFFECT_ID = [
@@ -27,6 +40,17 @@ EFFECT_ID = [
     5104841245755180586,
     5159385139981059251,
 ]
+
+
+def _support_updates_pills() -> str:
+    return (
+        "<p>"
+        f'<tg-button type="url" style="primary" url="{config.SUPPORT_GROUP}">'
+        "🍬 Support</tg-button> "
+        f'<tg-button type="url" style="success" url="{config.UPDATES_CHANNEL}">'
+        "🍹 Updates</tg-button>"
+        "</p>"
+    )
 
 
 # ── /start ────────────────────────────────────────────────────────────────────
@@ -55,8 +79,7 @@ async def start_handler(_, message: Message) -> None:
     # ── Private ───────────────────────────────────────────────────────────────
     if chat_type == ChatType.PRIVATE:
 
-        # Animation on its own — captions can't be rich, so this just carries
-        # the visual, not the buttons/text.
+        # Animation on its own — captions can't be rich.
         try:
             await message.reply_animation(
                 animation,
@@ -65,25 +88,33 @@ async def start_handler(_, message: Message) -> None:
             pass
 
         caption = (
-            "<b>╭────────────────────▣</b>\n"
-            f"<b>│❍ ʜᴇʏ</b> <a href='tg://user?id={uid}'>{name}</a>, 🥀\n"
-            f"<b>│❍ ᴛʜɪs ɪs {config.BOT_NAME} !</b>\n"
-            "<b>├────────────────────▣</b>\n"
-            "<b>│❍ ᴀ ғᴀsᴛ & ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ</b>\n"
-            "<b>│ ᴍᴜsɪᴄ ᴘʟᴀʏᴇʀ ʙᴏᴛ ᴡɪᴛʜ</b>\n"
-            "<b>│ sᴏᴍᴇ ᴀᴡᴇsᴏᴍᴇ ғᴇᴀᴛᴜʀᴇs.</b>\n"
-            "<b>├────────────────────▣</b>\n"
-            "<b>│❍ ᴄʟɪᴄᴋ ʜᴇʟᴘ ғᴏʀ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs.</b>\n"
-            "<b>├────────────────────▣</b>\n"
-            f"<b>│❍ ᴘᴏᴡᴇʀᴇᴅ ʙʏ » "
-            f"<a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>\n"
-            "<b>╰────────────────────▣</b>\n"
-            "<p>"
-            f'<tg-button type="url" style="primary" url="{config.SUPPORT_GROUP}">'
-            "🍬 Support</tg-button> "
-            f'<tg-button type="url" style="success" url="{config.UPDATES_CHANNEL}">'
-            "🍹 Updates</tg-button>"
-            "</p>"
+            f"<p>❍ Hey <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
+            "welcome aboard! 🎶</p>"
+            + f"<p>I am <b>{rich_esc(config.BOT_NAME)}</b> — a fast &amp; "
+              "powerful Telegram music player bot with some awesome "
+              "features.</p>"
+            + rich_details(
+                "✦ Key Features ✦",
+                rich_table(
+                    ["Feature", "Details"],
+                    [
+                        ("🎵 Streaming", "Play audio &amp; video in voice chats"),
+                        ("🔁 Autoplay", "Keeps the queue going automatically"),
+                        ("🎚️ Effects", "Speed control &amp; bass boost"),
+                        ("🛡️ Moderation", "Block/unblock chats &amp; users"),
+                    ],
+                ),
+                open=True,
+            )
+            + rich_details(
+                "✧ Why choose it? ✧",
+                "<p>⭐ Simple slash commands, no setup needed.</p>"
+                "<p>🎧 Clean, low-lag streaming.</p>"
+                "<p>❍ Click Help below for all commands.</p>",
+                open=True,
+            )
+            + rich_note(f"Powered by » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
+            + _support_updates_pills()
         )
         kb = InlineKeyboardMarkup([
             [InlineKeyboardButton("⛩️ ᴧᴅᴅ мᴇ ʙᴧʙʏ ⛩️",
@@ -130,7 +161,7 @@ async def start_handler(_, message: Message) -> None:
 
     # ── Group ─────────────────────────────────────────────────────────────────
     else:
-        chat_title = message.chat.title or "ᴛʜɪs ᴄʜᴀᴛ"
+        chat_title = message.chat.title or "this chat"
 
         try:
             await message.reply_animation(animation)
@@ -138,16 +169,13 @@ async def start_handler(_, message: Message) -> None:
             pass
 
         caption = (
-            f"❍ ʜᴇʏ <a href='tg://user?id={uid}'>{name}</a>,\n"
-            f"ᴛʜɪs ɪs <b>{config.BOT_NAME}</b>\n\n"
-            f"ᴛʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ ɪɴ <b>{chat_title}</b>.\n"
-            f"{name} ᴄᴀɴ ɴᴏᴡ ᴘʟᴀʏ sᴏɴɢs ʜᴇʀᴇ.\n"
-            "<p>"
-            f'<tg-button type="url" style="primary" url="{config.SUPPORT_GROUP}">'
-            "🍬 Support</tg-button> "
-            f'<tg-button type="url" style="success" url="{config.UPDATES_CHANNEL}">'
-            "🍹 Updates</tg-button>"
-            "</p>"
+            f"<p>❍ Hey <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
+            f"this is <b>{rich_esc(config.BOT_NAME)}</b></p>"
+            + rich_note(
+                f"Thanks for adding me in {rich_esc(chat_title)}. "
+                f"{rich_esc(name)} can now play songs here."
+            )
+            + _support_updates_pills()
         )
         kb = InlineKeyboardMarkup([
             [
@@ -244,14 +272,10 @@ async def help_handler(_, message: Message) -> None:
         pass
 
     caption = (
-        "<b>╭────────────────────▣</b>\n"
-        f"<b>│❍ ʜᴇʏ</b> <a href='tg://user?id={uid}'>{name}</a>, 🥀\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ :</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        f"<b>│❍ ᴘᴏᴡᴇʀᴇᴅ ʙʏ » "
-        f"<a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>\n"
-        "<b>╰────────────────────▣</b>"
+        f"{rich_heading('📜 Choose a category', level=3)}"
+        f"<p>❍ Hey <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, pick a "
+        "category below to see its commands.</p>"
+        + rich_note(f"Powered by » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
     )
 
     await rich_send(bot, message.chat.id, caption, reply_markup=kb)
