@@ -5,9 +5,16 @@
 #  Unauthorized copying, editing, re-uploading or removing credits
 #  from this source code is strictly prohibited.
 # --------------------------------------------------------------------------------
+#
+#  Category screens rebuilt to match the reference bot's structure (heading +
+#  description + a real Command/Description table + Support/Updates pills +
+#  colored Back/Close buttons) — content is ShizuMusic's own commands, taken
+#  straight from the old ASCII-box text, just restructured into rich blocks.
+# --------------------------------------------------------------------------------
 
 import asyncio
 
+from pyrogram import enums
 from pyrogram.enums import ParseMode
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 
@@ -20,6 +27,28 @@ from ShizuMusic.utils.db import is_user_blocked_db
 from ShizuMusic.utils.formatters import short
 from ShizuMusic.utils.helpers import delete_file
 from ShizuMusic.utils.permissions import is_user_authorized
+from ShizuMusic.utils.rich_ui import rich_edit, rich_esc, rich_heading, rich_table
+
+
+def _support_updates_pills() -> str:
+    return (
+        "<p>"
+        f'<tg-button type="url" style="primary" url="{config.SUPPORT_GROUP}">'
+        "🍬 Support</tg-button> "
+        f'<tg-button type="url" style="success" url="{config.UPDATES_CHANNEL}">'
+        "🍹 Updates</tg-button>"
+        "</p>"
+    )
+
+
+def _category_html(title: str, desc: str, rows) -> str:
+    """title/desc/rows -> heading + description + Command/Description table + pills."""
+    return (
+        rich_heading(title, level=3)
+        + f"<p>{desc}</p>"
+        + rich_table(["Command", "Description"], rows)
+        + _support_updates_pills()
+    )
 
 
 # ── Help menu layout ───────────────────────────────────────────────────────────
@@ -33,241 +62,146 @@ from ShizuMusic.utils.permissions import is_user_authorized
 
 _HELP_KB = InlineKeyboardMarkup([
     [
-        InlineKeyboardButton("ᴧᴅᴍɪɴ",    callback_data="help_admin"),
-        InlineKeyboardButton("ᴧ-ᴘʟᴀʏ",   callback_data="help_autoplay"),
-        InlineKeyboardButton("ɢ-ᴄᴧsᴛ",   callback_data="help_gcast"),
+        InlineKeyboardButton("ᴧᴅᴍɪɴ",    callback_data="help_admin",    style=enums.ButtonStyle.PRIMARY),
+        InlineKeyboardButton("ᴧ-ᴘʟᴀʏ",   callback_data="help_autoplay", style=enums.ButtonStyle.PRIMARY),
+        InlineKeyboardButton("ɢ-ᴄᴧsᴛ",   callback_data="help_gcast",    style=enums.ButtonStyle.PRIMARY),
     ],
     [
-        InlineKeyboardButton("ʙʟ-ᴄʜᴧᴛ",  callback_data="help_blchat"),
-        InlineKeyboardButton("ʙʟ-ᴜsᴇʀs", callback_data="help_blusers"),
-        InlineKeyboardButton("ᴘɪɴɢ",     callback_data="help_ping"),
+        InlineKeyboardButton("ʙʟ-ᴄʜᴧᴛ",  callback_data="help_blchat",  style=enums.ButtonStyle.PRIMARY),
+        InlineKeyboardButton("ʙʟ-ᴜsᴇʀs", callback_data="help_blusers", style=enums.ButtonStyle.PRIMARY),
+        InlineKeyboardButton("ᴘɪɴɢ",     callback_data="help_ping",    style=enums.ButtonStyle.PRIMARY),
     ],
     [
-        InlineKeyboardButton("ᴘʟᴀʏ",     callback_data="help_play"),
-        InlineKeyboardButton("sᴘᴇᴇᴅ",    callback_data="help_speed"),
-        InlineKeyboardButton("ɪɴғᴏ",     callback_data="help_info"),
+        InlineKeyboardButton("ᴘʟᴀʏ",     callback_data="help_play",  style=enums.ButtonStyle.PRIMARY),
+        InlineKeyboardButton("sᴘᴇᴇᴅ",    callback_data="help_speed", style=enums.ButtonStyle.PRIMARY),
+        InlineKeyboardButton("ɪɴғᴏ",     callback_data="help_info",  style=enums.ButtonStyle.PRIMARY),
     ],
     [
-        InlineKeyboardButton("⌯ ʜᴏᴍᴇ ⌯", callback_data="go_back"),
+        InlineKeyboardButton("⌯ ʜᴏᴍᴇ ⌯", callback_data="go_back", style=enums.ButtonStyle.SUCCESS),
     ],
 ])
 
-_BACK_KB = InlineKeyboardMarkup([[
-    InlineKeyboardButton("⌯ ʙᴀᴄᴋ ⌯", callback_data="show_help"),
-]])
+# Reference screenshots show BOTH a Back and a Close row under every category
+# screen — matched here (Back = blue, Close = red).
+_BACK_KB = InlineKeyboardMarkup([
+    [InlineKeyboardButton("⌯ ʙᴀᴄᴋ ⌯",  callback_data="show_help", style=enums.ButtonStyle.PRIMARY)],
+    [InlineKeyboardButton("⌯ ᴄʟᴏsᴇ ⌯", callback_data="close_help", style=enums.ButtonStyle.DANGER)],
+])
 
 # ── Help texts ─────────────────────────────────────────────────────────────────
+# Same commands/wording as the old ASCII-box version, restructured into a real
+# heading + description + Command/Description table.
 
 _HELP_TEXTS = {
 
-    # ── Admin commands ────────────────────────────────────────────────────────
-    "help_admin": (
-        "<b>╭────────────────────▣</b>\n"
-        "<b>│⚙️ ᴧᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /pause</b>\n"
-        "<b>│   ᴘᴀᴜsᴇ ᴄᴜʀʀᴇɴᴛ ᴘʟᴀʏʙᴀᴄᴋ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /resume</b>\n"
-        "<b>│   ʀᴇsᴜᴍᴇ ᴘᴀᴜsᴇᴅ ᴘʟᴀʏʙᴀᴄᴋ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /skip</b>\n"
-        "<b>│   sᴋɪᴩ ᴛᴏ ɴᴇxᴛ sᴏɴɢ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /stop  ᴏʀ  /end</b>\n"
-        "<b>│   sᴛᴏᴩ ᴘʟᴀʏʙᴀᴄᴋ & ʟᴇᴀᴠᴇ ᴠᴄ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /clear</b>\n"
-        "<b>│   ᴄʟᴇᴀʀ ᴀʟʟ sᴏɴɢs ɪɴ ǫᴜᴇᴜᴇ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /seek</b> <code>&lt;seconds&gt;</code>\n"
-        "<b>│   sᴇᴇᴋ ғᴏʀᴡᴀʀᴅ ʙʏ ɴ sᴇᴄᴏɴᴅs</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /seekback</b> <code>&lt;seconds&gt;</code>\n"
-        "<b>│   sᴇᴇᴋ ʙᴀᴄᴋᴡᴀʀᴅ ʙʏ ɴ sᴇᴄᴏɴᴅs</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /reboot</b>\n"
-        "<b>│   ʀᴇsᴇᴛ ᴄʜᴀᴛ sᴛᴀᴛᴇ & ʟᴇᴀᴠᴇ ᴠᴄ</b>\n"
-        "<b>╰────────────────────▣</b>"
+    "help_admin": _category_html(
+        "⚙️ Admin Commands",
+        "Core playback controls for chat admins.",
+        [
+            ("/pause", "Pause current playback"),
+            ("/resume", "Resume paused playback"),
+            ("/skip", "Skip to next song"),
+            ("/stop, /end", "Stop playback &amp; leave VC"),
+            ("/clear", "Clear all songs in queue"),
+            ("/seek &lt;seconds&gt;", "Seek forward by n seconds"),
+            ("/seekback &lt;seconds&gt;", "Seek backward by n seconds"),
+            ("/reboot", "Reset chat state &amp; leave VC"),
+        ],
     ),
 
-    # ── Autoplay ──────────────────────────────────────────────────────────────
-    "help_autoplay": (
-        "<b>╭────────────────────▣</b>\n"
-        "<b>│🔁 ᴧ-ᴘʟᴀʏ ᴄᴏᴍᴍᴀɴᴅs</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /autoplay</b> <code>&lt;query&gt;</code>\n"
-        "<b>│   ᴄᴏɴᴛɪɴᴜᴏᴜsʟʏ ᴘʟᴀʏ sᴏɴɢs</b>\n"
-        "<b>│   ʙᴀsᴇᴅ ᴏɴ ʏᴏᴜʀ ǫᴜᴇʀʏ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /end  ᴏʀ  /stop</b>\n"
-        "<b>│   sᴛᴏᴩ ᴀᴜᴛᴏᴩʟᴀʏ & ᴄʟᴇᴀʀ ǫᴜᴇᴜᴇ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│💡 ᴇxᴀᴍᴩʟᴇ :</b>\n"
-        "<b>│</b> <code>/autoplay sidhu moose wala</code>\n"
-        "<b>│</b> <code>/autoplay arijit singh</code>\n"
-        "<b>╰────────────────────▣</b>"
+    "help_autoplay": _category_html(
+        "🔁 Autoplay Commands",
+        "Keep the queue going automatically based on a query.",
+        [
+            ("/autoplay &lt;query&gt;", "Continuously play songs based on your query"),
+            ("/end, /stop", "Stop autoplay &amp; clear queue"),
+            ("<code>/autoplay sidhu moose wala</code>", "Example"),
+            ("<code>/autoplay arijit singh</code>", "Example"),
+        ],
     ),
 
-    # ── Gcast / Broadcast ─────────────────────────────────────────────────────
-    "help_gcast": (
-        "<b>╭────────────────────▣</b>\n"
-        "<b>│📢 ɢ-ᴄᴧsᴛ ᴄᴏᴍᴍᴀɴᴅs</b>\n"
-        "<b>│   (ᴏᴡɴᴇʀ ᴏɴʟʏ)</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /broadcast  ᴏʀ  /gcast</b>\n"
-        "<b>│   ʀᴇᴩʟʏ ᴛᴏ ᴀ ᴍsɢ ᴏʀ ᴛʏᴩᴇ ᴛᴇxᴛ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ ғʟᴀɢs :</b>\n"
-        "<b>│</b> <code>-pin</code>      <b>→ ᴩɪɴ sɪʟᴇɴᴛʟʏ ɪɴ ɢʀᴏᴜᴩs</b>\n"
-        "<b>│</b> <code>-pinloud</code>  <b>→ ᴩɪɴ ᴡɪᴛʜ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ</b>\n"
-        "<b>│</b> <code>-nogroup</code>  <b>→ sᴋɪᴩ ɢʀᴏᴜᴩs</b>\n"
-        "<b>│</b> <code>-user</code>     <b>→ ᴀʟsᴏ sᴇɴᴅ ᴛᴏ ᴜsᴇʀs</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│💡 ᴇxᴀᴍᴩʟᴇ :</b>\n"
-        "<b>│</b> <code>/gcast -pin</code>           <i>(reply)</i>\n"
-        "<b>│</b> <code>/gcast -user Hello!</code>   <i>(text)</i>\n"
-        "<b>│</b> <code>/gcast -nogroup -user</code> <i>(reply, users only)</i>\n"
-        "<b>╰────────────────────▣</b>"
+    "help_gcast": _category_html(
+        "📢 G-Cast Commands",
+        "Broadcast to every served chat (owner only).",
+        [
+            ("/broadcast, /gcast", "Reply to a msg or type text"),
+            ("-pin", "Pin silently in groups"),
+            ("-pinloud", "Pin with notification"),
+            ("-nogroup", "Skip groups"),
+            ("-user", "Also send to users"),
+        ],
     ),
 
-    # ── Block Chat ────────────────────────────────────────────────────────────
-    "help_blchat": (
-        "<b>╭────────────────────▣</b>\n"
-        "<b>│🚫 ʙʟ-ᴄʜᴧᴛ ᴄᴏᴍᴍᴀɴᴅs</b>\n"
-        "<b>│   (ᴏᴡɴᴇʀ ᴏɴʟʏ)</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /gblock</b>\n"
-        "<b>│   ʙʟᴏᴄᴋ ᴄᴜʀʀᴇɴᴛ ɢʀᴏᴜᴩ</b>\n"
-        "<b>│   ɴᴏ ᴄᴏᴍᴍᴀɴᴅs ᴡɪʟʟ ᴡᴏʀᴋ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /gblock</b> <code>-100xxxxxxx</code>\n"
-        "<b>│   ʙʟᴏᴄᴋ ʙʏ ᴄʜᴀᴛ ɪᴅ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /gunblock</b>\n"
-        "<b>│   ᴜɴʙʟᴏᴄᴋ ɢʀᴏᴜᴩ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /gunblock</b> <code>-100xxxxxxx</code>\n"
-        "<b>│   ᴜɴʙʟᴏᴄᴋ ʙʏ ᴄʜᴀᴛ ɪᴅ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /blocklist</b>\n"
-        "<b>│   sʜᴏᴡ ᴀʟʟ ʙʟᴏᴄᴋᴇᴅ ɢʀᴏᴜᴩs & ᴜsᴇʀs</b>\n"
-        "<b>╰────────────────────▣</b>"
+    "help_blchat": _category_html(
+        "🚫 Bl-Chat Commands",
+        "Block or unblock whole groups (owner only).",
+        [
+            ("/gblock", "Block current group — no commands will work"),
+            ("/gblock &lt;-100xxxxxxx&gt;", "Block by chat id"),
+            ("/gunblock", "Unblock group"),
+            ("/gunblock &lt;-100xxxxxxx&gt;", "Unblock by chat id"),
+            ("/blocklist", "Show all blocked groups &amp; users"),
+        ],
     ),
 
-    # ── Block Users ───────────────────────────────────────────────────────────
-    "help_blusers": (
-        "<b>╭────────────────────▣</b>\n"
-        "<b>│🚫 ʙʟ-ᴜsᴇʀs ᴄᴏᴍᴍᴀɴᴅs</b>\n"
-        "<b>│   (ᴏᴡɴᴇʀ ᴏɴʟʏ)</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /ublock</b>\n"
-        "<b>│   ʀᴇᴩʟʏ ᴛᴏ ᴜsᴇʀ's ᴍsɢ ᴛᴏ ʙʟᴏᴄᴋ</b>\n"
-        "<b>│   ᴜsᴇʀ ᴄᴀɴɴᴏᴛ ᴜsᴇ ᴀɴʏ ᴄᴏᴍᴍᴀɴᴅ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /ublock</b> <code>123456789</code>\n"
-        "<b>│   ʙʟᴏᴄᴋ ʙʏ ᴜsᴇʀ ɪᴅ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /uunblock</b>\n"
-        "<b>│   ʀᴇᴩʟʏ ᴛᴏ ᴜsᴇʀ's ᴍsɢ ᴛᴏ ᴜɴʙʟᴏᴄᴋ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /uunblock</b> <code>123456789</code>\n"
-        "<b>│   ᴜɴʙʟᴏᴄᴋ ʙʏ ᴜsᴇʀ ɪᴅ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /blocklist</b>\n"
-        "<b>│   sʜᴏᴡ ᴀʟʟ ʙʟᴏᴄᴋᴇᴅ ᴜsᴇʀs & ᴄʜᴀᴛs</b>\n"
-        "<b>╰────────────────────▣</b>"
+    "help_blusers": _category_html(
+        "🚫 Bl-Users Commands",
+        "Block or unblock individual users (owner only).",
+        [
+            ("/ublock", "Reply to a user's msg to block — they can't use any command"),
+            ("/ublock &lt;user id&gt;", "Block by user id"),
+            ("/uunblock", "Reply to a user's msg to unblock"),
+            ("/uunblock &lt;user id&gt;", "Unblock by user id"),
+            ("/blocklist", "Show all blocked users &amp; chats"),
+        ],
     ),
 
-    # ── Ping ──────────────────────────────────────────────────────────────────
-    "help_ping": (
-        "<b>╭────────────────────▣</b>\n"
-        "<b>│🏓 ᴘɪɴɢ ᴄᴏᴍᴍᴀɴᴅs</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /ping</b>\n"
-        "<b>│   ʙᴏᴛ ʟᴀᴛᴇɴᴄʏ, ʀᴀᴍ, ᴄᴩᴜ</b>\n"
-        "<b>│   ᴅɪsᴋ & ᴜᴩᴛɪᴍᴇ sᴛᴀᴛs</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /speedtest</b>  ᴏʀ  <b>/spt</b>\n"
-        "<b>│   ɴᴇᴛᴡᴏʀᴋ sᴩᴇᴇᴅ ᴛᴇsᴛ</b>\n"
-        "<b>│   (ᴏᴡɴᴇʀ ᴏɴʟʏ)</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /stats</b>\n"
-        "<b>│   ғᴜʟʟ sʏsᴛᴇᴍ + ᴍᴏɴɢᴏᴅʙ sᴛᴀᴛs</b>\n"
-        "<b>│   (ᴏᴡɴᴇʀ ᴏɴʟʏ)</b>\n"
-        "<b>╰────────────────────▣</b>"
+    "help_ping": _category_html(
+        "🏓 Ping Commands",
+        "Latency and system diagnostics.",
+        [
+            ("/ping", "Bot latency, RAM, CPU, disk &amp; uptime stats"),
+            ("/speedtest, /spt", "Network speed test (owner only)"),
+            ("/stats", "Full system + MongoDB stats (owner only)"),
+        ],
     ),
 
-    # ── Play ──────────────────────────────────────────────────────────────────
-    "help_play": (
-        "<b>╭────────────────────▣</b>\n"
-        "<b>│🎵 ᴘʟᴀʏ ᴄᴏᴍᴍᴀɴᴅs</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /play</b> <code>&lt;song name or URL&gt;</code>\n"
-        "<b>│   ᴩʟᴀʏ ᴀᴜᴅɪᴏ ɪɴ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /vplay</b> <code>&lt;song name or URL&gt;</code>\n"
-        "<b>│   ᴩʟᴀʏ ᴠɪᴅᴇᴏ ɪɴ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ ʀᴇᴩʟʏ ᴛᴏ ᴀᴜᴅɪᴏ/ᴠɪᴅᴇᴏ + /play</b>\n"
-        "<b>│   ᴩʟᴀʏ ᴛʜᴀᴛ ᴍᴇᴅɪᴀ ᴅɪʀᴇᴄᴛʟʏ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ ʏᴏᴜᴛᴜʙᴇ ᴜʀʟs sᴜᴩᴩᴏʀᴛᴇᴅ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        f"<b>│❍ ᴍᴀx ᴅᴜʀᴀᴛɪᴏɴ : {config.MAX_DURATION_SECONDS // 60} ᴍɪɴᴜᴛᴇs</b>\n"
-        f"<b>│❍ ǫᴜᴇᴜᴇ ʟɪᴍɪᴛ : {config.QUEUE_LIMIT} sᴏɴɢs</b>\n"
-        "<b>╰────────────────────▣</b>"
+    "help_play": _category_html(
+        "🎵 Play Commands",
+        "Start audio or video playback in a voice chat.",
+        [
+            ("/play &lt;song name or URL&gt;", "Play audio in voice chat"),
+            ("/vplay &lt;song name or URL&gt;", "Play video in voice chat"),
+            ("Reply to audio/video + /play", "Play that media directly"),
+            ("YouTube URLs", "Supported"),
+            ("Max duration", f"{config.MAX_DURATION_SECONDS // 60} minutes"),
+            ("Queue limit", f"{config.QUEUE_LIMIT} songs"),
+        ],
     ),
 
-    # ── Speed / Effects ───────────────────────────────────────────────────────
-    "help_speed": (
-        "<b>╭────────────────────▣</b>\n"
-        "<b>│🎚️ sᴩᴇᴇᴅ & ᴇғғᴇᴄᴛs</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /speed</b> <code>&lt;0.25 – 4.0&gt;</code>\n"
-        "<b>│   ᴄʜᴀɴɢᴇ ᴩʟᴀʏʙᴀᴄᴋ sᴩᴇᴇᴅ</b>\n"
-        "<b>│   ᴇxᴀᴍᴩʟᴇ : /speed 1.5</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /speedreset</b>\n"
-        "<b>│   ʀᴇsᴇᴛ sᴩᴇᴇᴅ ᴛᴏ ɴᴏʀᴍᴀʟ (1.0x)</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /bass</b> <code>&lt;1 – 20&gt;</code>\n"
-        "<b>│   ʙᴏᴏsᴛ ʙᴀss ʙʏ ɴ ᴅʙ</b>\n"
-        "<b>│   ᴇxᴀᴍᴩʟᴇ : /bass 10</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /bassoff</b>\n"
-        "<b>│   ᴛᴜʀɴ ᴏғғ ʙᴀss ʙᴏᴏsᴛ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /effecton</b>\n"
-        "<b>│   ᴀᴘᴩʟʏ ᴇғғᴇᴄᴛs ᴛᴏ ᴀʟʟ sᴏɴɢs</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /effectoff</b>\n"
-        "<b>│   ᴅɪsᴀʙʟᴇ ᴀᴜᴛᴏ ᴇғғᴇᴄᴛs</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /effects</b>\n"
-        "<b>│   sʜᴏᴡ ᴄᴜʀʀᴇɴᴛ ᴇғғᴇᴄᴛ sᴛᴀᴛᴜs</b>\n"
-        "<b>╰────────────────────▣</b>"
+    "help_speed": _category_html(
+        "🎚️ Speed &amp; Effects",
+        "Adjust playback speed and audio effects.",
+        [
+            ("/speed &lt;0.25–4.0&gt;", "Change playback speed — e.g. /speed 1.5"),
+            ("/speedreset", "Reset speed to normal (1.0x)"),
+            ("/bass &lt;1–20&gt;", "Boost bass by n dB — e.g. /bass 10"),
+            ("/bassoff", "Turn off bass boost"),
+            ("/effecton", "Apply effects to all songs"),
+            ("/effectoff", "Disable auto effects"),
+            ("/effects", "Show current effect status"),
+        ],
     ),
 
-    # ── Info ──────────────────────────────────────────────────────────────────
-    "help_info": (
-        "<b>╭────────────────────▣</b>\n"
-        "<b>│ℹ️ ɪɴғᴏ ᴄᴏᴍᴍᴀɴᴅs</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /id</b>\n"
-        "<b>│   ɢᴇᴛ ɪᴅs ᴏғ ᴜsᴇʀ / ᴄʜᴀᴛ / ᴍsɢ</b>\n"
-        "<b>│   ᴀʟsᴏ ᴡᴏʀᴋs ᴡɪᴛʜ ʀᴇᴩʟʏ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /id</b> <code>@username</code>\n"
-        "<b>│   ɢᴇᴛ ᴀɴʏ ᴜsᴇʀ's ɪᴅ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /repo</b>\n"
-        "<b>│   sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ ʟɪɴᴋ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ /stats</b>\n"
-        "<b>│   ғᴜʟʟ sᴛᴀᴛs (ᴏᴡɴᴇʀ ᴏɴʟʏ)</b>\n"
-        "<b>│   sʏsᴛᴇᴍ + ᴍᴏɴɢᴏᴅʙ ɪɴғᴏ</b>\n"
-        "<b>╰────────────────────▣</b>"
+    "help_info": _category_html(
+        "ℹ️ Info Commands",
+        "Bot, chat, and user information.",
+        [
+            ("/id", "Get IDs of user / chat / msg — also works with reply"),
+            ("/id @username", "Get any user's id"),
+            ("/repo", "Source code link"),
+            ("/stats", "Full stats — system + MongoDB info (owner only)"),
+        ],
     ),
 }
 
@@ -342,7 +276,7 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
 
         await client.send_message(
             chat_id,
-            f"<b>❍ ᴛʀᴀᴄᴋ sᴋɪᴘᴘᴇᴅ</b>\n"
+            f"<b>❍ ᴛʀᴀᴄᴋ sᴋɪᴩᴩᴇᴅ</b>\n"
             f"<b>❍ ʙʏ :</b> {user.mention}\n"
             f"<b>❍ sᴏɴɢ :</b> <code>{short(skipped['title'])}</code>",
             parse_mode=ParseMode.HTML,
@@ -394,18 +328,11 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
     # ── HELP ───────────────────────────────────────────────────────────────────
     elif data == "show_help":
         await cbq.answer()
-        try:
-            await cbq.message.edit_text(
-                "<b>📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ :</b>",
-                parse_mode=ParseMode.HTML,
-                reply_markup=_HELP_KB,
-            )
-        except Exception:
-            await cbq.message.edit_caption(
-                caption="<b>📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ :</b>",
-                parse_mode=ParseMode.HTML,
-                reply_markup=_HELP_KB,
-            )
+        await rich_edit(
+            cbq.message,
+            rich_heading("📜 Choose a category", level=3),
+            reply_markup=_HELP_KB,
+        )
 
     elif data == "go_back":
         await _go_back(cbq)
@@ -414,14 +341,7 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
         await cbq.answer()
         text = _HELP_TEXTS.get(data)
         if text:
-            try:
-                await cbq.message.edit_text(
-                    text,
-                    parse_mode=ParseMode.HTML,
-                    reply_markup=_BACK_KB,
-                )
-            except Exception:
-                pass
+            await rich_edit(cbq.message, text, reply_markup=_BACK_KB)
 
 
 # ── Go back to start message ───────────────────────────────────────────────────
@@ -432,45 +352,32 @@ async def _go_back(cbq: CallbackQuery) -> None:
     name = cbq.from_user.first_name or "User"
 
     caption = (
-        "<b>╭────────────────────▣</b>\n"
-        f"<b>│❍ нєу</b> <a href='tg://user?id={uid}'>{name}</a>, 🥀\n"
-        f"<b>│❍ ᴛʜɪs ɪs {config.BOT_NAME} !</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│❍ ᴀ ғᴀsᴛ & ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ʙᴏᴛ.</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        f"<b>│❍ 𝖯ᴏᴡᴇʀᴇᴅ 𝖡ʏ » "
-        f"<a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>\n"
-        "<b>╰────────────────────▣</b>"
+        f"<p>❍ Hey <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
+        f"this is <b>{rich_esc(config.BOT_NAME)}</b> — a fast &amp; powerful "
+        "Telegram music bot.</p>"
+        + _support_updates_pills()
     )
     kb = InlineKeyboardMarkup([
         [InlineKeyboardButton("⛩️ ᴧᴅᴅ мᴇ ʙᴧʙʏ ⛩️",
-                              url=f"{config.BOT_LINK}?startgroup=true")],
+                              url=f"{config.BOT_LINK}?startgroup=true",
+                              style=enums.ButtonStyle.PRIMARY)],
         [
-            InlineKeyboardButton("🍬 sᴜᴩᴩᴏʀᴛ 🍬", url=config.SUPPORT_GROUP),
-            InlineKeyboardButton("🍹 ᴜᴩᴅᴀᴛᴇ 🍹",  url=config.UPDATES_CHANNEL),
+            InlineKeyboardButton("🍬 sᴜᴩᴩᴏʀᴛ 🍬", url=config.SUPPORT_GROUP,
+                                 style=enums.ButtonStyle.PRIMARY),
+            InlineKeyboardButton("🍹 ᴜᴩᴅᴀᴛᴇ 🍹",  url=config.UPDATES_CHANNEL,
+                                 style=enums.ButtonStyle.SUCCESS),
         ],
         [InlineKeyboardButton("🏩 ʜᴇʟᴩ ᴧɴᴅ ᴄᴏᴍᴍᴀɴᴅs 🏩",
-                              callback_data="show_help")],
+                              callback_data="show_help",
+                              style=enums.ButtonStyle.PRIMARY)],
         [
             InlineKeyboardButton("🫧 ᴏᴡɴᴇʀ 🫧",
-                                 url=f"tg://user?id={config.OWNER_ID}"),
+                                 url=f"tg://user?id={config.OWNER_ID}",
+                                 style=enums.ButtonStyle.DEFAULT),
             InlineKeyboardButton("🍡 sᴏᴜʀᴄᴇ 🍡",
-                                 url="https://github.com/Badmunda05/ShizuMusic/fork"),
+                                 url="https://github.com/Badmunda05/ShizuMusic/fork",
+                                 style=enums.ButtonStyle.DEFAULT),
         ],
     ])
 
-    try:
-        await cbq.message.edit_caption(
-            caption=caption,
-            parse_mode=ParseMode.HTML,
-            reply_markup=kb,
-        )
-    except Exception:
-        try:
-            await cbq.message.edit_text(
-                caption,
-                parse_mode=ParseMode.HTML,
-                reply_markup=kb,
-            )
-        except Exception:
-            pass
+    await rich_edit(cbq.message, caption, reply_markup=kb)
