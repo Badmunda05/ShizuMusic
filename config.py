@@ -33,7 +33,7 @@ PORT             = int(os.getenv("PORT", 10000))
 #NSFW_THRESHOLDS = {
 #    "porn": float(os.getenv("NSFW_THRESHOLD_PORN", "0.7")),
 #    "sexy": float(os.getenv("NSFW_THRESHOLD_SEXY", "0.8")),
-}
+#}
 
 #── Start ───────────────────────────────────────────────────────────────────────
 START_ANIMATIONS = [
