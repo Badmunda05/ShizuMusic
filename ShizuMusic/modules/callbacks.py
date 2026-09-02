@@ -13,6 +13,7 @@
 # --------------------------------------------------------------------------------
 
 import asyncio
+import random
 
 from pyrogram import enums
 from pyrogram.enums import ParseMode
@@ -28,9 +29,11 @@ from ShizuMusic.utils.formatters import short
 from ShizuMusic.utils.helpers import delete_file
 from ShizuMusic.utils.permissions import is_user_authorized
 from ShizuMusic.utils.rich_ui import (
+    rich_caption,
     rich_details,
     rich_esc,
     rich_heading,
+    rich_kv_table,
     rich_note,
     rich_send,
     rich_table,
@@ -240,10 +243,10 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
         try:
             await call_py.pause(chat_id)
             await cbq.answer("Paused")
-            await client.send_message(
-                chat_id,
-                f"<b>❍ sᴛʀᴇᴀᴍ ᴘᴀᴜsᴇᴅ</b>\n<b>❍ ʙʏ :</b> {user.mention}",
-                parse_mode=ParseMode.HTML,
+            await rich_send(
+                bot, chat_id,
+                rich_heading("⏸ ˢᵗʳᵉᵃᵐ ᴘᴀᴜsᴇᴅ", level=3)
+                + rich_note(f"❍ ʙʏ » {user.mention}"),
             )
         except Exception:
             await cbq.answer("Failed To Pause", show_alert=True)
@@ -253,10 +256,10 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
         try:
             await call_py.resume(chat_id)
             await cbq.answer("Resumed")
-            await client.send_message(
-                chat_id,
-                f"<b>❍ sᴛʀᴇᴀᴍ ʀᴇsᴜᴍᴇᴅ</b>\n<b>❍ ʙʏ :</b> {user.mention}",
-                parse_mode=ParseMode.HTML,
+            await rich_send(
+                bot, chat_id,
+                rich_heading("▶ sᴛʀᴇᴀᴍ ʀᴇsᴜᴍᴇᴅ", level=3)
+                + rich_note(f"❍ ʙʏ » {user.mention}"),
             )
         except Exception:
             await cbq.answer("Failed To Resume", show_alert=True)
@@ -281,12 +284,13 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
         except Exception:
             pass
 
-        await client.send_message(
-            chat_id,
-            f"<b>❍ ᴛʀᴀᴄᴋ sᴋɪᴩᴩᴇᴅ</b>\n"
-            f"<b>❍ ʙʏ :</b> {user.mention}\n"
-            f"<b>❍ sᴏɴɢ :</b> <code>{short(skipped['title'])}</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("⏭ ᴛʀᴀᴄᴋ sᴋɪᴘᴘᴇᴅ", level=3)
+            + rich_kv_table([
+                ("ʙʏ", rich_esc(user.mention)),
+                ("sᴏɴɢ", f"<code>{rich_esc(short(skipped['title']))}</code>"),
+            ]),
         )
 
         nxt = peek_current(chat_id)
@@ -305,19 +309,20 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
     elif data == "stop":
         await leave_vc(chat_id)
         await cbq.answer("Stopped")
-        await client.send_message(
-            chat_id,
-            f"<b>❍ ᴘʟᴀʏʙᴀᴄᴋ sᴛᴏᴘᴘᴇᴅ</b>\n<b>❍ ʙʏ :</b> {user.mention}",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("⏹ ᴘʟᴀʏʙᴀᴄᴋ sᴛᴏᴘᴘᴇᴅ", level=3)
+            + rich_note(f"❍ ʙʏ » {user.mention}"),
         )
 
     # ── CLEAR ──────────────────────────────────────────────────────────────────
     elif data == "clear":
         clear_queue(chat_id)
         await cbq.answer("Queue Cleared")
-        await cbq.message.edit_text(
-            f"<b>❍ ǫᴜᴇᴜᴇ ᴄʟᴇᴀʀᴇᴅ</b>\n<b>❍ ʙʏ :</b> {user.mention}",
-            parse_mode=ParseMode.HTML,
+        await rich_edit(
+            cbq.message,
+            rich_heading("🧹 ǫᴜᴇᴜᴇ ᴄʟᴇᴀʀᴇᴅ", level=3)
+            + rich_note(f"❍ ʙʏ » {user.mention}"),
         )
 
     # ── NOOP ───────────────────────────────────────────────────────────────────
@@ -335,11 +340,17 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
     # ── HELP ───────────────────────────────────────────────────────────────────
     elif data == "show_help":
         await cbq.answer()
-        await rich_edit(
-            cbq.message,
-            rich_heading("📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ", level=3),
-            reply_markup=_HELP_KB,
-        )
+        heading = rich_heading("📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ", level=3)
+        if getattr(cbq.message, "photo", None):
+            # /start's message is a photo — can't edit its caption into a
+            # true rich message, so swap it out for one.
+            try:
+                await cbq.message.delete()
+            except Exception:
+                pass
+            await rich_send(bot, chat_id, heading, reply_markup=_HELP_KB)
+        else:
+            await rich_edit(cbq.message, heading, reply_markup=_HELP_KB)
 
     elif data == "go_back":
         await _go_back(cbq)
@@ -392,12 +403,12 @@ async def _go_back(cbq: CallbackQuery) -> None:
                               url=f"{config.BOT_LINK}?startgroup=true",
                               style=enums.ButtonStyle.PRIMARY)],
         [
-            InlineKeyboardButton("🍬 sᴜᴩᴩᴏʀᴛ 🍬", url=config.SUPPORT_GROUP,
+            InlineKeyboardButton("🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP,
                                  style=enums.ButtonStyle.PRIMARY),
-            InlineKeyboardButton("🍹 ᴜᴩᴅᴀᴛᴇ 🍹",  url=config.UPDATES_CHANNEL,
+            InlineKeyboardButton("🍹 ᴜᴘᴅᴀᴛᴇs 🍹",  url=config.UPDATES_CHANNEL,
                                  style=enums.ButtonStyle.SUCCESS),
         ],
-        [InlineKeyboardButton("🏩 ʜᴇʟᴩ ᴧɴᴅ ᴄᴏᴍᴍᴀɴᴅs 🏩",
+        [InlineKeyboardButton("🏩 ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅs 🏩",
                               callback_data="show_help",
                               style=enums.ButtonStyle.PRIMARY)],
         [
@@ -410,5 +421,22 @@ async def _go_back(cbq: CallbackQuery) -> None:
         ],
     ])
 
-    await rich_edit(cbq.message, caption, reply_markup=kb)
-    
+    photo = random.choice(config.START_PHOTOS)
+    chat_id = cbq.message.chat.id
+
+    try:
+        await cbq.message.delete()
+    except Exception:
+        pass
+
+    try:
+        await bot.send_photo(
+            chat_id,
+            photo,
+            caption=rich_caption(caption),
+            parse_mode=ParseMode.HTML,
+            reply_markup=kb,
+        )
+    except Exception:
+        await rich_send(bot, chat_id, caption, reply_markup=kb)
+
