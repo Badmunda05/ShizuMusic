@@ -16,6 +16,14 @@ from ShizuMusic import bot, call_py, LOGGER
 from ShizuMusic.core.queue import peek_current
 from ShizuMusic.modules.block import group_allowed, user_allowed
 from ShizuMusic.utils.formatters import fmt_time, parse_dur, progress_bar, short
+from ShizuMusic.utils.rich_ui import (
+    rich_edit,
+    rich_esc,
+    rich_heading,
+    rich_kv_table,
+    rich_note,
+    rich_send,
+)
 from ShizuMusic.utils.youtube import resolve_stream
 
 # ── Seek state tracker ─────────────────────────────────────────────────────────
@@ -44,23 +52,25 @@ async def _seek_to(chat_id: int, target_sec: int, message: Message) -> None:
 
     song = peek_current(chat_id)
     if not song:
-        await message.reply("<b>❍ Nothing is playing right now.</b>", parse_mode=ParseMode.HTML)
+        await rich_send(bot, chat_id, rich_heading("❍ ɴᴏᴛʜɪɴɢ ɪs ᴘʟᴀʏɪɴɢ ʀɪɢʜᴛ ɴᴏᴡ", level=3))
         return
 
     total_sec  = parse_dur(song.get("duration", "0:00"))
     target_sec = max(0, min(target_sec, total_sec - 1))
 
-    pm = await message.reply(
-        f"<b>❍ Seeking to</b> <code>{fmt_time(target_sec)}</code><b>...</b>",
-        parse_mode=ParseMode.HTML,
+    pm = await rich_send(
+        bot, chat_id,
+        rich_heading("⏩ sᴇᴇᴋɪɴɢ...", level=3)
+        + rich_kv_table([("ᴛᴏ", f"<code>{fmt_time(target_sec)}</code>")]),
     )
 
     try:
         media_path = await resolve_stream(song["url"])
     except Exception as e:
-        await pm.edit_text(
-            f"<b>❍ Seek failed — could not resolve stream.</b>\n<code>{e}</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_edit(
+            pm,
+            rich_heading("❍ sᴇᴇᴋ ғᴀɪʟᴇᴅ — ᴄᴏᴜʟᴅ ɴᴏᴛ ʀᴇsᴏʟᴠᴇ sᴛʀᴇᴀᴍ", level=3)
+            + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
         return
 
@@ -74,7 +84,7 @@ async def _seek_to(chat_id: int, target_sec: int, message: Message) -> None:
                 ffmpeg_parameters=f"-ss {target_sec}",
             ),
         )
-    except Exception as e:
+    except Exception:
         try:
             await call_py.play(
                 chat_id,
@@ -86,21 +96,24 @@ async def _seek_to(chat_id: int, target_sec: int, message: Message) -> None:
                 ),
             )
         except Exception as e2:
-            await pm.edit_text(
-                f"<b>❍ Seek failed.</b>\n<code>{e2}</code>",
-                parse_mode=ParseMode.HTML,
+            await rich_edit(
+                pm,
+                rich_heading("❍ sᴇᴇᴋ ғᴀɪʟᴇᴅ", level=3)
+                + rich_note(f"<code>{rich_esc(e2)}</code>"),
             )
             return
 
     set_seek_state(chat_id, target_sec)
 
+    # Live now-playing caption — must stay a caption (periodically re-edited
+    # elsewhere via edit_message_caption), so plain HTML, not rich blocks.
     caption = (
         "<blockquote>"
-        "<b>🎧 Sʜɪᴢᴜ Mᴜsɪᴄ</b>\n\n"
-        f"<b>❍ Title :</b> {short(song['title'])}\n"
-        f"<b>❍ Duration :</b> {song.get('duration', '?')}\n"
-        f"<b>❍ By :</b> {song['requester']}\n"
-        f"<b>❍ Seeked to :</b> <code>{fmt_time(target_sec)}</code>"
+        "<b>🎧 sʜɪᴢᴜ ᴍᴜsɪᴄ</b>\n\n"
+        f"<b>❍ ᴛɪᴛʟᴇ :</b> {rich_esc(short(song['title']))}\n"
+        f"<b>❍ ᴅᴜʀᴀᴛɪᴏɴ :</b> {rich_esc(song.get('duration', '?'))}\n"
+        f"<b>❍ ʙʏ :</b> {rich_esc(song['requester'])}\n"
+        f"<b>❍ sᴇᴇᴋᴇᴅ ᴛᴏ :</b> <code>{fmt_time(target_sec)}</code>"
         "</blockquote>"
     )
     btns = [
@@ -114,7 +127,11 @@ async def _seek_to(chat_id: int, target_sec: int, message: Message) -> None:
         [InlineKeyboardButton(bar, callback_data="noop")],
         btns,
     ])
-    await pm.edit_text(caption, reply_markup=kb, parse_mode=ParseMode.HTML)
+    try:
+        await pm.delete()
+    except Exception:
+        pass
+    await bot.send_message(chat_id, caption, reply_markup=kb, parse_mode=ParseMode.HTML)
 
 
 # ── /seek ──────────────────────────────────────────────────────────────────────
@@ -130,15 +147,15 @@ async def seek_cmd(_, message: Message) -> None:
     song    = peek_current(chat_id)
 
     if not song:
-        await message.reply("<b>❍ No song is currently playing.</b>", parse_mode=ParseMode.HTML)
+        await rich_send(bot, chat_id, rich_heading("❍ ɴᴏ sᴏɴɢ ɪs ᴄᴜʀʀᴇɴᴛʟʏ ᴘʟᴀʏɪɴɢ", level=3))
         return
 
     sec = int(message.matches[0].group("sec"))
     if sec < 1:
-        await message.reply(
-            "<b>❍ Please provide a number of seconds greater than 0.</b>\n"
-            "<b>❍ Usage :</b> <code>/seek 30</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ɴᴜᴍʙᴇʀ ᴏғ sᴇᴄᴏɴᴅs ɢʀᴇᴀᴛᴇʀ ᴛʜᴀɴ 0", level=3)
+            + rich_kv_table([("ᴜsᴀɢᴇ", "<code>/seek 30</code>")]),
         )
         return
 
@@ -147,15 +164,17 @@ async def seek_cmd(_, message: Message) -> None:
     total_sec   = parse_dur(song.get("duration", "0:00"))
 
     if current_pos >= total_sec - 1:
-        await message.reply("<b>❍ Song is almost finished. Cannot seek forward.</b>", parse_mode=ParseMode.HTML)
+        await rich_send(bot, chat_id, rich_heading("❍ sᴏɴɢ ɪs ᴀʟᴍᴏsᴛ ғɪɴɪsʜᴇᴅ, ᴄᴀɴɴᴏᴛ sᴇᴇᴋ ғᴏʀᴡᴀʀᴅ", level=3))
         return
 
     if target >= total_sec:
-        await message.reply(
-            f"<b>❍ Cannot seek that far forward.</b>\n"
-            f"<b>❍ Current position :</b> <code>{fmt_time(current_pos)}</code>\n"
-            f"<b>❍ Song duration :</b> <code>{fmt_time(total_sec)}</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ ᴄᴀɴɴᴏᴛ sᴇᴇᴋ ᴛʜᴀᴛ ғᴀʀ ғᴏʀᴡᴀʀᴅ", level=3)
+            + rich_kv_table([
+                ("ᴄᴜʀʀᴇɴᴛ ᴘᴏsɪᴛɪᴏɴ", f"<code>{fmt_time(current_pos)}</code>"),
+                ("sᴏɴɢ ᴅᴜʀᴀᴛɪᴏɴ", f"<code>{fmt_time(total_sec)}</code>"),
+            ]),
         )
         return
 
@@ -180,15 +199,15 @@ async def seekback_cmd(_, message: Message) -> None:
     song    = peek_current(chat_id)
 
     if not song:
-        await message.reply("<b>❍ No song is currently playing.</b>", parse_mode=ParseMode.HTML)
+        await rich_send(bot, chat_id, rich_heading("❍ ɴᴏ sᴏɴɢ ɪs ᴄᴜʀʀᴇɴᴛʟʏ ᴘʟᴀʏɪɴɢ", level=3))
         return
 
     sec = int(message.matches[0].group("sec"))
     if sec < 1:
-        await message.reply(
-            "<b>❍ Please provide a number of seconds greater than 0.</b>\n"
-            "<b>❍ Usage :</b> <code>/seekback 30</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ɴᴜᴍʙᴇʀ ᴏғ sᴇᴄᴏɴᴅs ɢʀᴇᴀᴛᴇʀ ᴛʜᴀɴ 0", level=3)
+            + rich_kv_table([("ᴜsᴀɢᴇ", "<code>/seekback 30</code>")]),
         )
         return
 
@@ -214,20 +233,25 @@ async def seek_usage(_, message: Message) -> None:
     chat_id = message.chat.id
     song    = peek_current(chat_id)
 
+    usage_rows = [
+        ("/seek 30", "ғᴏʀᴡᴀʀᴅ 30 sᴇᴄᴏɴᴅs"),
+        ("/seekback 30", "ʙᴀᴄᴋᴡᴀʀᴅ 30 sᴇᴄᴏɴᴅs"),
+    ]
+
     if song:
         pos       = get_current_position(chat_id)
         total_sec = parse_dur(song.get("duration", "0:00"))
-        await message.reply(
-            f"<b>❍ Current position :</b> <code>{fmt_time(pos)}</code> / <code>{fmt_time(total_sec)}</code>\n\n"
-            f"<b>❍ Usage :</b>\n"
-            f"<code>/seek 30</code>     → forward 30 seconds\n"
-            f"<code>/seekback 30</code> → backward 30 seconds",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ sᴇᴇᴋ ᴜsᴀɢᴇ", level=3)
+            + rich_kv_table([("ᴄᴜʀʀᴇɴᴛ ᴘᴏsɪᴛɪᴏɴ",
+                              f"<code>{fmt_time(pos)}</code> / <code>{fmt_time(total_sec)}</code>")])
+            + rich_kv_table(usage_rows, headers=["ᴄᴏᴍᴍᴀɴᴅ", "ᴅᴇsᴄʀɪᴘᴛɪᴏɴ"]),
         )
     else:
-        await message.reply(
-            "<b>❍ Usage :</b>\n"
-            "<code>/seek 30</code>     → forward 30 seconds\n"
-            "<code>/seekback 30</code> → backward 30 seconds",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ sᴇᴇᴋ ᴜsᴀɢᴇ", level=3)
+            + rich_kv_table(usage_rows, headers=["ᴄᴏᴍᴍᴀɴᴅ", "ᴅᴇsᴄʀɪᴘᴛɪᴏɴ"]),
         )
+        
