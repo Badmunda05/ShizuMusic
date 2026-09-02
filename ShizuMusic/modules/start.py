@@ -15,6 +15,7 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 import config
 from ShizuMusic import bot
 from config import START_ANIMATIONS
+from config import START_ANIMATIONS as START_PHOTOS
 from ShizuMusic.modules.block import user_allowed
 from ShizuMusic.utils.db import add_broadcast_chat, add_served_chat, add_served_user
 from ShizuMusic.utils.rich_ui import (
