@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------------
 
 from pyrogram import filters
-from pyrogram.enums import ParseMode
 from pyrogram.types import Message
 
 from ShizuMusic import bot, call_py
 from ShizuMusic.modules.block import group_allowed, user_allowed
 from ShizuMusic.utils.permissions import is_user_authorized
+from ShizuMusic.utils.rich_ui import rich_esc, rich_heading, rich_note, rich_send
 
 
 @bot.on_message(
@@ -23,23 +23,27 @@ from ShizuMusic.utils.permissions import is_user_authorized
 )
 async def resume_cmd(_, message: Message) -> None:
 
+    chat_id = message.chat.id
+
     if not await is_user_authorized(message):
-        await message.reply(
-            "<b>❍ ᴀᴅᴍɪɴ ᴏɴʟʏ</b>\n"
-            "<b>❍ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ɪs ғᴏʀ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs.</b>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("⛔ ᴀᴅᴍɪɴ ᴏɴʟʏ", level=3)
+            + rich_note("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ɪs ғᴏʀ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs."),
         )
         return
 
     try:
-        await call_py.resume(message.chat.id)
-        await message.reply(
-            "<b>❍ sᴛʀᴇᴀᴍ ʀᴇsᴜᴍᴇᴅ</b>\n"
-            "<b>❍ ᴍᴜsɪᴄ ᴘʟᴀʏʙᴀᴄᴋ ᴄᴏɴᴛɪɴᴜᴇᴅ.</b>",
-            parse_mode=ParseMode.HTML,
+        await call_py.resume(chat_id)
+        await rich_send(
+            bot, chat_id,
+            rich_heading("▶ sᴛʀᴇᴀᴍ ʀᴇsᴜᴍᴇᴅ", level=3)
+            + rich_note("ᴍᴜsɪᴄ ᴘʟᴀʏʙᴀᴄᴋ ᴄᴏɴᴛɪɴᴜᴇᴅ."),
         )
     except Exception as e:
-        await message.reply(
-            f"<b>❍ ʀᴇsᴜᴍᴇ ғᴀɪʟᴇᴅ</b>\n<code>{e}</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ ʀᴇsᴜᴍᴇ ғᴀɪʟᴇᴅ", level=3)
+            + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
+        
