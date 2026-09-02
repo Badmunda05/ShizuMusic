@@ -6,10 +6,10 @@
 #  from this source code is strictly prohibited.
 # --------------------------------------------------------------------------------
 
-import asyncio
+
 import random
 
-from pyrogram import filters
+from pyrogram import enums, filters
 from pyrogram.enums import ChatType, ParseMode
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
@@ -18,6 +18,7 @@ from ShizuMusic import bot
 from config import START_ANIMATIONS
 from ShizuMusic.modules.block import user_allowed
 from ShizuMusic.utils.db import add_broadcast_chat, add_served_chat, add_served_user
+from ShizuMusic.utils.rich_ui import rich_send
 
 # ── Message effect IDs (Telegram premium effects) ─────────────────────────────
 EFFECT_ID = [
@@ -26,6 +27,7 @@ EFFECT_ID = [
     5104841245755180586,
     5159385139981059251,
 ]
+
 
 # ── /start ────────────────────────────────────────────────────────────────────
 
@@ -53,6 +55,15 @@ async def start_handler(_, message: Message) -> None:
     # ── Private ───────────────────────────────────────────────────────────────
     if chat_type == ChatType.PRIVATE:
 
+        # Animation on its own — captions can't be rich, so this just carries
+        # the visual, not the buttons/text.
+        try:
+            await message.reply_animation(
+                animation,
+            )
+        except Exception:
+            pass
+
         caption = (
             "<b>╭────────────────────▣</b>\n"
             f"<b>│❍ ʜᴇʏ</b> <a href='tg://user?id={uid}'>{name}</a>, 🥀\n"
@@ -66,32 +77,38 @@ async def start_handler(_, message: Message) -> None:
             "<b>├────────────────────▣</b>\n"
             f"<b>│❍ ᴘᴏᴡᴇʀᴇᴅ ʙʏ » "
             f"<a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>\n"
-            "<b>╰────────────────────▣</b>"
+            "<b>╰────────────────────▣</b>\n"
+            "<p>"
+            f'<tg-button type="url" style="primary" url="{config.SUPPORT_GROUP}">'
+            "🍬 Support</tg-button> "
+            f'<tg-button type="url" style="success" url="{config.UPDATES_CHANNEL}">'
+            "🍹 Updates</tg-button>"
+            "</p>"
         )
         kb = InlineKeyboardMarkup([
             [InlineKeyboardButton("⛩️ ᴧᴅᴅ мᴇ ʙᴧʙʏ ⛩️",
-                                  url=f"{config.BOT_LINK}?startgroup=true")],
+                                  url=f"{config.BOT_LINK}?startgroup=true",
+                                  style=enums.ButtonStyle.PRIMARY)],
             [
-                InlineKeyboardButton("🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP),
-                InlineKeyboardButton("🍹 ᴜᴘᴅᴀᴛᴇs 🍹",  url=config.UPDATES_CHANNEL),
+                InlineKeyboardButton("🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP,
+                                     style=enums.ButtonStyle.PRIMARY),
+                InlineKeyboardButton("🍹 ᴜᴘᴅᴀᴛᴇs 🍹",  url=config.UPDATES_CHANNEL,
+                                     style=enums.ButtonStyle.SUCCESS),
             ],
             [InlineKeyboardButton("🏩 ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅs 🏩",
-                                  callback_data="show_help")],
+                                  callback_data="show_help",
+                                  style=enums.ButtonStyle.PRIMARY)],
             [
                 InlineKeyboardButton("🫧 ᴏᴡɴᴇʀ 🫧",
-                                     url=f"tg://user?id={config.OWNER_ID}"),
+                                     url=f"tg://user?id={config.OWNER_ID}",
+                                     style=enums.ButtonStyle.DEFAULT),
                 InlineKeyboardButton("🍡 sᴏᴜʀᴄᴇ 🍡",
-                                     url="https://github.com/Badmunda05/ShizuMusic/fork"),
+                                     url="https://github.com/Badmunda05/ShizuMusic/fork",
+                                     style=enums.ButtonStyle.DEFAULT),
             ],
         ])
 
-        sent = await message.reply_animation(
-            animation,
-            caption=caption,
-            parse_mode=ParseMode.HTML,
-            reply_markup=kb,
-            message_effect_id=random.choice(EFFECT_ID),
-        )
+        sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
 
         try:
             add_broadcast_chat(chat_id, "private")
@@ -114,28 +131,38 @@ async def start_handler(_, message: Message) -> None:
     # ── Group ─────────────────────────────────────────────────────────────────
     else:
         chat_title = message.chat.title or "ᴛʜɪs ᴄʜᴀᴛ"
+
+        try:
+            await message.reply_animation(animation)
+        except Exception:
+            pass
+
         caption = (
             f"❍ ʜᴇʏ <a href='tg://user?id={uid}'>{name}</a>,\n"
             f"ᴛʜɪs ɪs <b>{config.BOT_NAME}</b>\n\n"
             f"ᴛʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ ɪɴ <b>{chat_title}</b>.\n"
-            f"{name} ᴄᴀɴ ɴᴏᴡ ᴘʟᴀʏ sᴏɴɢs ʜᴇʀᴇ."
+            f"{name} ᴄᴀɴ ɴᴏᴡ ᴘʟᴀʏ sᴏɴɢs ʜᴇʀᴇ.\n"
+            "<p>"
+            f'<tg-button type="url" style="primary" url="{config.SUPPORT_GROUP}">'
+            "🍬 Support</tg-button> "
+            f'<tg-button type="url" style="success" url="{config.UPDATES_CHANNEL}">'
+            "🍹 Updates</tg-button>"
+            "</p>"
         )
         kb = InlineKeyboardMarkup([
             [
                 InlineKeyboardButton("⛩️ ᴧᴅᴅ мᴇ ʙᴧʙʏ ⛩️",
-                                     url=f"{config.BOT_LINK}?startgroup=true"),
-                InlineKeyboardButton("🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP),
+                                     url=f"{config.BOT_LINK}?startgroup=true",
+                                     style=enums.ButtonStyle.PRIMARY),
+                InlineKeyboardButton("🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP,
+                                     style=enums.ButtonStyle.SUCCESS),
             ],
             [InlineKeyboardButton("🏩 ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅs 🏩",
-                                  callback_data="show_help")],
+                                  callback_data="show_help",
+                                  style=enums.ButtonStyle.PRIMARY)],
         ])
 
-        sent = await message.reply_animation(
-            animation,
-            caption=caption,
-            parse_mode=ParseMode.HTML,
-            reply_markup=kb,
-        )
+        sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
 
         admin_msg = (
             "<b>╭──────────────────────▣</b>\n"
@@ -156,6 +183,7 @@ async def start_handler(_, message: Message) -> None:
             InlineKeyboardButton(
                 "⚡ ᴍᴀᴋᴇ ᴍᴇ ᴀᴅᴍɪɴ ⚡",
                 url=f"tg://user?id={(await bot.get_me()).id}",
+                style=enums.ButtonStyle.DANGER,
             )
         ]])
         try:
@@ -189,39 +217,41 @@ async def help_handler(_, message: Message) -> None:
 
     kb = InlineKeyboardMarkup([
         [
-            InlineKeyboardButton("ᴧᴅᴍɪɴ",    callback_data="help_admin"),
-            InlineKeyboardButton("ᴧ-ᴘʟᴀʏ",   callback_data="help_autoplay"),
-            InlineKeyboardButton("ɢ-ᴄᴧsᴛ",   callback_data="help_gcast"),
+            InlineKeyboardButton("ᴧᴅᴍɪɴ",    callback_data="help_admin", style=enums.ButtonStyle.PRIMARY),
+            InlineKeyboardButton("ᴧ-ᴘʟᴀʏ",   callback_data="help_autoplay", style=enums.ButtonStyle.PRIMARY),
+            InlineKeyboardButton("ɢ-ᴄᴧsᴛ",   callback_data="help_gcast", style=enums.ButtonStyle.PRIMARY),
         ],
         [
-            InlineKeyboardButton("ʙʟ-ᴄʜᴧᴛ",  callback_data="help_blchat"),
-            InlineKeyboardButton("ʙʟ-ᴜsᴇʀs", callback_data="help_blusers"),
-            InlineKeyboardButton("ᴘɪɴɢ",     callback_data="help_ping"),
+            InlineKeyboardButton("ʙʟ-ᴄʜᴧᴛ",  callback_data="help_blchat", style=enums.ButtonStyle.PRIMARY),
+            InlineKeyboardButton("ʙʟ-ᴜsᴇʀs", callback_data="help_blusers", style=enums.ButtonStyle.PRIMARY),
+            InlineKeyboardButton("ᴘɪɴɢ",     callback_data="help_ping", style=enums.ButtonStyle.PRIMARY),
         ],
         [
-            InlineKeyboardButton("ᴘʟᴀʏ",     callback_data="help_play"),
-            InlineKeyboardButton("sᴘᴇᴇᴅ",    callback_data="help_speed"),
-            InlineKeyboardButton("ɪɴғᴏ",     callback_data="help_info"),
+            InlineKeyboardButton("ᴘʟᴀʏ",     callback_data="help_play", style=enums.ButtonStyle.PRIMARY),
+            InlineKeyboardButton("sᴘᴇᴇᴅ",    callback_data="help_speed", style=enums.ButtonStyle.PRIMARY),
+            InlineKeyboardButton("ɪɴғᴏ",     callback_data="help_info", style=enums.ButtonStyle.PRIMARY),
         ],
         [
-            InlineKeyboardButton("⌯ ᴄʟᴏsᴇ ⌯", callback_data="close_help"),
+            InlineKeyboardButton("⌯ ᴄʟᴏsᴇ ⌯", callback_data="close_help", style=enums.ButtonStyle.DANGER),
         ],
     ])
 
     animation = random.choice(START_ANIMATIONS)
 
-    sent = await message.reply_animation(
-        animation,
-        caption=(
-            "<b>╭────────────────────▣</b>\n"
-            f"<b>│❍ ʜᴇʏ</b> <a href='tg://user?id={uid}'>{name}</a>, 🥀\n"
-            "<b>├────────────────────▣</b>\n"
-            "<b>│📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ :</b>\n"
-            "<b>├────────────────────▣</b>\n"
-            f"<b>│❍ ᴘᴏᴡᴇʀᴇᴅ ʙʏ » "
-            f"<a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>\n"
-            "<b>╰────────────────────▣</b>"
-        ),
-        parse_mode=ParseMode.HTML,
-        reply_markup=kb,
+    try:
+        await message.reply_animation(animation)
+    except Exception:
+        pass
+
+    caption = (
+        "<b>╭────────────────────▣</b>\n"
+        f"<b>│❍ ʜᴇʏ</b> <a href='tg://user?id={uid}'>{name}</a>, 🥀\n"
+        "<b>├────────────────────▣</b>\n"
+        "<b>│📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ :</b>\n"
+        "<b>├────────────────────▣</b>\n"
+        f"<b>│❍ ᴘᴏᴡᴇʀᴇᴅ ʙʏ » "
+        f"<a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>\n"
+        "<b>╰────────────────────▣</b>"
     )
+
+    await rich_send(bot, message.chat.id, caption, reply_markup=kb)
