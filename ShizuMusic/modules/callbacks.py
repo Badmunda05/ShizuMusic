@@ -34,6 +34,7 @@ from ShizuMusic.utils.rich_ui import (
     rich_note,
     rich_send,
     rich_table,
+    rich_edit,
 )
 
 def _support_updates_pills() -> str:
