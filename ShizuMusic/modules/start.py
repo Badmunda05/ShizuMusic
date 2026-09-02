@@ -18,6 +18,7 @@ from config import START_ANIMATIONS
 from ShizuMusic.modules.block import user_allowed
 from ShizuMusic.utils.db import add_broadcast_chat, add_served_chat, add_served_user
 from ShizuMusic.utils.rich_ui import (
+    rich_caption,
     rich_details,
     rich_esc,
     rich_heading,
@@ -55,7 +56,7 @@ async def start_handler(_, message: Message) -> None:
     name      = message.from_user.first_name or "User"
     chat_id   = message.chat.id
     chat_type = message.chat.type
-    animation = random.choice(START_ANIMATIONS)
+    photo     = random.choice(config.START_PHOTOS)
 
     # ── Delete the user's /start command message ──────────────────────────────
     try:
@@ -71,14 +72,6 @@ async def start_handler(_, message: Message) -> None:
 
     # ── Private ───────────────────────────────────────────────────────────────
     if chat_type == ChatType.PRIVATE:
-
-        # Animation on its own — captions can't be rich.
-        try:
-            await message.reply_animation(
-                animation,
-            )
-        except Exception:
-            pass
 
         caption = (
             f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
@@ -132,7 +125,15 @@ async def start_handler(_, message: Message) -> None:
             ],
         ])
 
-        sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
+        try:
+            sent = await message.reply_photo(
+                photo,
+                caption=rich_caption(caption),
+                parse_mode=ParseMode.HTML,
+                reply_markup=kb,
+            )
+        except Exception:
+            sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
 
         try:
             add_broadcast_chat(chat_id, "private")
@@ -156,11 +157,6 @@ async def start_handler(_, message: Message) -> None:
     else:
         chat_title = message.chat.title or "this chat"
 
-        try:
-            await message.reply_animation(animation)
-        except Exception:
-            pass
-
         caption = (
             f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
             f"ᴛʜɪs ɪs <b>{rich_esc(config.BOT_NAME)}</b></p>"
@@ -183,7 +179,15 @@ async def start_handler(_, message: Message) -> None:
                                   style=enums.ButtonStyle.PRIMARY)],
         ])
 
-        sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
+        try:
+            sent = await message.reply_photo(
+                photo,
+                caption=rich_caption(caption),
+                parse_mode=ParseMode.HTML,
+                reply_markup=kb,
+            )
+        except Exception:
+            sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
 
         admin_msg = (
             "<b>╭──────────────────────▣</b>\n"
@@ -272,4 +276,4 @@ async def help_handler(_, message: Message) -> None:
     )
 
     await rich_send(bot, message.chat.id, caption, reply_markup=kb)
-    
+
