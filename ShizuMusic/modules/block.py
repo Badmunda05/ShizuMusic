@@ -252,3 +252,4 @@ async def blocklist_cmd(_, message: Message) -> None:
         f"<b>❍ Blocked Users ({len(users)}):</b>\n{u_text}",
         parse_mode=ParseMode.HTML,
     )
+    
