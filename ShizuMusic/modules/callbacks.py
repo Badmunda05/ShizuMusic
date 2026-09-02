@@ -27,8 +27,14 @@ from ShizuMusic.utils.db import is_user_blocked_db
 from ShizuMusic.utils.formatters import short
 from ShizuMusic.utils.helpers import delete_file
 from ShizuMusic.utils.permissions import is_user_authorized
-from ShizuMusic.utils.rich_ui import rich_edit, rich_esc, rich_heading, rich_table
-
+from ShizuMusic.utils.rich_ui import (
+    rich_details,
+    rich_esc,
+    rich_heading,
+    rich_note,
+    rich_send,
+    rich_table,
+)
 
 def _support_updates_pills() -> str:
     return (
