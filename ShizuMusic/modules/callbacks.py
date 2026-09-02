@@ -34,9 +34,9 @@ def _support_updates_pills() -> str:
     return (
         "<p>"
         f'<tg-button type="url" style="primary" url="{config.SUPPORT_GROUP}">'
-        "🍬 Support</tg-button> "
+        "🍬 sᴜᴘᴘᴏʀᴛ</tg-button> "
         f'<tg-button type="url" style="success" url="{config.UPDATES_CHANNEL}">'
-        "🍹 Updates</tg-button>"
+        "🍹 ᴜᴘᴅᴀᴛᴇs</tg-button>"
         "</p>"
     )
 
@@ -46,7 +46,7 @@ def _category_html(title: str, desc: str, rows) -> str:
     return (
         rich_heading(title, level=3)
         + f"<p>{desc}</p>"
-        + rich_table(["Command", "Description"], rows)
+        + rich_table(["ᴄᴏᴍᴍᴀɴᴅ", "ᴅᴇsᴄʀɪᴘᴛɪᴏɴ"], rows)
         + _support_updates_pills()
     )
 
@@ -95,112 +95,112 @@ _BACK_KB = InlineKeyboardMarkup([
 _HELP_TEXTS = {
 
     "help_admin": _category_html(
-        "⚙️ Admin Commands",
-        "Core playback controls for chat admins.",
+        "⚙️ ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs",
+        "ᴄᴏʀᴇ ᴘʟᴀʏʙᴀᴄᴋ ᴄᴏɴᴛʀᴏʟs ғᴏʀ ᴄʜᴀᴛ ᴀᴅᴍɪɴs.",
         [
-            ("/pause", "Pause current playback"),
-            ("/resume", "Resume paused playback"),
-            ("/skip", "Skip to next song"),
-            ("/stop, /end", "Stop playback &amp; leave VC"),
-            ("/clear", "Clear all songs in queue"),
-            ("/seek &lt;seconds&gt;", "Seek forward by n seconds"),
-            ("/seekback &lt;seconds&gt;", "Seek backward by n seconds"),
-            ("/reboot", "Reset chat state &amp; leave VC"),
+            ("/pause", "ᴘᴀᴜsᴇ ᴄᴜʀʀᴇɴᴛ ᴘʟᴀʏʙᴀᴄᴋ"),
+            ("/resume", "ʀᴇsᴜᴍᴇ ᴘᴀᴜsᴇᴅ ᴘʟᴀʏʙᴀᴄᴋ"),
+            ("/skip", "sᴋɪᴘ ᴛᴏ ɴᴇxᴛ sᴏɴɢ"),
+            ("/stop, /end", "sᴛᴏᴘ ᴘʟᴀʏʙᴀᴄᴋ &amp; ʟᴇᴀᴠᴇ ᴠᴄ"),
+            ("/clear", "ᴄʟᴇᴀʀ ᴀʟʟ sᴏɴɢs ɪɴ ǫᴜᴇᴜᴇ"),
+            ("/seek &lt;seconds&gt;", "sᴇᴇᴋ ғᴏʀᴡᴀʀᴅ ʙʏ ɴ sᴇᴄᴏɴᴅs"),
+            ("/seekback &lt;seconds&gt;", "sᴇᴇᴋ ʙᴀᴄᴋᴡᴀʀᴅ ʙʏ ɴ sᴇᴄᴏɴᴅs"),
+            ("/reboot", "ʀᴇsᴇᴛ ᴄʜᴀᴛ sᴛᴀᴛᴇ &amp; ʟᴇᴀᴠᴇ ᴠᴄ"),
         ],
     ),
 
     "help_autoplay": _category_html(
-        "🔁 Autoplay Commands",
-        "Keep the queue going automatically based on a query.",
+        "🔁 ᴀᴜᴛᴏᴘʟᴀʏ ᴄᴏᴍᴍᴀɴᴅs",
+        "ᴋᴇᴇᴘ ᴛʜᴇ ǫᴜᴇᴜᴇ ɢᴏɪɴɢ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ ʙᴀsᴇᴅ ᴏɴ ᴀ ǫᴜᴇʀʏ.",
         [
-            ("/autoplay &lt;query&gt;", "Continuously play songs based on your query"),
-            ("/end, /stop", "Stop autoplay &amp; clear queue"),
-            ("<code>/autoplay sidhu moose wala</code>", "Example"),
-            ("<code>/autoplay arijit singh</code>", "Example"),
+            ("/autoplay &lt;query&gt;", "ᴄᴏɴᴛɪɴᴜᴏᴜsʟʏ ᴘʟᴀʏ sᴏɴɢs ʙᴀsᴇᴅ ᴏɴ ʏᴏᴜʀ ǫᴜᴇʀʏ"),
+            ("/end, /stop", "sᴛᴏᴘ ᴀᴜᴛᴏᴘʟᴀʏ &amp; ᴄʟᴇᴀʀ ǫᴜᴇᴜᴇ"),
+            ("<code>/autoplay sidhu moose wala</code>", "ᴇxᴀᴍᴘʟᴇ"),
+            ("<code>/autoplay arijit singh</code>", "ᴇxᴀᴍᴘʟᴇ"),
         ],
     ),
 
     "help_gcast": _category_html(
-        "📢 G-Cast Commands",
-        "Broadcast to every served chat (owner only).",
+        "📢 ɢ-ᴄᴀsᴛ ᴄᴏᴍᴍᴀɴᴅs",
+        "ʙʀᴏᴀᴅᴄᴀsᴛ ᴛᴏ ᴇᴠᴇʀʏ sᴇʀᴠᴇᴅ ᴄʜᴀᴛ (ᴏᴡɴᴇʀ ᴏɴʟʏ).",
         [
-            ("/broadcast, /gcast", "Reply to a msg or type text"),
-            ("-pin", "Pin silently in groups"),
-            ("-pinloud", "Pin with notification"),
-            ("-nogroup", "Skip groups"),
-            ("-user", "Also send to users"),
+            ("/broadcast, /gcast", "ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴍsɢ ᴏʀ ᴛʏᴘᴇ ᴛᴇxᴛ"),
+            ("-pin", "ᴘɪɴ sɪʟᴇɴᴛʟʏ ɪɴ ɢʀᴏᴜᴘs"),
+            ("-pinloud", "ᴘɪɴ ᴡɪᴛʜ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ"),
+            ("-nogroup", "sᴋɪᴘ ɢʀᴏᴜᴘs"),
+            ("-user", "ᴀʟsᴏ sᴇɴᴅ ᴛᴏ ᴜsᴇʀs"),
         ],
     ),
 
     "help_blchat": _category_html(
-        "🚫 Bl-Chat Commands",
-        "Block or unblock whole groups (owner only).",
+        "🚫 ʙʟ-ᴄʜᴀᴛ ᴄᴏᴍᴍᴀɴᴅs",
+        "ʙʟᴏᴄᴋ ᴏʀ ᴜɴʙʟᴏᴄᴋ ᴡʜᴏʟᴇ ɢʀᴏᴜᴘs (ᴏᴡɴᴇʀ ᴏɴʟʏ).",
         [
-            ("/gblock", "Block current group — no commands will work"),
-            ("/gblock &lt;-100xxxxxxx&gt;", "Block by chat id"),
-            ("/gunblock", "Unblock group"),
-            ("/gunblock &lt;-100xxxxxxx&gt;", "Unblock by chat id"),
-            ("/blocklist", "Show all blocked groups &amp; users"),
+            ("/gblock", "ʙʟᴏᴄᴋ ᴄᴜʀʀᴇɴᴛ ɢʀᴏᴜᴘ — ɴᴏ ᴄᴏᴍᴍᴀɴᴅs ᴡɪʟʟ ᴡᴏʀᴋ"),
+            ("/gblock &lt;-100xxxxxxx&gt;", "ʙʟᴏᴄᴋ ʙʏ ᴄʜᴀᴛ ɪᴅ"),
+            ("/gunblock", "ᴜɴʙʟᴏᴄᴋ ɢʀᴏᴜᴘ"),
+            ("/gunblock &lt;-100xxxxxxx&gt;", "ᴜɴʙʟᴏᴄᴋ ʙʏ ᴄʜᴀᴛ ɪᴅ"),
+            ("/blocklist", "sʜᴏᴡ ᴀʟʟ ʙʟᴏᴄᴋᴇᴅ ɢʀᴏᴜᴘs &amp; ᴜsᴇʀs"),
         ],
     ),
 
     "help_blusers": _category_html(
-        "🚫 Bl-Users Commands",
-        "Block or unblock individual users (owner only).",
+        "🚫 ʙʟ-ᴜsᴇʀs ᴄᴏᴍᴍᴀɴᴅs",
+        "ʙʟᴏᴄᴋ ᴏʀ ᴜɴʙʟᴏᴄᴋ ɪɴᴅɪᴠɪᴅᴜᴀʟ ᴜsᴇʀs (ᴏᴡɴᴇʀ ᴏɴʟʏ).",
         [
-            ("/ublock", "Reply to a user's msg to block — they can't use any command"),
-            ("/ublock &lt;user id&gt;", "Block by user id"),
-            ("/uunblock", "Reply to a user's msg to unblock"),
-            ("/uunblock &lt;user id&gt;", "Unblock by user id"),
-            ("/blocklist", "Show all blocked users &amp; chats"),
+            ("/ublock", "ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ's ᴍsɢ ᴛᴏ ʙʟᴏᴄᴋ — ᴛʜᴇʏ ᴄᴀɴ'ᴛ ᴜsᴇ ᴀɴʏ ᴄᴏᴍᴍᴀɴᴅ"),
+            ("/ublock &lt;user id&gt;", "ʙʟᴏᴄᴋ ʙʏ ᴜsᴇʀ ɪᴅ"),
+            ("/uunblock", "ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ's ᴍsɢ ᴛᴏ ᴜɴʙʟᴏᴄᴋ"),
+            ("/uunblock &lt;user id&gt;", "ᴜɴʙʟᴏᴄᴋ ʙʏ ᴜsᴇʀ ɪᴅ"),
+            ("/blocklist", "sʜᴏᴡ ᴀʟʟ ʙʟᴏᴄᴋᴇᴅ ᴜsᴇʀs &amp; ᴄʜᴀᴛs"),
         ],
     ),
 
     "help_ping": _category_html(
-        "🏓 Ping Commands",
-        "Latency and system diagnostics.",
+        "🏓 ᴘɪɴɢ ᴄᴏᴍᴍᴀɴᴅs",
+        "ʟᴀᴛᴇɴᴄʏ ᴀɴᴅ sʏsᴛᴇᴍ ᴅɪᴀɢɴᴏsᴛɪᴄs.",
         [
-            ("/ping", "Bot latency, RAM, CPU, disk &amp; uptime stats"),
-            ("/speedtest, /spt", "Network speed test (owner only)"),
-            ("/stats", "Full system + MongoDB stats (owner only)"),
+            ("/ping", "ʙᴏᴛ ʟᴀᴛᴇɴᴄʏ, ʀᴀᴍ, ᴄᴘᴜ, ᴅɪsᴋ &amp; ᴜᴘᴛɪᴍᴇ sᴛᴀᴛs"),
+            ("/speedtest, /spt", "ɴᴇᴛᴡᴏʀᴋ sᴘᴇᴇᴅ ᴛᴇsᴛ (ᴏᴡɴᴇʀ ᴏɴʟʏ)"),
+            ("/stats", "ғᴜʟʟ sʏsᴛᴇᴍ + ᴍᴏɴɢᴏᴅʙ sᴛᴀᴛs (ᴏᴡɴᴇʀ ᴏɴʟʏ)"),
         ],
     ),
 
     "help_play": _category_html(
-        "🎵 Play Commands",
-        "Start audio or video playback in a voice chat.",
+        "🎵 ᴘʟᴀʏ ᴄᴏᴍᴍᴀɴᴅs",
+        "sᴛᴀʀᴛ ᴀᴜᴅɪᴏ ᴏʀ ᴠɪᴅᴇᴏ ᴘʟᴀʏʙᴀᴄᴋ ɪɴ ᴀ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ.",
         [
-            ("/play &lt;song name or URL&gt;", "Play audio in voice chat"),
-            ("/vplay &lt;song name or URL&gt;", "Play video in voice chat"),
-            ("Reply to audio/video + /play", "Play that media directly"),
-            ("YouTube URLs", "Supported"),
-            ("Max duration", f"{config.MAX_DURATION_SECONDS // 60} minutes"),
-            ("Queue limit", f"{config.QUEUE_LIMIT} songs"),
+            ("/play &lt;song name or URL&gt;", "ᴘʟᴀʏ ᴀᴜᴅɪᴏ ɪɴ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ"),
+            ("/vplay &lt;song name or URL&gt;", "ᴘʟᴀʏ ᴠɪᴅᴇᴏ ɪɴ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ"),
+            ("ʀᴇᴘʟʏ ᴛᴏ ᴀᴜᴅɪᴏ/ᴠɪᴅᴇᴏ + /play", "ᴘʟᴀʏ ᴛʜᴀᴛ ᴍᴇᴅɪᴀ ᴅɪʀᴇᴄᴛʟʏ"),
+            ("ʏᴏᴜᴛᴜʙᴇ ᴜʀʟs", "sᴜᴘᴘᴏʀᴛᴇᴅ"),
+            ("ᴍᴀx ᴅᴜʀᴀᴛɪᴏɴ", f"{config.MAX_DURATION_SECONDS // 60} ᴍɪɴᴜᴛᴇs"),
+            ("ǫᴜᴇᴜᴇ ʟɪᴍɪᴛ", f"{config.QUEUE_LIMIT} sᴏɴɢs"),
         ],
     ),
 
     "help_speed": _category_html(
-        "🎚️ Speed &amp; Effects",
-        "Adjust playback speed and audio effects.",
+        "🎚️ sᴘᴇᴇᴅ &amp; ᴇғғᴇᴄᴛs",
+        "ᴀᴅᴊᴜsᴛ ᴘʟᴀʏʙᴀᴄᴋ sᴘᴇᴇᴅ ᴀɴᴅ ᴀᴜᴅɪᴏ ᴇғғᴇᴄᴛs.",
         [
-            ("/speed &lt;0.25–4.0&gt;", "Change playback speed — e.g. /speed 1.5"),
-            ("/speedreset", "Reset speed to normal (1.0x)"),
-            ("/bass &lt;1–20&gt;", "Boost bass by n dB — e.g. /bass 10"),
-            ("/bassoff", "Turn off bass boost"),
-            ("/effecton", "Apply effects to all songs"),
-            ("/effectoff", "Disable auto effects"),
-            ("/effects", "Show current effect status"),
+            ("/speed &lt;0.25–4.0&gt;", "ᴄʜᴀɴɢᴇ ᴘʟᴀʏʙᴀᴄᴋ sᴘᴇᴇᴅ — ᴇ.ɢ. /speed 1.5"),
+            ("/speedreset", "ʀᴇsᴇᴛ sᴘᴇᴇᴅ ᴛᴏ ɴᴏʀᴍᴀʟ (1.0x)"),
+            ("/bass &lt;1–20&gt;", "ʙᴏᴏsᴛ ʙᴀss ʙʏ ɴ ᴅʙ — ᴇ.ɢ. /bass 10"),
+            ("/bassoff", "ᴛᴜʀɴ ᴏғғ ʙᴀss ʙᴏᴏsᴛ"),
+            ("/effecton", "ᴀᴘᴘʟʏ ᴇғғᴇᴄᴛs ᴛᴏ ᴀʟʟ sᴏɴɢs"),
+            ("/effectoff", "ᴅɪsᴀʙʟᴇ ᴀᴜᴛᴏ ᴇғғᴇᴄᴛs"),
+            ("/effects", "sʜᴏᴡ ᴄᴜʀʀᴇɴᴛ ᴇғғᴇᴄᴛ sᴛᴀᴛᴜs"),
         ],
     ),
 
     "help_info": _category_html(
-        "ℹ️ Info Commands",
-        "Bot, chat, and user information.",
+        "ℹ️ ɪɴғᴏ ᴄᴏᴍᴍᴀɴᴅs",
+        "ʙᴏᴛ, ᴄʜᴀᴛ, ᴀɴᴅ ᴜsᴇʀ ɪɴғᴏʀᴍᴀᴛɪᴏɴ.",
         [
-            ("/id", "Get IDs of user / chat / msg — also works with reply"),
-            ("/id @username", "Get any user's id"),
-            ("/repo", "Source code link"),
-            ("/stats", "Full stats — system + MongoDB info (owner only)"),
+            ("/id", "ɢᴇᴛ ɪᴅs ᴏғ ᴜsᴇʀ / ᴄʜᴀᴛ / ᴍsɢ — ᴀʟsᴏ ᴡᴏʀᴋs ᴡɪᴛʜ ʀᴇᴘʟʏ"),
+            ("/id @username", "ɢᴇᴛ ᴀɴʏ ᴜsᴇʀ's ɪᴅ"),
+            ("/repo", "sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ ʟɪɴᴋ"),
+            ("/stats", "ғᴜʟʟ sᴛᴀᴛs — sʏsᴛᴇᴍ + ᴍᴏɴɢᴏᴅʙ ɪɴғᴏ (ᴏᴡɴᴇʀ ᴏɴʟʏ)"),
         ],
     ),
 }
@@ -330,7 +330,7 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
         await cbq.answer()
         await rich_edit(
             cbq.message,
-            rich_heading("📜 Choose a category", level=3),
+            rich_heading("📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ", level=3),
             reply_markup=_HELP_KB,
         )
 
@@ -352,9 +352,9 @@ async def _go_back(cbq: CallbackQuery) -> None:
     name = cbq.from_user.first_name or "User"
 
     caption = (
-        f"<p>❍ Hey <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
-        f"this is <b>{rich_esc(config.BOT_NAME)}</b> — a fast &amp; powerful "
-        "Telegram music bot.</p>"
+        f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
+        f"ᴛʜɪs ɪs <b>{rich_esc(config.BOT_NAME)}</b> — ᴀ ғᴀsᴛ &amp; ᴘᴏᴡᴇʀғᴜʟ "
+        "ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ʙᴏᴛ.</p>"
         + _support_updates_pills()
     )
     kb = InlineKeyboardMarkup([
@@ -381,3 +381,4 @@ async def _go_back(cbq: CallbackQuery) -> None:
     ])
 
     await rich_edit(cbq.message, caption, reply_markup=kb)
+    
