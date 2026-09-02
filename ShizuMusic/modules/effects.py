@@ -17,6 +17,14 @@ from ShizuMusic import LOGGER, bot, call_py
 from ShizuMusic.core.queue import peek_current
 from ShizuMusic.modules.block import group_allowed, user_allowed
 from ShizuMusic.utils.formatters import short
+from ShizuMusic.utils.rich_ui import (
+    rich_edit,
+    rich_esc,
+    rich_heading,
+    rich_kv_table,
+    rich_note,
+    rich_send,
+)
 
 # ── DB helpers using utils.db ──────────────────────────────────────────────────
 
@@ -168,25 +176,33 @@ async def apply_effects_now(chat_id: int, message: Message, *, seek_sec: int = -
 
     song = peek_current(chat_id)
     if not song:
-        await message.reply("<b>❍ No song is currently playing.</b>", parse_mode=ParseMode.HTML)
+        await rich_send(bot, chat_id, rich_heading("❍ ɴᴏ sᴏɴɢ ɪs ᴄᴜʀʀᴇɴᴛʟʏ ᴘʟᴀʏɪɴɢ", level=3))
         return
 
     state = _get(chat_id)
     speed = state["speed"]
     bass  = state["bass"]
 
-    pm = await message.reply("<b>❍ Applying effects, please wait...</b>", parse_mode=ParseMode.HTML)
+    pm = await rich_send(bot, chat_id, rich_heading("❍ ᴀᴘᴘʟʏɪɴɢ ᴇғғᴇᴄᴛs, ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...", level=3))
 
     try:
         src = await resolve_stream(song["url"])
     except Exception as e:
-        await pm.edit_text(f"<b>❍ Stream resolve failed.</b>\n<code>{e}</code>", parse_mode=ParseMode.HTML)
+        await rich_edit(
+            pm,
+            rich_heading("❍ sᴛʀᴇᴀᴍ ʀᴇsᴏʟᴠᴇ ғᴀɪʟᴇᴅ", level=3)
+            + rich_note(f"<code>{rich_esc(e)}</code>"),
+        )
         return
 
     try:
         processed = await _process_file(src, speed, bass)
     except Exception as e:
-        await pm.edit_text(f"<b>❍ ffmpeg error:</b> <code>{e}</code>", parse_mode=ParseMode.HTML)
+        await rich_edit(
+            pm,
+            rich_heading("❍ ғғᴍᴘᴇɢ ᴇʀʀᴏʀ", level=3)
+            + rich_note(f"<code>{rich_esc(e)}</code>"),
+        )
         return
 
     pos = get_current_position(chat_id) if seek_sec == -1 else seek_sec
@@ -194,22 +210,28 @@ async def apply_effects_now(chat_id: int, message: Message, *, seek_sec: int = -
     try:
         await _stream_from(chat_id, processed, seek_sec=pos)
     except Exception as e:
-        await pm.edit_text(f"<b>❍ Playback failed:</b> <code>{e}</code>", parse_mode=ParseMode.HTML)
+        await rich_edit(
+            pm,
+            rich_heading("❍ ᴘʟᴀʏʙᴀᴄᴋ ғᴀɪʟᴇᴅ", level=3)
+            + rich_note(f"<code>{rich_esc(e)}</code>"),
+        )
         return
 
     set_seek_state(chat_id, pos)
 
-    speed_label = f"{speed}x" if speed != 1.0 else "Normal (1.0x)"
-    bass_label  = f"{bass} dB boost" if bass > 0 else "Off"
+    speed_label = f"{speed}x" if speed != 1.0 else "ɴᴏʀᴍᴀʟ (1.0x)"
+    bass_label  = f"{bass} dB ʙᴏᴏsᴛ" if bass > 0 else "ᴏғғ"
     pos_label   = f"{pos // 60}:{pos % 60:02d}"
 
-    await pm.edit_text(
-        f"<b>❍ Effects Applied ✓</b>\n\n"
-        f"<b>❍ Song     :</b> {short(song['title'])}\n"
-        f"<b>❍ Position :</b> <code>{pos_label}</code>\n"
-        f"<b>❍ Speed    :</b> <code>{speed_label}</code>\n"
-        f"<b>❍ Bass     :</b> <code>{bass_label}</code>",
-        parse_mode=ParseMode.HTML,
+    await rich_edit(
+        pm,
+        rich_heading("❍ ᴇғғᴇᴄᴛs ᴀᴘᴘʟɪᴇᴅ ✓", level=3)
+        + rich_kv_table([
+            ("sᴏɴɢ", rich_esc(short(song['title']))),
+            ("ᴘᴏsɪᴛɪᴏɴ", f"<code>{pos_label}</code>"),
+            ("sᴘᴇᴇᴅ", f"<code>{speed_label}</code>"),
+            ("ʙᴀss", f"<code>{bass_label}</code>"),
+        ]),
     )
 
 
@@ -244,16 +266,17 @@ async def speed_cmd(_, message: Message) -> None:
     try:
         val = round(float(message.matches[0].group("val")), 2)
     except ValueError:
-        await message.reply(
-            "<b>❍ Invalid value.</b>\n<b>❍ Usage :</b> <code>/speed 1.5</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ ɪɴᴠᴀʟɪᴅ ᴠᴀʟᴜᴇ", level=3)
+            + rich_kv_table([("ᴜsᴀɢᴇ", "<code>/speed 1.5</code>")]),
         )
         return
 
     if not (0.25 <= val <= 4.0):
-        await message.reply(
-            "<b>❍ Speed must be between</b> <code>0.25</code> <b>and</b> <code>4.0</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ sᴘᴇᴇᴅ ᴍᴜsᴛ ʙᴇ ʙᴇᴛᴡᴇᴇɴ 0.25 ᴀɴᴅ 4.0", level=3),
         )
         return
 
@@ -290,16 +313,17 @@ async def bass_cmd(_, message: Message) -> None:
     try:
         val = int(message.matches[0].group("val"))
     except ValueError:
-        await message.reply(
-            "<b>❍ Invalid value.</b>\n<b>❍ Usage :</b> <code>/bass 10</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ ɪɴᴠᴀʟɪᴅ ᴠᴀʟᴜᴇ", level=3)
+            + rich_kv_table([("ᴜsᴀɢᴇ", "<code>/bass 10</code>")]),
         )
         return
 
     if not (1 <= val <= 20):
-        await message.reply(
-            "<b>❍ Bass must be between</b> <code>1</code> <b>and</b> <code>20</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ ʙᴀss ᴍᴜsᴛ ʙᴇ ʙᴇᴛᴡᴇᴇɴ 1 ᴀɴᴅ 20", level=3),
         )
         return
 
@@ -335,15 +359,14 @@ async def effecton_cmd(_, message: Message) -> None:
     chat_id = message.chat.id
     set_enabled(chat_id, True)
     state       = _get(chat_id)
-    speed_label = f"{state['speed']}x" if state['speed'] != 1.0 else "Normal (1.0x)"
-    bass_label  = f"{state['bass']} dB" if state['bass'] > 0 else "Off"
-    await message.reply(
-        "<b>❍ Effects Enabled ✓</b>\n\n"
-        "<b>❍ All songs in this group will now play with effects.</b>\n\n"
-        f"<b>❍ Speed  :</b> <code>{speed_label}</code>\n"
-        f"<b>❍ Bass   :</b> <code>{bass_label}</code>\n\n"
-        "<i>Use /effectoff to disable. Settings are saved across restarts.</i>",
-        parse_mode=ParseMode.HTML,
+    speed_label = f"{state['speed']}x" if state['speed'] != 1.0 else "ɴᴏʀᴍᴀʟ (1.0x)"
+    bass_label  = f"{state['bass']} dB" if state['bass'] > 0 else "ᴏғғ"
+    await rich_send(
+        bot, chat_id,
+        rich_heading("❍ ᴇғғᴇᴄᴛs ᴇɴᴀʙʟᴇᴅ ✓", level=3)
+        + rich_kv_table([("sᴘᴇᴇᴅ", f"<code>{speed_label}</code>"), ("ʙᴀss", f"<code>{bass_label}</code>")])
+        + rich_note("ᴀʟʟ sᴏɴɢs ɪɴ ᴛʜɪs ɢʀᴏᴜᴘ ᴡɪʟʟ ɴᴏᴡ ᴘʟᴀʏ ᴡɪᴛʜ ᴇғғᴇᴄᴛs. "
+                    "ᴜsᴇ /effectoff ᴛᴏ ᴅɪsᴀʙʟᴇ."),
     )
 
 
@@ -353,12 +376,13 @@ async def effecton_cmd(_, message: Message) -> None:
     & group_allowed & user_allowed
 )
 async def effectoff_cmd(_, message: Message) -> None:
-    set_enabled(message.chat.id, False)
-    await message.reply(
-        "<b>❍ Effects Disabled ✓</b>\n\n"
-        "<b>❍ Songs will now play normally in this group.</b>\n\n"
-        "<i>Speed + bass settings are kept — use /effecton to re-enable.</i>",
-        parse_mode=ParseMode.HTML,
+    chat_id = message.chat.id
+    set_enabled(chat_id, False)
+    await rich_send(
+        bot, chat_id,
+        rich_heading("❍ ᴇғғᴇᴄᴛs ᴅɪsᴀʙʟᴇᴅ ✓", level=3)
+        + rich_note("sᴏɴɢs ᴡɪʟʟ ɴᴏᴡ ᴘʟᴀʏ ɴᴏʀᴍᴀʟʟʏ ɪɴ ᴛʜɪs ɢʀᴏᴜᴘ. sᴘᴇᴇᴅ + ʙᴀss "
+                    "sᴇᴛᴛɪɴɢs ᴀʀᴇ ᴋᴇᴘᴛ — ᴜsᴇ /effecton ᴛᴏ ʀᴇ-ᴇɴᴀʙʟᴇ."),
     )
 
 
@@ -374,25 +398,32 @@ async def effects_status_cmd(_, message: Message) -> None:
     bass        = state["bass"]
     enabled     = state["enabled"]
 
-    speed_label = f"{speed}x" if speed != 1.0 else "Normal (1.0x)"
-    bass_label  = f"{bass} dB boost" if bass > 0 else "Off"
-    mode_label  = "ON — All songs affected 🟢" if enabled else "OFF — Manual per song 🔴"
+    speed_label = f"{speed}x" if speed != 1.0 else "ɴᴏʀᴍᴀʟ (1.0x)"
+    bass_label  = f"{bass} dB ʙᴏᴏsᴛ" if bass > 0 else "ᴏғғ"
+    mode_label  = "ᴏɴ — ᴀʟʟ sᴏɴɢs ᴀғғᴇᴄᴛᴇᴅ 🟢" if enabled else "ᴏғғ — ᴍᴀɴᴜᴀʟ ᴘᴇʀ sᴏɴɢ 🔴"
 
     song        = peek_current(chat_id)
-    song_label  = short(song["title"]) if song else "Nothing playing"
+    song_label  = rich_esc(short(song["title"])) if song else "ɴᴏᴛʜɪɴɢ ᴘʟᴀʏɪɴɢ"
 
-    await message.reply(
-        f"<b>❍ Effects Status — {message.chat.title}</b>\n\n"
-        f"<b>❍ Now Playing  :</b> {song_label}\n"
-        f"<b>❍ Mode         :</b> <code>{mode_label}</code>\n"
-        f"<b>❍ Speed        :</b> <code>{speed_label}</code>\n"
-        f"<b>❍ Bass Boost   :</b> <code>{bass_label}</code>\n\n"
-        "<b>❍ Commands :</b>\n"
-        "<code>/speed 1.5</code>    → set speed (0.25–4.0)\n"
-        "<code>/speedreset</code>   → back to normal speed\n"
-        "<code>/bass 10</code>      → bass boost (1–20 dB)\n"
-        "<code>/bassoff</code>      → remove bass boost\n"
-        "<code>/effecton</code>     → all songs get effects\n"
-        "<code>/effectoff</code>    → manual mode only",
-        parse_mode=ParseMode.HTML,
-    )
+    await rich_send(
+        bot, chat_id,
+        rich_heading(f"❍ ᴇғғᴇᴄᴛs sᴛᴀᴛᴜs — {rich_esc(message.chat.title)}", level=3)
+        + rich_kv_table([
+            ("ɴᴏᴡ ᴘʟᴀʏɪɴɢ", song_label),
+            ("ᴍᴏᴅᴇ", f"<code>{mode_label}</code>"),
+            ("sᴘᴇᴇᴅ", f"<code>{speed_label}</code>"),
+            ("ʙᴀss ʙᴏᴏsᴛ", f"<code>{bass_label}</code>"),
+        ])
+        + rich_kv_table(
+            [
+                ("/speed 1.5", "sᴇᴛ sᴘᴇᴇᴅ (0.25–4.0)"),
+                ("/speedreset", "ʙᴀᴄᴋ ᴛᴏ ɴᴏʀᴍᴀʟ sᴘᴇᴇᴅ"),
+                ("/bass 10", "ʙᴀss ʙᴏᴏsᴛ (1–20 ᴅʙ)"),
+                ("/bassoff", "ʀᴇᴍᴏᴠᴇ ʙᴀss ʙᴏᴏsᴛ"),
+                ("/effecton", "ᴀʟʟ sᴏɴɢs ɢᴇᴛ ᴇғғᴇᴄᴛs"),
+                ("/effectoff", "ᴍᴀɴᴜᴀʟ ᴍᴏᴅᴇ ᴏɴʟʏ"),
+            ],
+            headers=["ᴄᴏᴍᴍᴀɴᴅ", "ᴅᴇsᴄʀɪᴘᴛɪᴏɴ"],
+        ),
+)
+    
