@@ -20,6 +20,13 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 import config
 from ShizuMusic import bot, assistant, bot_start_time
 from ShizuMusic.modules.block import user_allowed
+from ShizuMusic.utils.rich_ui import (
+    rich_caption,
+    rich_esc,
+    rich_heading,
+    rich_kv_table,
+    rich_send,
+)
 
 
 def supp_markup():
@@ -33,10 +40,11 @@ def supp_markup():
 @bot.on_message(filters.command("ping") & user_allowed)
 async def ping_cmd(client, message: Message) -> None:
 
+    chat_id = message.chat.id
     start   = time.perf_counter()
-    pm      = await message.reply_text(
-        f"<b>❍ {client.me.first_name} ɪs ᴘɪɴɢɪɴɢ...</b>",
-        parse_mode=ParseMode.HTML,
+    pm      = await rich_send(
+        bot, chat_id,
+        rich_heading(f"❍ {rich_esc(client.me.first_name)} ɪs ᴘɪɴɢɪɴɢ...", level=3),
     )
     latency = round((time.perf_counter() - start) * 1000)
     uptime  = str(timedelta(seconds=int(time.time() - bot_start_time)))
@@ -59,22 +67,26 @@ async def ping_cmd(client, message: Message) -> None:
     except Exception:
         pytg = "N/A"
 
-    await pm.delete()
+    try:
+        await pm.delete()
+    except Exception:
+        pass
 
     caption = (
-        f"<b>🏓 ᴘᴏɴɢ : <code>{latency}ms</code></b>\n\n"
-        f"<b><u>{client.me.first_name} sʏsᴛᴇᴍ sᴛᴀᴛs :</u></b>\n\n"
-        f"<b>❍ ᴜᴘᴛɪᴍᴇ :</b> <code>{uptime}</code>\n"
-        f"<b>❍ ʀᴀᴍ :</b> <code>{ram:.2f} MB</code>\n"
-        f"<b>❍ ᴄᴘᴜ :</b> <code>{cpu}%</code>\n"
-        f"<b>❍ ᴅɪsᴋ :</b> <code>{disk_str}</code>\n"
-        f"<b>❍ ᴘʏᴛɢᴄ :</b> <code>{pytg}ms</code>\n\n"
-        f"<b>❍ 𝖡ʏ » <a href=\"{config.SUPPORT_GROUP}\">sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>"
+        rich_heading(f"🏓 ᴘᴏɴɢ : {latency}ms", level=3)
+        + rich_kv_table([
+            ("ᴜᴘᴛɪᴍᴇ", f"<code>{uptime}</code>"),
+            ("ʀᴀᴍ", f"<code>{ram:.2f} MB</code>"),
+            ("ᴄᴘᴜ", f"<code>{cpu}%</code>"),
+            ("ᴅɪsᴋ", f"<code>{disk_str}</code>"),
+            ("ᴘʏᴛɢᴄ", f"<code>{pytg}ms</code>"),
+        ])
+        + f"<p>❍ ʙʏ » <a href=\"{config.SUPPORT_GROUP}\">sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></p>"
     )
 
     await message.reply_photo(
         photo=config.PING_IMG_URL,
-        caption=caption,
+        caption=rich_caption(caption),
         parse_mode=ParseMode.HTML,
         reply_markup=supp_markup(),
     )
@@ -90,7 +102,7 @@ def _run_speedtest(m):
         st.upload()
         st.results.share()
         return st.results.dict()
-    except Exception as e:
+    except Exception:
         return None
 
 
@@ -100,16 +112,15 @@ def _run_speedtest(m):
 )
 async def speedtest_cmd(client, message: Message) -> None:
 
-    m = await message.reply_text(
-        "<b>❍ sᴛᴀʀᴛɪɴɢ sᴘᴇᴇᴅ ᴛᴇsᴛ, ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...</b>",
-        parse_mode=ParseMode.HTML,
-    )
+    chat_id = message.chat.id
+    m = await rich_send(bot, chat_id, rich_heading("❍ sᴛᴀʀᴛɪɴɢ sᴘᴇᴇᴅ ᴛᴇsᴛ, ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...", level=3))
 
     loop   = asyncio.get_event_loop()
     result = await loop.run_in_executor(None, _run_speedtest, m)
 
     if result is None:
-        await m.edit_text("<b>❍ Speedtest failed. Please try again.</b>", parse_mode=ParseMode.HTML)
+        from ShizuMusic.utils.rich_ui import rich_edit
+        await rich_edit(m, rich_heading("❍ sᴘᴇᴇᴅᴛᴇsᴛ ғᴀɪʟᴇᴅ, ᴘʟᴇᴀsᴇ ᴛʀʏ ᴀɢᴀɪɴ", level=3))
         return
 
     download = result["download"] / 1_000_000
@@ -124,26 +135,33 @@ async def speedtest_cmd(client, message: Message) -> None:
     share    = result["share"]
 
     caption = (
-        "<b>⚡ sᴘᴇᴇᴅᴛᴇsᴛ ʀᴇsᴜʟᴛs</b>\n\n"
-        "<b><u>ᴄʟɪᴇɴᴛ ɪɴғᴏ :</u></b>\n"
-        f"<b>❍ ɪsᴘ     :</b> <code>{isp}</code>\n"
-        f"<b>❍ ᴄᴏᴜɴᴛʀʏ :</b> <code>{country}</code>\n\n"
-        "<b><u>sᴇʀᴠᴇʀ ɪɴғᴏ :</u></b>\n"
-        f"<b>❍ ɴᴀᴍᴇ    :</b> <code>{server}</code>\n"
-        f"<b>❍ sᴘᴏɴsᴏʀ :</b> <code>{sponsor}</code>\n"
-        f"<b>❍ ᴄᴏᴜɴᴛʀʏ :</b> <code>{s_cc}</code>\n"
-        f"<b>❍ ʟᴀᴛᴇɴᴄʏ :</b> <code>{s_lat} ms</code>\n\n"
-        "<b><u>sᴘᴇᴇᴅ :</u></b>\n"
-        f"<b>❍ ᴘɪɴɢ     :</b> <code>{ping:.2f} ms</code>\n"
-        f"<b>❍ ᴅᴏᴡɴʟᴏᴀᴅ :</b> <code>{download:.2f} Mbps</code>\n"
-        f"<b>❍ ᴜᴘʟᴏᴀᴅ   :</b> <code>{upload:.2f} Mbps</code>\n\n"
-        f"<b>❍ 𝖡ʏ » <a href=\"{config.SUPPORT_GROUP}\">sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></b>"
+        rich_heading("⚡ sᴘᴇᴇᴅᴛᴇsᴛ ʀᴇsᴜʟᴛs", level=3)
+        + rich_kv_table([
+            ("ɪsᴘ", f"<code>{rich_esc(isp)}</code>"),
+            ("ᴄᴏᴜɴᴛʀʏ", f"<code>{rich_esc(country)}</code>"),
+        ], headers=["ᴄʟɪᴇɴᴛ ɪɴғᴏ", ""])
+        + rich_kv_table([
+            ("ɴᴀᴍᴇ", f"<code>{rich_esc(server)}</code>"),
+            ("sᴘᴏɴsᴏʀ", f"<code>{rich_esc(sponsor)}</code>"),
+            ("ᴄᴏᴜɴᴛʀʏ", f"<code>{rich_esc(s_cc)}</code>"),
+            ("ʟᴀᴛᴇɴᴄʏ", f"<code>{s_lat} ms</code>"),
+        ], headers=["sᴇʀᴠᴇʀ ɪɴғᴏ", ""])
+        + rich_kv_table([
+            ("ᴘɪɴɢ", f"<code>{ping:.2f} ms</code>"),
+            ("ᴅᴏᴡɴʟᴏᴀᴅ", f"<code>{download:.2f} Mbps</code>"),
+            ("ᴜᴘʟᴏᴀᴅ", f"<code>{upload:.2f} Mbps</code>"),
+        ], headers=["sᴘᴇᴇᴅ", ""])
+        + f"<p>❍ ʙʏ » <a href=\"{config.SUPPORT_GROUP}\">sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></p>"
     )
 
-    await m.delete()
+    try:
+        await m.delete()
+    except Exception:
+        pass
     await message.reply_photo(
         photo=share,
-        caption=caption,
+        caption=rich_caption(caption),
         parse_mode=ParseMode.HTML,
         reply_markup=supp_markup(),
     )
+    
