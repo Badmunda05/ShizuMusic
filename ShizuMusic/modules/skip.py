@@ -19,6 +19,14 @@ from ShizuMusic.modules.block import group_allowed, user_allowed
 from ShizuMusic.utils.formatters import short
 from ShizuMusic.utils.helpers import delete_file
 from ShizuMusic.utils.permissions import is_user_authorized
+from ShizuMusic.utils.rich_ui import (
+    rich_edit,
+    rich_esc,
+    rich_heading,
+    rich_kv_table,
+    rich_note,
+    rich_send,
+)
 
 
 @bot.on_message(
@@ -32,25 +40,22 @@ async def skip_cmd(_, message: Message) -> None:
     chat_id = message.chat.id
 
     if not await is_user_authorized(message):
-        await message.reply(
-            "<b>❍ ᴀᴅᴍɪɴ ᴏɴʟʏ</b>\n"
-            "<b>❍ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ɪs ғᴏʀ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs.</b>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("⛔ ᴀᴅᴍɪɴ ᴏɴʟʏ", level=3)
+            + rich_note("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ɪs ғᴏʀ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs."),
         )
         return
 
     if not queue_size(chat_id):
-        await message.reply(
-            "<b>❍ ǫᴜᴇᴜᴇ ɪs ᴇᴍᴘᴛʏ</b>\n"
-            "<b>❍ ɴᴏ sᴏɴɢs ᴛᴏ sᴋɪᴘ.</b>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ ǫᴜᴇᴜᴇ ɪs ᴇᴍᴘᴛʏ", level=3)
+            + rich_note("ɴᴏ sᴏɴɢs ᴛᴏ sᴋɪᴘ."),
         )
         return
 
-    sm = await message.reply(
-        "<b>❍ sᴋɪᴘᴘɪɴɢ ᴄᴜʀʀᴇɴᴛ ᴛʀᴀᴄᴋ...</b>",
-        parse_mode=ParseMode.HTML,
-    )
+    sm = await rich_send(bot, chat_id, rich_heading("⏭ sᴋɪᴘᴘɪɴɢ ᴄᴜʀʀᴇɴᴛ ᴛʀᴀᴄᴋ...", level=3))
 
     skipped = pop_current(chat_id)
 
@@ -69,10 +74,13 @@ async def skip_cmd(_, message: Message) -> None:
     nxt = peek_current(chat_id)
 
     if nxt:
-        await sm.edit_text(
-            f"<b>❍ sᴋɪᴘᴘᴇᴅ ᴛʀᴀᴄᴋ :</b> <code>{short(skipped['title'])}</code>\n"
-            f"<b>❍ ɴᴏᴡ ᴘʟᴀʏɪɴɢ :</b>\n<code>{nxt['title']}</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_edit(
+            sm,
+            rich_heading("⏭ ᴛʀᴀᴄᴋ sᴋɪᴘᴘᴇᴅ", level=3)
+            + rich_kv_table([
+                ("sᴋɪᴘᴘᴇᴅ", f"<code>{rich_esc(short(skipped['title']))}</code>"),
+                ("ɴᴏᴡ ᴘʟᴀʏɪɴɢ", f"<code>{rich_esc(nxt['title'])}</code>"),
+            ]),
         )
         dm = await bot.send_message(
             chat_id,
@@ -81,8 +89,10 @@ async def skip_cmd(_, message: Message) -> None:
         )
         await play_song(chat_id, dm, nxt)
     else:
-        await sm.edit_text(
-            f"<b>❍ sᴋɪᴘᴘᴇᴅ ᴛʀᴀᴄᴋ :</b> <code>{short(skipped['title'])}</code>\n"
-            "<b>❍ ǫᴜᴇᴜᴇ ɪs ɴᴏᴡ ᴇᴍᴘᴛʏ</b>",
-            parse_mode=ParseMode.HTML,
+        await rich_edit(
+            sm,
+            rich_heading("⏭ ᴛʀᴀᴄᴋ sᴋɪᴘᴘᴇᴅ", level=3)
+            + rich_kv_table([("sᴋɪᴘᴘᴇᴅ", f"<code>{rich_esc(short(skipped['title']))}</code>")])
+            + rich_note("ǫᴜᴇᴜᴇ ɪs ɴᴏᴡ ᴇᴍᴘᴛʏ"),
         )
+        
