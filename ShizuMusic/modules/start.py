@@ -5,13 +5,6 @@
 #  Unauthorized copying, editing, re-uploading or removing credits
 #  from this source code is strictly prohibited.
 # --------------------------------------------------------------------------------
-#
-#  Text content is ShizuMusic's own (same features as the old ASCII-box
-#  version) — only the STRUCTURE changed, matching the reference bot's
-#  pattern: heading, a collapsible "Key Features" table, a "Why choose"
-#  list, all via rich_ui's block helpers so it actually renders as
-#  headings/tables/collapsible sections instead of plain lines.
-# --------------------------------------------------------------------------------
 
 import random
 
@@ -46,9 +39,9 @@ def _support_updates_pills() -> str:
     return (
         "<p>"
         f'<tg-button type="url" style="primary" url="{config.SUPPORT_GROUP}">'
-        "🍬 Support</tg-button> "
+        "🍬 sᴜᴘᴘᴏʀᴛ</tg-button> "
         f'<tg-button type="url" style="success" url="{config.UPDATES_CHANNEL}">'
-        "🍹 Updates</tg-button>"
+        "🍹 ᴜᴘᴅᴀᴛᴇs</tg-button>"
         "</p>"
     )
 
@@ -88,32 +81,32 @@ async def start_handler(_, message: Message) -> None:
             pass
 
         caption = (
-            f"<p>❍ Hey <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
-            "welcome aboard! 🎶</p>"
-            + f"<p>I am <b>{rich_esc(config.BOT_NAME)}</b> — a fast &amp; "
-              "powerful Telegram music player bot with some awesome "
-              "features.</p>"
+            f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
+            "ᴡᴇʟᴄᴏᴍᴇ ᴀʙᴏᴀʀᴅ! 🎶</p>"
+            + f"<p>ɪ ᴀᴍ <b>{rich_esc(config.BOT_NAME)}</b> — ᴀ ғᴀsᴛ &amp; "
+              "ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ᴘʟᴀʏᴇʀ ʙᴏᴛ ᴡɪᴛʜ sᴏᴍᴇ ᴀᴡᴇsᴏᴍᴇ "
+              "ғᴇᴀᴛᴜʀᴇs.</p>"
             + rich_details(
-                "✦ Key Features ✦",
+                "✦ ᴋᴇʏ ғᴇᴀᴛᴜʀᴇs ✦",
                 rich_table(
-                    ["Feature", "Details"],
+                    ["ғᴇᴀᴛᴜʀᴇ", "ᴅᴇᴛᴀɪʟs"],
                     [
-                        ("🎵 Streaming", "Play audio &amp; video in voice chats"),
-                        ("🔁 Autoplay", "Keeps the queue going automatically"),
-                        ("🎚️ Effects", "Speed control &amp; bass boost"),
-                        ("🛡️ Moderation", "Block/unblock chats &amp; users"),
+                        ("🎵 sᴛʀᴇᴀᴍɪɴɢ", "ᴘʟᴀʏ ᴀᴜᴅɪᴏ &amp; ᴠɪᴅᴇᴏ ɪɴ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs"),
+                        ("🔁 ᴀᴜᴛᴏᴘʟᴀʏ", "ᴋᴇᴇᴘs ᴛʜᴇ ǫᴜᴇᴜᴇ ɢᴏɪɴɢ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ"),
+                        ("🎚️ ᴇғғᴇᴄᴛs", "sᴘᴇᴇᴅ ᴄᴏɴᴛʀᴏʟ &amp; ʙᴀss ʙᴏᴏsᴛ"),
+                        ("🛡️ ᴍᴏᴅᴇʀᴀᴛɪᴏɴ", "ʙʟᴏᴄᴋ/ᴜɴʙʟᴏᴄᴋ ᴄʜᴀᴛs &amp; ᴜsᴇʀs"),
                     ],
                 ),
                 open=True,
             )
             + rich_details(
-                "✧ Why choose it? ✧",
-                "<p>⭐ Simple slash commands, no setup needed.</p>"
-                "<p>🎧 Clean, low-lag streaming.</p>"
-                "<p>❍ Click Help below for all commands.</p>",
+                "✧ ᴡʜʏ ᴄʜᴏᴏsᴇ ɪᴛ? ✧",
+                "<p>⭐ sɪᴍᴘʟᴇ sʟᴀsʜ ᴄᴏᴍᴍᴀɴᴅs, ɴᴏ sᴇᴛᴜᴘ ɴᴇᴇᴅᴇᴅ.</p>"
+                "<p>🎧 ᴄʟᴇᴀɴ, ʟᴏᴡ-ʟᴀɢ sᴛʀᴇᴀᴍɪɴɢ.</p>"
+                "<p>❍ ᴄʟɪᴄᴋ ʜᴇʟᴘ ʙᴇʟᴏᴡ ғᴏʀ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs.</p>",
                 open=True,
             )
-            + rich_note(f"Powered by » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
+            + rich_note(f"ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
             + _support_updates_pills()
         )
         kb = InlineKeyboardMarkup([
@@ -169,11 +162,11 @@ async def start_handler(_, message: Message) -> None:
             pass
 
         caption = (
-            f"<p>❍ Hey <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
-            f"this is <b>{rich_esc(config.BOT_NAME)}</b></p>"
+            f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
+            f"ᴛʜɪs ɪs <b>{rich_esc(config.BOT_NAME)}</b></p>"
             + rich_note(
-                f"Thanks for adding me in {rich_esc(chat_title)}. "
-                f"{rich_esc(name)} can now play songs here."
+                f"ᴛʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ ɪɴ {rich_esc(chat_title)}. "
+                f"{rich_esc(name)} ᴄᴀɴ ɴᴏᴡ ᴘʟᴀʏ sᴏɴɢs ʜᴇʀᴇ."
             )
             + _support_updates_pills()
         )
@@ -272,10 +265,11 @@ async def help_handler(_, message: Message) -> None:
         pass
 
     caption = (
-        f"{rich_heading('📜 Choose a category', level=3)}"
-        f"<p>❍ Hey <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, pick a "
-        "category below to see its commands.</p>"
-        + rich_note(f"Powered by » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
+        f"{rich_heading('📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ', level=3)}"
+        f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, ᴘɪᴄᴋ ᴀ "
+        "ᴄᴀᴛᴇɢᴏʀʏ ʙᴇʟᴏᴡ ᴛᴏ sᴇᴇ ɪᴛs ᴄᴏᴍᴍᴀɴᴅs.</p>"
+        + rich_note(f"ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
     )
 
     await rich_send(bot, message.chat.id, caption, reply_markup=kb)
+    
