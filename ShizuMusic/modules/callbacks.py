@@ -13,7 +13,6 @@
 # --------------------------------------------------------------------------------
 
 import asyncio
-import random
 
 from pyrogram import enums
 from pyrogram.enums import ParseMode
@@ -29,7 +28,6 @@ from ShizuMusic.utils.formatters import short
 from ShizuMusic.utils.helpers import delete_file
 from ShizuMusic.utils.permissions import is_user_authorized
 from ShizuMusic.utils.rich_ui import (
-    rich_caption,
     rich_details,
     rich_esc,
     rich_heading,
@@ -341,16 +339,7 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
     elif data == "show_help":
         await cbq.answer()
         heading = rich_heading("📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ", level=3)
-        if getattr(cbq.message, "photo", None):
-            # /start's message is a photo — can't edit its caption into a
-            # true rich message, so swap it out for one.
-            try:
-                await cbq.message.delete()
-            except Exception:
-                pass
-            await rich_send(bot, chat_id, heading, reply_markup=_HELP_KB)
-        else:
-            await rich_edit(cbq.message, heading, reply_markup=_HELP_KB)
+        await rich_edit(cbq.message, heading, reply_markup=_HELP_KB)
 
     elif data == "go_back":
         await _go_back(cbq)
@@ -421,22 +410,4 @@ async def _go_back(cbq: CallbackQuery) -> None:
         ],
     ])
 
-    photo = random.choice(config.START_PHOTOS)
-    chat_id = cbq.message.chat.id
-
-    try:
-        await cbq.message.delete()
-    except Exception:
-        pass
-
-    try:
-        await bot.send_photo(
-            chat_id,
-            photo,
-            caption=rich_caption(caption),
-            parse_mode=ParseMode.HTML,
-            reply_markup=kb,
-        )
-    except Exception:
-        await rich_send(bot, chat_id, caption, reply_markup=kb)
-
+    await rich_edit(cbq.message, caption, reply_markup=kb)
