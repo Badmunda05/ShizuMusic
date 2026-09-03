@@ -6,10 +6,12 @@
 #  from this source code is strictly prohibited.
 # --------------------------------------------------------------------------------
 
+import asyncio
 import random
 
 from pyrogram import enums, filters
 from pyrogram.enums import ChatType, ParseMode
+from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 import config
@@ -18,12 +20,14 @@ from config import START_ANIMATIONS
 from ShizuMusic.modules.block import user_allowed
 from ShizuMusic.utils.db import add_broadcast_chat, add_served_chat, add_served_user
 from ShizuMusic.utils.rich_ui import (
+    rich_caption,
     rich_details,
     rich_esc,
     rich_heading,
     rich_note,
     rich_send,
     rich_table,
+    sanitize_display_name,
 )
 
 # ── Message effect IDs (Telegram premium effects) ─────────────────────────────
@@ -52,10 +56,10 @@ def _support_updates_pills() -> str:
 async def start_handler(_, message: Message) -> None:
 
     uid       = message.from_user.id
-    name      = message.from_user.first_name or "User"
+    name      = sanitize_display_name(message.from_user.first_name)
     chat_id   = message.chat.id
     chat_type = message.chat.type
-    animation = random.choice(START_ANIMATIONS)
+    photo     = random.choice(config.START_PHOTOS)
 
     # ── Delete the user's /start command message ──────────────────────────────
     try:
@@ -125,14 +129,25 @@ async def start_handler(_, message: Message) -> None:
         ])
 
         try:
-            await message.reply_animation(
-                animation,
-                message_effect_id=random.choice(EFFECT_ID),
+            sent = await message.reply_photo(
+                photo,
+                caption=rich_caption(caption),
+                parse_mode=ParseMode.HTML,
+                reply_markup=kb,
             )
+        except FloodWait as fw:
+            await asyncio.sleep(fw.value + 1)
+            try:
+                sent = await message.reply_photo(
+                    photo,
+                    caption=rich_caption(caption),
+                    parse_mode=ParseMode.HTML,
+                    reply_markup=kb,
+                )
+            except Exception:
+                sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
         except Exception:
-            pass
-
-        sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
+            sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
 
         try:
             add_broadcast_chat(chat_id, "private")
@@ -144,9 +159,9 @@ async def start_handler(_, message: Message) -> None:
                 await bot.send_message(
                     config.LOGGER_ID,
                     "<b>#ɴᴇᴡᴜsᴇʀ sᴛᴀʀᴛᴇᴅ</b>\n\n"
-                    f"<b>❍ ɴᴀᴍᴇ     :</b> <a href='tg://user?id={uid}'>{name}</a>\n"
+                    f"<b>❍ ɴᴀᴍᴇ     :</b> <a href='tg://user?id={uid}'>{rich_esc(name)}</a>\n"
                     f"<b>❍ ɪᴅ       :</b> <code>{uid}</code>\n"
-                    f"<b>❍ ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username or 'N/A'}",
+                    f"<b>❍ ᴜsᴇʀɴᴀᴍᴇ :</b> @{rich_esc(message.from_user.username) or 'N/A'}",
                     parse_mode=ParseMode.HTML,
                 )
             except Exception:
@@ -179,11 +194,25 @@ async def start_handler(_, message: Message) -> None:
         ])
 
         try:
-            await message.reply_animation(animation)
+            sent = await message.reply_photo(
+                photo,
+                caption=rich_caption(caption),
+                parse_mode=ParseMode.HTML,
+                reply_markup=kb,
+            )
+        except FloodWait as fw:
+            await asyncio.sleep(fw.value + 1)
+            try:
+                sent = await message.reply_photo(
+                    photo,
+                    caption=rich_caption(caption),
+                    parse_mode=ParseMode.HTML,
+                    reply_markup=kb,
+                )
+            except Exception:
+                sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
         except Exception:
-            pass
-
-        sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
+            sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
 
         admin_msg = (
             "<b>╭──────────────────────▣</b>\n"
@@ -228,7 +257,7 @@ async def start_handler(_, message: Message) -> None:
 async def help_handler(_, message: Message) -> None:
 
     uid  = message.from_user.id
-    name = message.from_user.first_name or "User"
+    name = sanitize_display_name(message.from_user.first_name)
 
     # ── Delete the user's /help command message ───────────────────────────────
     try:
@@ -272,3 +301,4 @@ async def help_handler(_, message: Message) -> None:
     )
 
     await rich_send(bot, message.chat.id, caption, reply_markup=kb)
+
