@@ -15,11 +15,9 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 import config
 from ShizuMusic import bot
 from config import START_ANIMATIONS
-from config import START_ANIMATIONS as START_PHOTOS
 from ShizuMusic.modules.block import user_allowed
 from ShizuMusic.utils.db import add_broadcast_chat, add_served_chat, add_served_user
 from ShizuMusic.utils.rich_ui import (
-    rich_caption,
     rich_details,
     rich_esc,
     rich_heading,
@@ -57,7 +55,7 @@ async def start_handler(_, message: Message) -> None:
     name      = message.from_user.first_name or "User"
     chat_id   = message.chat.id
     chat_type = message.chat.type
-    photo     = random.choice(config.START_PHOTOS)
+    animation = random.choice(START_ANIMATIONS)
 
     # ── Delete the user's /start command message ──────────────────────────────
     try:
@@ -127,14 +125,14 @@ async def start_handler(_, message: Message) -> None:
         ])
 
         try:
-            sent = await message.reply_photo(
-                photo,
-                caption=rich_caption(caption),
-                parse_mode=ParseMode.HTML,
-                reply_markup=kb,
+            await message.reply_animation(
+                animation,
+                message_effect_id=random.choice(EFFECT_ID),
             )
         except Exception:
-            sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
+            pass
+
+        sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
 
         try:
             add_broadcast_chat(chat_id, "private")
@@ -181,14 +179,11 @@ async def start_handler(_, message: Message) -> None:
         ])
 
         try:
-            sent = await message.reply_photo(
-                photo,
-                caption=rich_caption(caption),
-                parse_mode=ParseMode.HTML,
-                reply_markup=kb,
-            )
+            await message.reply_animation(animation)
         except Exception:
-            sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
+            pass
+
+        sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
 
         admin_msg = (
             "<b>╭──────────────────────▣</b>\n"
@@ -277,4 +272,3 @@ async def help_handler(_, message: Message) -> None:
     )
 
     await rich_send(bot, message.chat.id, caption, reply_markup=kb)
-
