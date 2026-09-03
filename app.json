@@ -70,8 +70,8 @@
       "required": false
     },
 
-    "START_ANIMATIONS": {
-      "description": "Start Animation / Video URL",
+    "START_PHOTOS": {
+      "description": "Start Image url",
       "required": false
     },
 
