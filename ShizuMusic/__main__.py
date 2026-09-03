@@ -22,6 +22,12 @@ from pyrogram.types import BotCommand
 import config
 from ShizuMusic import LOGGER, assistant, bot, call_py
 from ShizuMusic.modules import ALL_MODULES
+from ShizuMusic.utils.rich_ui import (
+    rich_esc,
+    rich_heading,
+    rich_kv_table,
+    rich_send,
+)
 
 ASSISTANT_USERNAME: str = ""
 
@@ -59,19 +65,39 @@ def _keep_alive() -> None:
 
 # ── Startup notification ──────────────────────────────────────────────────────
 
+
 async def _notify_owner(me, assistant_username: str) -> None:
     if not config.LOGGER_ID:
         return
-    try:
-        await bot.send_message(
-            config.LOGGER_ID,
-            f"🎵 ꜱʜɪᴢᴜᴍᴜꜱɪᴄ ꜱᴛᴀʀᴛᴇᴅ💕\n\n"
-            f"❍ ʙᴏᴛ : @{me.username}\n"
-            f"❍ ᴀꜱꜱɪꜱᴛᴀɴᴛ : @{assistant_username}",
-        )
-    except Exception as e:
-        LOGGER.warning(f"Logger Notification Error : {e}")
 
+    try:
+        content = (
+            rich_heading(
+                "🎵 ꜱʜɪᴢᴜᴍᴜꜱɪᴄ ꜱᴛᴀʀᴛᴇᴅ 💕",
+                level=3
+            )
+            + rich_kv_table([
+                (
+                    "ʙᴏᴛ",
+                    f"@{rich_esc(me.username or 'N/A')}"
+                ),
+                (
+                    "ᴀꜱꜱɪꜱᴛᴀɴᴛ",
+                    f"@{rich_esc(assistant_username)}"
+                ),
+            ])
+        )
+
+        await rich_send(
+            bot,
+            config.LOGGER_ID,
+            content,
+        )
+
+    except Exception as e:
+        LOGGER.warning(
+            f"Logger Notification Error : {e}"
+        )
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
