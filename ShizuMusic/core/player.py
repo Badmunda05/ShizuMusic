@@ -52,9 +52,48 @@ from ShizuMusic.utils.formatters import (
     short,
 )
 
+from ShizuMusic.utils.rich_ui import (
+    rich_edit,
+    rich_esc,
+    rich_heading,
+    rich_kv_table,
+    rich_note,
+    rich_send,
+)
+
 from ShizuMusic.utils.youtube import (
     resolve_stream,
 )
+
+
+# ─────────────────────────────────────────────
+# NOW PLAYING CONTENT
+# ─────────────────────────────────────────────
+
+def _now_playing_content(song: dict) -> str:
+    """True rich block content for the now-playing message (not a caption)."""
+    return (
+        rich_heading("🎧 sʜɪᴢᴜ ᴍᴜsɪᴄ — ɴᴏᴡ ᴘʟᴀʏɪɴɢ", level=3)
+        + rich_kv_table([
+            ("ᴛɪᴛʟᴇ", rich_esc(short(song["title"]))),
+            ("ᴅᴜʀᴀᴛɪᴏɴ", rich_esc(song.get("duration", "?"))),
+            ("ʙʏ", rich_esc(song["requester"])),
+        ])
+    )
+
+
+def _now_playing_kb(elapsed: float, total: float) -> InlineKeyboardMarkup:
+    bar = progress_bar(elapsed, total)
+    btns = [
+        InlineKeyboardButton("▷", callback_data="resume"),
+        InlineKeyboardButton("II", callback_data="pause"),
+        InlineKeyboardButton("‣‣I", callback_data="skip"),
+        InlineKeyboardButton("▢", callback_data="stop"),
+    ]
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton(bar, callback_data="noop")],
+        btns,
+    ])
 
 
 # ─────────────────────────────────────────────
@@ -66,36 +105,16 @@ async def _update_progress(
     msg: Message,
     start_t: float,
     total: float,
-    caption: str,
+    content: str,
 ) -> None:
-
-    btns = [
-        InlineKeyboardButton("▷", callback_data="resume"),
-        InlineKeyboardButton("II", callback_data="pause"),
-        InlineKeyboardButton("‣‣I", callback_data="skip"),
-        InlineKeyboardButton("▢", callback_data="stop"),
-    ]
 
     while True:
 
         elapsed = min(time.time() - start_t, total)
-
-        bar = progress_bar(elapsed, total)
-
-        kb = InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton(bar, callback_data="noop")],
-                btns,
-            ]
-        )
+        kb = _now_playing_kb(elapsed, total)
 
         try:
-            await bot.edit_message_caption(
-                chat_id,
-                msg.id,
-                caption=caption,
-                reply_markup=kb,
-            )
+            await rich_edit(msg, content, reply_markup=kb)
 
         except Exception as e:
             if "MESSAGE_NOT_MODIFIED" not in str(e):
@@ -131,11 +150,10 @@ async def _ensure_vc(chat_id: int) -> bool:
 
     except TelegramServerError as e:
         LOGGER.error(f"[VC] TelegramServerError: {e}")
-        await bot.send_message(
-            chat_id,
-            "<b>❍ ᴠᴄ ꜱᴛᴀʀᴛ ғᴀɪʟᴇᴅ (Telegram Server)</b>\n"
-            f"<code>{e}</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ ᴠᴄ sᴛᴀʀᴛ ғᴀɪʟᴇᴅ (Telegram Server)", level=3)
+            + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
         return False
 
@@ -149,22 +167,18 @@ async def _ensure_vc(chat_id: int) -> bool:
 
         # admin rights missing
         if "chat_admin_required" in err or "admin" in err:
-            await bot.send_message(
-                chat_id,
-                "<b>❍ ᴠᴄ ꜱᴛᴀʀᴛ ᴘᴇʀᴍɪssɪᴏɴ ᴍɪssɪɴɢ</b>\n\n"
-                "<b>❍ ɢɪᴠᴇ ᴀssɪsᴛᴀɴᴛ :</b>\n"
-                "• <code>Manage Video Chats</code>\n"
-                "• <code>Admin Rights</code>",
-                parse_mode=ParseMode.HTML,
+            await rich_send(
+                bot, chat_id,
+                rich_heading("❍ ᴠᴄ sᴛᴀʀᴛ ᴘᴇʀᴍɪssɪᴏɴ ᴍɪssɪɴɢ", level=3)
+                + rich_note("ɢɪᴠᴇ ᴀssɪsᴛᴀɴᴛ » ᴍᴀɴᴀɢᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs, ᴀᴅᴍɪɴ ʀɪɢʜᴛs"),
             )
             return False
 
         LOGGER.error(f"[VC ERROR] {e}")
-        await bot.send_message(
-            chat_id,
-            "<b>❍ ᴠᴄ ꜱᴛᴀʀᴛ ғᴀɪʟᴇᴅ</b>\n"
-            f"<code>{e}</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ ᴠᴄ sᴛᴀʀᴛ ғᴀɪʟᴇᴅ", level=3)
+            + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
         return False
 
@@ -186,19 +200,15 @@ async def play_song(
         return
 
     loading_text = (
-        f"<b>❍ ʟᴏᴀᴅɪɴɢ :</b> "
-        f"{short(song['title'])}"
+        rich_heading("❍ ʟᴏᴀᴅɪɴɢ...", level=3)
+        + rich_kv_table([("sᴏɴɢ", rich_esc(short(song['title'])))])
     )
 
     try:
-        await message.edit(loading_text, parse_mode=ParseMode.HTML)
+        await rich_edit(message, loading_text)
 
     except Exception:
-        message = await bot.send_message(
-            chat_id,
-            loading_text,
-            parse_mode=ParseMode.HTML,
-        )
+        message = await rich_send(bot, chat_id, loading_text)
 
     # ─────────────────────────────────────────
     # RESOLVE STREAM
@@ -213,11 +223,10 @@ async def play_song(
         except Exception:
             pass
 
-        await bot.send_message(
-            chat_id,
-            f"<b>❍ ᴅᴏᴡɴʟᴏᴀᴅ ғᴀɪʟᴇᴅ</b>\n\n"
-            f"<code>{e}</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ ᴅᴏᴡɴʟᴏᴀᴅ ғᴀɪʟᴇᴅ", level=3)
+            + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
         return
 
@@ -291,11 +300,10 @@ async def play_song(
             except Exception:
                 pass
 
-            await bot.send_message(
-                chat_id,
-                "<b>❍ ᴘʟᴀʏʙᴀᴄᴋ ғᴀɪʟᴇᴅ (Telegram Server)</b>\n"
-                f"<code>{e}</code>",
-                parse_mode=ParseMode.HTML,
+            await rich_send(
+                bot, chat_id,
+                rich_heading("❍ ᴘʟᴀʏʙᴀᴄᴋ ғᴀɪʟᴇᴅ (Telegram Server)", level=3)
+                + rich_note(f"<code>{rich_esc(e)}</code>"),
             )
             return
 
@@ -336,14 +344,11 @@ async def play_song(
                 except Exception:
                     pass
 
-                await bot.send_message(
-                    chat_id,
-                    "<b>❍ ᴠᴄ ꜱᴛᴀʀᴛ ᴘᴇʀᴍɪssɪᴏɴ ᴍɪssɪɴɢ</b>\n\n"
-                    "<b>❍ ᴘʟᴇᴀsᴇ ɢɪᴠᴇ :</b>\n"
-                    "• <code>Manage Video Chats</code>\n"
-                    "• <code>Admin Rights</code>\n\n"
-                    "<b>❍ ᴀssɪsᴛᴀɴᴛ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ</b>",
-                    parse_mode=ParseMode.HTML,
+                await rich_send(
+                    bot, chat_id,
+                    rich_heading("❍ ᴠᴄ sᴛᴀʀᴛ ᴘᴇʀᴍɪssɪᴏɴ ᴍɪssɪɴɢ", level=3)
+                    + rich_note("ᴘʟᴇᴀsᴇ ɢɪᴠᴇ » ᴍᴀɴᴀɢᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs, ᴀᴅᴍɪɴ ʀɪɢʜᴛs · "
+                                "ᴀssɪsᴛᴀɴᴛ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ"),
                 )
                 LOGGER.error(f"[ADMIN ERROR] {e}")
                 return
@@ -354,11 +359,10 @@ async def play_song(
             except Exception:
                 pass
 
-            await bot.send_message(
-                chat_id,
-                "<b>❍ ᴘʟᴀʏʙᴀᴄᴋ ғᴀɪʟᴇᴅ</b>\n\n"
-                f"<code>{e}</code>",
-                parse_mode=ParseMode.HTML,
+            await rich_send(
+                bot, chat_id,
+                rich_heading("❍ ᴘʟᴀʏʙᴀᴄᴋ ғᴀɪʟᴇᴅ", level=3)
+                + rich_note(f"<code>{rich_esc(e)}</code>"),
             )
             LOGGER.error(f"[PLAY ERROR] {e}")
             return
@@ -399,58 +403,30 @@ async def play_song(
         LOGGER.warning(f"[DB ERROR] {db_err}")
 
     # ─────────────────────────────────────────
-    # NOW PLAYING UI
+    # NOW PLAYING UI — a genuine rich message (heading + table), with the
+    # thumbnail sent alongside it as a plain, uncaptioned photo. Captions
+    # can never carry rich blocks, and this message is edited every ~18s
+    # for the progress bar, so it has to stay a true rich text message
+    # rather than a photo caption.
     # ─────────────────────────────────────────
 
     total = parse_dur(song.get("duration", "0:00"))
-
-    caption = (
-        "<blockquote>"
-        "<b>🎧 Sʜɪᴢᴜ Mᴜsɪᴄ</b>\n\n"
-        f"<b>❍ ᴛɪᴛʟᴇ :</b> {short(song['title'])}\n"
-        f"<b>❍ ᴅᴜʀ :</b> {song.get('duration', '?')}\n"
-        f"<b>❍ ʙʏ :</b> {song['requester']}"
-        "</blockquote>"
-    )
-
-    btns = [
-        InlineKeyboardButton("▷", callback_data="resume"),
-        InlineKeyboardButton("II", callback_data="pause"),
-        InlineKeyboardButton("‣‣I", callback_data="skip"),
-        InlineKeyboardButton("▢", callback_data="stop"),
-    ]
-
-    bar = progress_bar(0, total)
-
-    kb = InlineKeyboardMarkup(
-        [
-            [InlineKeyboardButton(bar, callback_data="noop")],
-            btns,
-        ]
-    )
+    content = _now_playing_content(song)
+    kb = _now_playing_kb(0, total)
 
     thumb = song.get("thumbnail")
+    if thumb:
+        try:
+            await bot.send_photo(chat_id, thumb)
+        except Exception:
+            pass
 
     try:
-        pmsg = await message.reply_photo(
-            photo=thumb,
-            caption=caption,
-            reply_markup=kb,
-            parse_mode=ParseMode.HTML,
-        )
-
+        pmsg = await rich_edit(message, content, reply_markup=kb)
+        if pmsg is None:
+            pmsg = message
     except Exception:
-        pmsg = await bot.send_message(
-            chat_id,
-            caption,
-            reply_markup=kb,
-            parse_mode=ParseMode.HTML,
-        )
-
-    try:
-        await message.delete()
-    except Exception:
-        pass
+        pmsg = await rich_send(bot, chat_id, content, reply_markup=kb)
 
     asyncio.create_task(
         _update_progress(
@@ -458,7 +434,7 @@ async def play_song(
             pmsg,
             time.time(),
             total,
-            caption,
+            content,
         )
     )
 
@@ -471,9 +447,10 @@ async def play_song(
             bot.send_message(
                 config.LOGGER_ID,
                 "<b>#ɴᴏᴡᴘʟᴀʏɪɴɢ</b>\n"
-                f"• <b>ᴛɪᴛʟᴇ :</b> {song.get('title')}\n"
-                f"• <b>ᴅᴜʀ :</b> {song.get('duration')}\n"
-                f"• <b>ʙʏ :</b> {song.get('requester')}",
+                f"• <b>ᴛɪᴛʟᴇ :</b> {rich_esc(song.get('title'))}\n"
+                f"• <b>ᴅᴜʀ :</b> {rich_esc(song.get('duration'))}\n"
+                f"• <b>ʙʏ :</b> {rich_esc(song.get('requester'))}",
                 parse_mode=ParseMode.HTML,
             )
-         )
+        )
+        
