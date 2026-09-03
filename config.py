@@ -36,7 +36,7 @@ PORT             = int(os.getenv("PORT", 10000))
 #}
 
 #── Start ───────────────────────────────────────────────────────────────────────
-START_ANIMATIONS = [
+START_PHOTOS = [
     "https://files.catbox.moe/jgt2vm.png",
 ]
 
