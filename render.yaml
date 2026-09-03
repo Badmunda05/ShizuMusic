@@ -41,8 +41,8 @@ services:
       - key: SUPPORT_GROUP
         sync: false
 
-      - key: START_ANIMATIONS
-        value: https://telegra.ph/file/1a3c152717eb9d2e94dc2.mp4
+      - key: START_PHOTOS
+        value: https://files.catbox.moe/jgt2vm.png
 
       - key: PING_IMG_URL
         value: https://files.catbox.moe/ddzvc0.jpg
