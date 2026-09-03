@@ -29,10 +29,10 @@ from ShizuMusic.utils.formatters import short
 from ShizuMusic.utils.helpers import delete_file
 from ShizuMusic.utils.permissions import is_user_authorized
 from ShizuMusic.utils.rich_ui import (
-    rich_caption,
     rich_details,
     rich_esc,
     rich_heading,
+    rich_img,
     rich_kv_table,
     rich_note,
     rich_send,
@@ -378,7 +378,8 @@ async def _go_back(cbq: CallbackQuery) -> None:
     name = sanitize_display_name(cbq.from_user.first_name)
 
     caption = (
-            f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
+            rich_img(random.choice(config.START_PHOTOS))
+            + f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
             "ᴡᴇʟᴄᴏᴍᴇ ᴀʙᴏᴀʀᴅ! 🎶</p>"
             + f"<p>ɪ ᴀᴍ <b>{rich_esc(config.BOT_NAME)}</b> — ᴀ ғᴀsᴛ &amp; "
               "ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ᴘʟᴀʏᴇʀ ʙᴏᴛ ᴡɪᴛʜ sᴏᴍᴇ ᴀᴡᴇsᴏᴍᴇ "
@@ -429,7 +430,6 @@ async def _go_back(cbq: CallbackQuery) -> None:
         ],
     ])
 
-    photo = random.choice(config.START_PHOTOS)
     chat_id = cbq.message.chat.id
 
     try:
@@ -437,14 +437,5 @@ async def _go_back(cbq: CallbackQuery) -> None:
     except Exception:
         pass
 
-    try:
-        await bot.send_photo(
-            chat_id,
-            photo,
-            caption=rich_caption(caption),
-            parse_mode=ParseMode.HTML,
-            reply_markup=kb,
-        )
-    except Exception:
-        await rich_send(bot, chat_id, caption, reply_markup=kb)
+    await rich_send(bot, chat_id, caption, reply_markup=kb)
 
