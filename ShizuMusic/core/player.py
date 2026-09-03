@@ -56,6 +56,7 @@ from ShizuMusic.utils.rich_ui import (
     rich_edit,
     rich_esc,
     rich_heading,
+    rich_img,
     rich_kv_table,
     rich_note,
     rich_send,
@@ -71,9 +72,17 @@ from ShizuMusic.utils.youtube import (
 # ─────────────────────────────────────────────
 
 def _now_playing_content(song: dict) -> str:
-    """True rich block content for the now-playing message (not a caption)."""
+    """True rich block content for the now-playing message (not a caption).
+
+    The thumbnail is embedded via rich_img() as part of the same rich
+    message instead of being sent as a separate photo — Bot API 10.2 rich
+    messages support <img>, so this keeps everything as one card instead
+    of two split bubbles.
+    """
+    thumb = song.get("thumbnail")
     return (
         rich_heading("🎧 sʜɪᴢᴜ ᴍᴜsɪᴄ — ɴᴏᴡ ᴘʟᴀʏɪɴɢ", level=3)
+        + (rich_img(thumb) if thumb else "")
         + rich_kv_table([
             ("ᴛɪᴛʟᴇ", rich_esc(short(song["title"]))),
             ("ᴅᴜʀᴀᴛɪᴏɴ", rich_esc(song.get("duration", "?"))),
@@ -403,23 +412,15 @@ async def play_song(
         LOGGER.warning(f"[DB ERROR] {db_err}")
 
     # ─────────────────────────────────────────
-    # NOW PLAYING UI — a genuine rich message (heading + table), with the
-    # thumbnail sent alongside it as a plain, uncaptioned photo. Captions
-    # can never carry rich blocks, and this message is edited every ~18s
-    # for the progress bar, so it has to stay a true rich text message
-    # rather than a photo caption.
+    # NOW PLAYING UI — one genuine rich message (heading + embedded
+    # thumbnail + table). This message is edited every ~18s for the
+    # progress bar, so it has to stay a true rich text message rather
+    # than a photo caption (captions can never carry rich blocks).
     # ─────────────────────────────────────────
 
     total = parse_dur(song.get("duration", "0:00"))
     content = _now_playing_content(song)
     kb = _now_playing_kb(0, total)
-
-    thumb = song.get("thumbnail")
-    if thumb:
-        try:
-            await bot.send_photo(chat_id, thumb)
-        except Exception:
-            pass
 
     try:
         pmsg = await rich_edit(message, content, reply_markup=kb)
@@ -453,4 +454,5 @@ async def play_song(
                 parse_mode=ParseMode.HTML,
             )
         )
-        
+
+                                      
