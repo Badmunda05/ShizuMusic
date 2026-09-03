@@ -13,6 +13,7 @@
 # --------------------------------------------------------------------------------
 
 import asyncio
+import random
 
 from pyrogram import enums
 from pyrogram.enums import ParseMode
@@ -28,6 +29,7 @@ from ShizuMusic.utils.formatters import short
 from ShizuMusic.utils.helpers import delete_file
 from ShizuMusic.utils.permissions import is_user_authorized
 from ShizuMusic.utils.rich_ui import (
+    rich_caption,
     rich_details,
     rich_esc,
     rich_heading,
@@ -36,6 +38,7 @@ from ShizuMusic.utils.rich_ui import (
     rich_send,
     rich_table,
     rich_edit,
+    sanitize_display_name,
 )
 
 def _support_updates_pills() -> str:
@@ -286,7 +289,7 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
             bot, chat_id,
             rich_heading("⏭ ᴛʀᴀᴄᴋ sᴋɪᴘᴘᴇᴅ", level=3)
             + rich_kv_table([
-                ("ʙʏ", rich_esc(user.mention)),
+                ("ʙʏ", user.mention),
                 ("sᴏɴɢ", f"<code>{rich_esc(short(skipped['title']))}</code>"),
             ]),
         )
@@ -338,8 +341,24 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
     # ── HELP ───────────────────────────────────────────────────────────────────
     elif data == "show_help":
         await cbq.answer()
-        heading = rich_heading("📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ", level=3)
-        await rich_edit(cbq.message, heading, reply_markup=_HELP_KB)
+        uid  = cbq.from_user.id
+        name = sanitize_display_name(cbq.from_user.first_name)
+        content = (
+            rich_heading("📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ", level=3)
+            + f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, ᴘɪᴄᴋ ᴀ "
+              "ᴄᴀᴛᴇɢᴏʀʏ ʙᴇʟᴏᴡ ᴛᴏ sᴇᴇ ɪᴛs ᴄᴏᴍᴍᴀɴᴅs.</p>"
+            + rich_note(f"ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
+        )
+        if getattr(cbq.message, "photo", None):
+            # /start's message is a photo — can't edit its caption into a
+            # true rich message, so swap it out for one.
+            try:
+                await cbq.message.delete()
+            except Exception:
+                pass
+            await rich_send(bot, chat_id, content, reply_markup=_HELP_KB)
+        else:
+            await rich_edit(cbq.message, content, reply_markup=_HELP_KB)
 
     elif data == "go_back":
         await _go_back(cbq)
@@ -356,7 +375,7 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
 async def _go_back(cbq: CallbackQuery) -> None:
     await cbq.answer()
     uid  = cbq.from_user.id
-    name = cbq.from_user.first_name or "User"
+    name = sanitize_display_name(cbq.from_user.first_name)
 
     caption = (
             f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
@@ -410,4 +429,22 @@ async def _go_back(cbq: CallbackQuery) -> None:
         ],
     ])
 
-    await rich_edit(cbq.message, caption, reply_markup=kb)
+    photo = random.choice(config.START_PHOTOS)
+    chat_id = cbq.message.chat.id
+
+    try:
+        await cbq.message.delete()
+    except Exception:
+        pass
+
+    try:
+        await bot.send_photo(
+            chat_id,
+            photo,
+            caption=rich_caption(caption),
+            parse_mode=ParseMode.HTML,
+            reply_markup=kb,
+        )
+    except Exception:
+        await rich_send(bot, chat_id, caption, reply_markup=kb)
+
