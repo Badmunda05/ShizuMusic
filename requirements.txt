@@ -7,6 +7,7 @@ py-tgcalls==2.2.11
 ntgcalls
 
 # ── Telegram Client ──────────────────────
+# Bot API 10.3
 https://github.com/KurimuzonAkuma/kurigram/archive/refs/heads/dev.zip
 tgcrypto==1.2.5
 httpx[http2]==0.28.1
