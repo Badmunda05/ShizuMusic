@@ -52,24 +52,28 @@ def _support_updates_pills() -> str:
     )
 
 
-def _category_html(title: str, desc: str, rows) -> str:
-    """title/desc/rows -> heading + description + Command/Description table + pills."""
+def _category_html(title: str, desc: str, rows, photo: str = None) -> str:
+    """title/desc/rows + photo -> photo + heading + description + Command/Description table + pills."""
+    html = ""
+    if photo:
+        html += rich_img(photo)
     return (
-        rich_heading(title, level=3)
+        html
+        + rich_heading(title, level=3)
         + f"<p>{desc}</p>"
         + rich_table(["ᴄᴏᴍᴍᴀɴᴅ", "ᴅᴇsᴄʀɪᴘᴛɪᴏɴ"], rows)
         + _support_updates_pills()
     )
 
 
-# ── Help menu layout ───────────────────────────────────────────────────────────
+# ── Help menu layout ──────────────────────────────────────────────────────────[...]
 #
 #   Row 1 : [ᴧᴅᴍɪɴ]  [ᴧ-ᴘʟᴀʏ]  [ɢ-ᴄᴧsᴛ]
 #   Row 2 : [ʙʟ-ᴄʜᴧᴛ] [ʙʟ-ᴜsᴇʀs] [ᴘɪɴɢ]
 #   Row 3 : [ᴘʟᴀʏ]   [sᴘᴇᴇᴅ]   [ɪɴғᴏ]
 #   Row 4 :          [⌯ ʜᴏᴍᴇ ⌯]
 #
-# ──────────────────────────────────────────────────────────────────────────────
+# ──────────────────────────────────────────────────────────────────[...]
 
 _HELP_KB = InlineKeyboardMarkup([
     [
@@ -99,16 +103,17 @@ _BACK_KB = InlineKeyboardMarkup([
     [InlineKeyboardButton("⌯ ᴄʟᴏsᴇ ⌯", callback_data="close_help", style=enums.ButtonStyle.DANGER)],
 ])
 
-# ── Help texts ─────────────────────────────────────────────────────────────────
+# ── Help texts ────────────────────────────────────────────────────────────[...]
 # Same commands/wording as the old ASCII-box version, restructured into a real
 # heading + description + Command/Description table.
+# Note: photo parameter will be passed at render time from callback handler
 
 _HELP_TEXTS = {
 
-    "help_admin": _category_html(
-        "⚙️ ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs",
-        "ᴄᴏʀᴇ ᴘʟᴀʏʙᴀᴄᴋ ᴄᴏɴᴛʀᴏʟs ғᴏʀ ᴄʜᴀᴛ ᴀᴅᴍɪɴs.",
-        [
+    "help_admin": {
+        "title": "⚙️ ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs",
+        "desc": "ᴄᴏʀᴇ ᴘʟᴀʏʙᴀᴄᴋ ᴄᴏɴᴛʀᴏʟs ғᴏʀ ᴄʜᴀᴛ ᴀᴅᴍɪɴs.",
+        "rows": [
             ("/pause", "ᴘᴀᴜsᴇ ᴄᴜʀʀᴇɴᴛ ᴘʟᴀʏʙᴀᴄᴋ"),
             ("/resume", "ʀᴇsᴜᴍᴇ ᴘᴀᴜsᴇᴅ ᴘʟᴀʏʙᴀᴄᴋ"),
             ("/skip", "sᴋɪᴘ ᴛᴏ ɴᴇxᴛ sᴏɴɢ"),
@@ -118,69 +123,69 @@ _HELP_TEXTS = {
             ("/seekback &lt;seconds&gt;", "sᴇᴇᴋ ʙᴀᴄᴋᴡᴀʀᴅ ʙʏ ɴ sᴇᴄᴏɴᴅs"),
             ("/reboot", "ʀᴇsᴇᴛ ᴄʜᴀᴛ sᴛᴀᴛᴇ &amp; ʟᴇᴀᴠᴇ ᴠᴄ"),
         ],
-    ),
+    },
 
-    "help_autoplay": _category_html(
-        "🔁 ᴀᴜᴛᴏᴘʟᴀʏ ᴄᴏᴍᴍᴀɴᴅs",
-        "ᴋᴇᴇᴘ ᴛʜᴇ ǫᴜᴇᴜᴇ ɢᴏɪɴɢ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ ʙᴀsᴇᴅ ᴏɴ ᴀ ǫᴜᴇʀʏ.",
-        [
+    "help_autoplay": {
+        "title": "🔁 ᴀᴜᴛᴏᴘʟᴀʏ ᴄᴏᴍᴍᴀɴᴅs",
+        "desc": "ᴋᴇᴇᴘ ᴛʜᴇ ǫᴜᴇᴜᴇ ɢᴏɪɴɢ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ ʙᴀsᴇᴅ ᴏɴ ᴀ ǫᴜᴇʀʏ.",
+        "rows": [
             ("/autoplay &lt;query&gt;", "ᴄᴏɴᴛɪɴᴜᴏᴜsʟʏ ᴘʟᴀʏ sᴏɴɢs ʙᴀsᴇᴅ ᴏɴ ʏᴏᴜʀ ǫᴜᴇʀʏ"),
             ("/end, /stop", "sᴛᴏᴘ ᴀᴜᴛᴏᴘʟᴀʏ &amp; ᴄʟᴇᴀʀ ǫᴜᴇᴜᴇ"),
             ("<code>/autoplay sidhu moose wala</code>", "ᴇxᴀᴍᴘʟᴇ"),
             ("<code>/autoplay arijit singh</code>", "ᴇxᴀᴍᴘʟᴇ"),
         ],
-    ),
+    },
 
-    "help_gcast": _category_html(
-        "📢 ɢ-ᴄᴀsᴛ ᴄᴏᴍᴍᴀɴᴅs",
-        "ʙʀᴏᴀᴅᴄᴀsᴛ ᴛᴏ ᴇᴠᴇʀʏ sᴇʀᴠᴇᴅ ᴄʜᴀᴛ (ᴏᴡɴᴇʀ ᴏɴʟʏ).",
-        [
+    "help_gcast": {
+        "title": "📢 ɢ-ᴄᴀsᴛ ᴄᴏᴍᴍᴀɴᴅs",
+        "desc": "ʙʀᴏᴀᴅᴄᴀsᴛ ᴛᴏ ᴇᴠᴇʀʏ sᴇʀᴠᴇᴅ ᴄʜᴀᴛ (ᴏᴡɴᴇʀ ᴏɴʟʏ).",
+        "rows": [
             ("/broadcast, /gcast", "ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴍsɢ ᴏʀ ᴛʏᴘᴇ ᴛᴇxᴛ"),
             ("-pin", "ᴘɪɴ sɪʟᴇɴᴛʟʏ ɪɴ ɢʀᴏᴜᴘs"),
             ("-pinloud", "ᴘɪɴ ᴡɪᴛʜ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ"),
             ("-nogroup", "sᴋɪᴘ ɢʀᴏᴜᴘs"),
             ("-user", "ᴀʟsᴏ sᴇɴᴅ ᴛᴏ ᴜsᴇʀs"),
         ],
-    ),
+    },
 
-    "help_blchat": _category_html(
-        "🚫 ʙʟ-ᴄʜᴀᴛ ᴄᴏᴍᴍᴀɴᴅs",
-        "ʙʟᴏᴄᴋ ᴏʀ ᴜɴʙʟᴏᴄᴋ ᴡʜᴏʟᴇ ɢʀᴏᴜᴘs (ᴏᴡɴᴇʀ ᴏɴʟʏ).",
-        [
+    "help_blchat": {
+        "title": "🚫 ʙʟ-ᴄʜᴀᴛ ᴄᴏᴍᴍᴀɴᴅs",
+        "desc": "ʙʟᴏᴄᴋ ᴏʀ ᴜɴʙʟᴏᴄᴋ ᴡʜᴏʟᴇ ɢʀᴏᴜᴘs (ᴏᴡɴᴇʀ ᴏɴʟʏ).",
+        "rows": [
             ("/gblock", "ʙʟᴏᴄᴋ ᴄᴜʀʀᴇɴᴛ ɢʀᴏᴜᴘ — ɴᴏ ᴄᴏᴍᴍᴀɴᴅs ᴡɪʟʟ ᴡᴏʀᴋ"),
             ("/gblock &lt;-100xxxxxxx&gt;", "ʙʟᴏᴄᴋ ʙʏ ᴄʜᴀᴛ ɪᴅ"),
             ("/gunblock", "ᴜɴʙʟᴏᴄᴋ ɢʀᴏᴜᴘ"),
             ("/gunblock &lt;-100xxxxxxx&gt;", "ᴜɴʙʟᴏᴄᴋ ʙʏ ᴄʜᴀᴛ ɪᴅ"),
             ("/blocklist", "sʜᴏᴡ ᴀʟʟ ʙʟᴏᴄᴋᴇᴅ ɢʀᴏᴜᴘs &amp; ᴜsᴇʀs"),
         ],
-    ),
+    },
 
-    "help_blusers": _category_html(
-        "🚫 ʙʟ-ᴜsᴇʀs ᴄᴏᴍᴍᴀɴᴅs",
-        "ʙʟᴏᴄᴋ ᴏʀ ᴜɴʙʟᴏᴄᴋ ɪɴᴅɪᴠɪᴅᴜᴀʟ ᴜsᴇʀs (ᴏᴡɴᴇʀ ᴏɴʟʏ).",
-        [
+    "help_blusers": {
+        "title": "🚫 ʙʟ-ᴜsᴇʀs ᴄᴏᴍᴍᴀɴᴅs",
+        "desc": "ʙʟᴏᴄᴋ ᴏʀ ᴜɴʙʟᴏᴄᴋ ɪɴᴅɪᴠɪᴅᴜᴀʟ ᴜsᴇʀs (ᴏᴡɴᴇʀ ᴏɴʟʏ).",
+        "rows": [
             ("/ublock", "ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ's ᴍsɢ ᴛᴏ ʙʟᴏᴄᴋ — ᴛʜᴇʏ ᴄᴀɴ'ᴛ ᴜsᴇ ᴀɴʏ ᴄᴏᴍᴍᴀɴᴅ"),
             ("/ublock &lt;user id&gt;", "ʙʟᴏᴄᴋ ʙʏ ᴜsᴇʀ ɪᴅ"),
             ("/uunblock", "ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ's ᴍsɢ ᴛᴏ ᴜɴʙʟᴏᴄᴋ"),
             ("/uunblock &lt;user id&gt;", "ᴜɴʙʟᴏᴄᴋ ʙʏ ᴜsᴇʀ ɪᴅ"),
             ("/blocklist", "sʜᴏᴡ ᴀʟʟ ʙʟᴏᴄᴋᴇᴅ ᴜsᴇʀs &amp; ᴄʜᴀᴛs"),
         ],
-    ),
+    },
 
-    "help_ping": _category_html(
-        "🏓 ᴘɪɴɢ ᴄᴏᴍᴍᴀɴᴅs",
-        "ʟᴀᴛᴇɴᴄʏ ᴀɴᴅ sʏsᴛᴇᴍ ᴅɪᴀɢɴᴏsᴛɪᴄs.",
-        [
+    "help_ping": {
+        "title": "🏓 ᴘɪɴɢ ᴄᴏᴍᴍᴀɴᴅs",
+        "desc": "ʟᴀᴛᴇɴᴄʏ ᴀɴᴅ sʏsᴛᴇᴍ ᴅɪᴀɢɴᴏsᴛɪᴄs.",
+        "rows": [
             ("/ping", "ʙᴏᴛ ʟᴀᴛᴇɴᴄʏ, ʀᴀᴍ, ᴄᴘᴜ, ᴅɪsᴋ &amp; ᴜᴘᴛɪᴍᴇ sᴛᴀᴛs"),
             ("/speedtest, /spt", "ɴᴇᴛᴡᴏʀᴋ sᴘᴇᴇᴅ ᴛᴇsᴛ (ᴏᴡɴᴇʀ ᴏɴʟʏ)"),
             ("/stats", "ғᴜʟʟ sʏsᴛᴇᴍ + ᴍᴏɴɢᴏᴅʙ sᴛᴀᴛs (ᴏᴡɴᴇʀ ᴏɴʟʏ)"),
         ],
-    ),
+    },
 
-    "help_play": _category_html(
-        "🎵 ᴘʟᴀʏ ᴄᴏᴍᴍᴀɴᴅs",
-        "sᴛᴀʀᴛ ᴀᴜᴅɪᴏ ᴏʀ ᴠɪᴅᴇᴏ ᴘʟᴀʏʙᴀᴄᴋ ɪɴ ᴀ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ.",
-        [
+    "help_play": {
+        "title": "🎵 ᴘʟᴀʏ ᴄᴏᴍᴍᴀɴᴅs",
+        "desc": "sᴛᴀʀᴛ ᴀᴜᴅɪᴏ ᴏʀ ᴠɪᴅᴇᴏ ᴘʟᴀʏʙᴀᴄᴋ ɪɴ ᴀ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ.",
+        "rows": [
             ("/play &lt;song name or URL&gt;", "ᴘʟᴀʏ ᴀᴜᴅɪᴏ ɪɴ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ"),
             ("/vplay &lt;song name or URL&gt;", "ᴘʟᴀʏ ᴠɪᴅᴇᴏ ɪɴ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ"),
             ("ʀᴇᴘʟʏ ᴛᴏ ᴀᴜᴅɪᴏ/ᴠɪᴅᴇᴏ + /play", "ᴘʟᴀʏ ᴛʜᴀᴛ ᴍᴇᴅɪᴀ ᴅɪʀᴇᴄᴛʟʏ"),
@@ -188,12 +193,12 @@ _HELP_TEXTS = {
             ("ᴍᴀx ᴅᴜʀᴀᴛɪᴏɴ", f"{config.MAX_DURATION_SECONDS // 60} ᴍɪɴᴜᴛᴇs"),
             ("ǫᴜᴇᴜᴇ ʟɪᴍɪᴛ", f"{config.QUEUE_LIMIT} sᴏɴɢs"),
         ],
-    ),
+    },
 
-    "help_speed": _category_html(
-        "🎚️ sᴘᴇᴇᴅ &amp; ᴇғғᴇᴄᴛs",
-        "ᴀᴅᴊᴜsᴛ ᴘʟᴀʏʙᴀᴄᴋ sᴘᴇᴇᴅ ᴀɴᴅ ᴀᴜᴅɪᴏ ᴇғғᴇᴄᴛs.",
-        [
+    "help_speed": {
+        "title": "🎚️ sᴘᴇᴇᴅ &amp; ᴇғғᴇᴄᴛs",
+        "desc": "ᴀᴅᴊᴜsᴛ ᴘʟᴀʏʙᴀᴄᴋ sᴘᴇᴇᴅ ᴀɴᴅ ᴀᴜᴅɪᴏ ᴇғғᴇᴄᴛs.",
+        "rows": [
             ("/speed &lt;0.25–4.0&gt;", "ᴄʜᴀɴɢᴇ ᴘʟᴀʏʙᴀᴄᴋ sᴘᴇᴇᴅ — ᴇ.ɢ. /speed 1.5"),
             ("/speedreset", "ʀᴇsᴇᴛ sᴘᴇᴇᴅ ᴛᴏ ɴᴏʀᴍᴀʟ (1.0x)"),
             ("/bass &lt;1–20&gt;", "ʙᴏᴏsᴛ ʙᴀss ʙʏ ɴ ᴅʙ — ᴇ.ɢ. /bass 10"),
@@ -202,24 +207,24 @@ _HELP_TEXTS = {
             ("/effectoff", "ᴅɪsᴀʙʟᴇ ᴀᴜᴛᴏ ᴇғғᴇᴄᴛs"),
             ("/effects", "sʜᴏᴡ ᴄᴜʀʀᴇɴᴛ ᴇғғᴇᴄᴛ sᴛᴀᴛᴜs"),
         ],
-    ),
+    },
 
-    "help_info": _category_html(
-        "ℹ️ ɪɴғᴏ ᴄᴏᴍᴍᴀɴᴅs",
-        "ʙᴏᴛ, ᴄʜᴀᴛ, ᴀɴᴅ ᴜsᴇʀ ɪɴғᴏʀᴍᴀᴛɪᴏɴ.",
-        [
+    "help_info": {
+        "title": "ℹ️ ɪɴғᴏ ᴄᴏᴍᴍᴀɴᴅs",
+        "desc": "ʙᴏᴛ, ᴄʜᴀᴛ, ᴀɴᴅ ᴜsᴇʀ ɪɴғᴏʀᴍᴀᴛɪᴏɴ.",
+        "rows": [
             ("/id", "ɢᴇᴛ ɪᴅs ᴏғ ᴜsᴇʀ / ᴄʜᴀᴛ / ᴍsɢ — ᴀʟsᴏ ᴡᴏʀᴋs ᴡɪᴛʜ ʀᴇᴘʟʏ"),
             ("/id @username", "ɢᴇᴛ ᴀɴʏ ᴜsᴇʀ's ɪᴅ"),
             ("/repo", "sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ ʟɪɴᴋ"),
             ("/stats", "ғᴜʟʟ sᴛᴀᴛs — sʏsᴛᴇᴍ + ᴍᴏɴɢᴏᴅʙ ɪɴғᴏ (ᴏᴡɴᴇʀ ᴏɴʟʏ)"),
         ],
-    ),
+    },
 }
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════[...]
 #  MAIN CALLBACK HANDLER
-# ══════════════════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════[...]
 
 @bot.on_callback_query()
 async def on_callback(client, cbq: CallbackQuery) -> None:
@@ -228,7 +233,7 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
     user    = cbq.from_user
     data    = cbq.data
 
-    # ── Block check ────────────────────────────────────────────────────────────
+    # ── Block check ──────────────────────────────────────────────────────────[...]
     if user and is_user_blocked_db(user.id):
         await cbq.answer()
         return
@@ -239,7 +244,7 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
             await cbq.answer("❍ ᴀᴅᴍɪɴs ᴏɴʟʏ", show_alert=True)
             return
 
-    # ── PAUSE ──────────────────────────────────────────────────────────────────
+    # ── PAUSE ────────────────────────────────────────────────────────────[...]
     if data == "pause":
         try:
             await call_py.pause(chat_id)
@@ -252,7 +257,7 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
         except Exception:
             await cbq.answer("Failed To Pause", show_alert=True)
 
-    # ── RESUME ─────────────────────────────────────────────────────────────────
+    # ── RESUME ────────────────────────────────────────────────────────────[...]
     elif data == "resume":
         try:
             await call_py.resume(chat_id)
@@ -265,7 +270,7 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
         except Exception:
             await cbq.answer("Failed To Resume", show_alert=True)
 
-    # ── SKIP ───────────────────────────────────────────────────────────────────
+    # ── SKIP ────────────────────────────────────────────────────────────[...]
     elif data == "skip":
         if not queue_size(chat_id):
             await cbq.answer("Queue Is Empty", show_alert=True)
@@ -306,7 +311,7 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
         else:
             await cbq.answer("Queue Empty", show_alert=True)
 
-    # ── STOP ───────────────────────────────────────────────────────────────────
+    # ── STOP ────────────────────────────────────────────────────────────[...]
     elif data == "stop":
         await leave_vc(chat_id)
         await cbq.answer("Stopped")
@@ -316,7 +321,7 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
             + rich_note(f"❍ ʙʏ » {user.mention}"),
         )
 
-    # ── CLEAR ──────────────────────────────────────────────────────────────────
+    # ── CLEAR ────────────────────────────────────────────────────────────[...]
     elif data == "clear":
         clear_queue(chat_id)
         await cbq.answer("Queue Cleared")
@@ -326,11 +331,11 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
             + rich_note(f"❍ ʙʏ » {user.mention}"),
         )
 
-    # ── NOOP ───────────────────────────────────────────────────────────────────
+    # ── NOOP ────────────────────────────────────────────────────────────[...]
     elif data == "noop":
         await cbq.answer()
 
-    # ── CLOSE HELP ─────────────────────────────────────────────────────────────
+    # ── CLOSE HELP ──────────────────────────────────────────────────────────[...]
     elif data == "close_help":
         await cbq.answer()
         try:
@@ -338,13 +343,15 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
         except Exception:
             pass
 
-    # ── HELP ───────────────────────────────────────────────────────────────────
+    # ── HELP ────────────────────────────────────────────────────────────[...]
     elif data == "show_help":
         await cbq.answer()
         uid  = cbq.from_user.id
         name = sanitize_display_name(cbq.from_user.first_name)
+        photo = random.choice(config.START_PHOTOS)
         content = (
-            rich_heading("📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ", level=3)
+            rich_img(photo)
+            + rich_heading("📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ", level=3)
             + f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, ᴘɪᴄᴋ ᴀ "
               "ᴄᴀᴛᴇɢᴏʀʏ ʙᴇʟᴏᴡ ᴛᴏ sᴇᴇ ɪᴛs ᴄᴏᴍᴍᴀɴᴅs.</p>"
             + rich_note(f"ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
@@ -365,8 +372,10 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
 
     elif data.startswith("help_"):
         await cbq.answer()
-        text = _HELP_TEXTS.get(data)
-        if text:
+        photo = random.choice(config.START_PHOTOS)
+        help_data = _HELP_TEXTS.get(data)
+        if help_data:
+            text = _category_html(help_data["title"], help_data["desc"], help_data["rows"], photo)
             await rich_edit(cbq.message, text, reply_markup=_BACK_KB)
 
 
@@ -376,9 +385,10 @@ async def _go_back(cbq: CallbackQuery) -> None:
     await cbq.answer()
     uid  = cbq.from_user.id
     name = sanitize_display_name(cbq.from_user.first_name)
+    photo = random.choice(config.START_PHOTOS)
 
     caption = (
-            rich_img(random.choice(config.START_PHOTOS))
+            rich_img(photo)
             + f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
             "ᴡᴇʟᴄᴏᴍᴇ ᴀʙᴏᴀʀᴅ! 🎶</p>"
             + f"<p>ɪ ᴀᴍ <b>{rich_esc(config.BOT_NAME)}</b> — ᴀ ғᴀsᴛ &amp; "
@@ -438,4 +448,3 @@ async def _go_back(cbq: CallbackQuery) -> None:
         pass
 
     await rich_send(bot, chat_id, caption, reply_markup=kb)
-
