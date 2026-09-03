@@ -66,28 +66,39 @@ from ShizuMusic.utils.youtube import (
     resolve_stream,
 )
 
+def _support_updates_pills() -> str:
+    return (
+        "<p>"
+        f'<tg-button type="url" style="primary" url="{config.SUPPORT_GROUP}">'
+        "🍬 sᴜᴘᴘᴏʀᴛ</tg-button> "
+        f'<tg-button type="url" style="success" url="{config.UPDATES_CHANNEL}">'
+        "🍹 ᴜᴘᴅᴀᴛᴇs</tg-button>"
+        "</p>"
+    )
+
 
 # ─────────────────────────────────────────────
 # NOW PLAYING CONTENT
 # ─────────────────────────────────────────────
 
-def _now_playing_content(song: dict) -> str:
-    """True rich block content for the now-playing message (not a caption).
 
-    The thumbnail is embedded via rich_img() as part of the same rich
-    message instead of being sent as a separate photo — Bot API 10.2 rich
-    messages support <img>, so this keeps everything as one card instead
-    of two split bubbles.
-    """
+def _now_playing_content(song: dict) -> str:
+    """Now-playing rich message content."""
+
     thumb = song.get("thumbnail")
+
     return (
-        rich_heading("🎧 sʜɪᴢᴜ ᴍᴜsɪᴄ — ɴᴏᴡ ᴘʟᴀʏɪɴɢ", level=3)
+        rich_heading(
+            "🎧 sʜɪᴢᴜ ᴍᴜsɪᴄ — ɴᴏᴡ ᴘʟᴀʏɪɴɢ",
+            level=3
+        )
         + (rich_img(thumb) if thumb else "")
         + rich_kv_table([
             ("ᴛɪᴛʟᴇ", rich_esc(short(song["title"]))),
             ("ᴅᴜʀᴀᴛɪᴏɴ", rich_esc(song.get("duration", "?"))),
             ("ʙʏ", rich_esc(song["requester"])),
         ])
+        + _support_updates_pills()
     )
 
 
