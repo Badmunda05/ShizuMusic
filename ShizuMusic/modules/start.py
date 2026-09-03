@@ -50,7 +50,7 @@ def _support_updates_pills() -> str:
     )
 
 
-# ── /start ────────────────────────────────────────────────────────────────────
+# ── /start ─────────────────────────────────────────────────────────────────────
 
 @bot.on_message(filters.command("start") & user_allowed)
 async def start_handler(_, message: Message) -> None:
@@ -142,18 +142,23 @@ async def start_handler(_, message: Message) -> None:
 
         if config.LOGGER_ID:
             try:
+                logger_caption = (
+                    rich_heading("#ɴᴇᴡᴜsᴇʀ sᴛᴀʀᴛᴇᴅ", level=2)
+                    + "<p>"
+                    + f"<b>❍ ɴᴀᴍᴇ     :</b> <a href='tg://user?id={uid}'>{rich_esc(name)}</a><br>"
+                    + f"<b>❍ ɪᴅ       :</b> <code>{uid}</code><br>"
+                    + f"<b>❍ ᴜsᴇʀɴᴀᴍᴇ :</b> @{rich_esc(message.from_user.username) or 'N/A'}"
+                    + "</p>"
+                )
                 await bot.send_message(
                     config.LOGGER_ID,
-                    "<b>#ɴᴇᴡᴜsᴇʀ sᴛᴀʀᴛᴇᴅ</b>\n\n"
-                    f"<b>❍ ɴᴀᴍᴇ     :</b> <a href='tg://user?id={uid}'>{rich_esc(name)}</a>\n"
-                    f"<b>❍ ɪᴅ       :</b> <code>{uid}</code>\n"
-                    f"<b>❍ ᴜsᴇʀɴᴀᴍᴇ :</b> @{rich_esc(message.from_user.username) or 'N/A'}",
+                    logger_caption,
                     parse_mode=ParseMode.HTML,
                 )
             except Exception:
                 pass
 
-    # ── Group ─────────────────────────────────────────────────────────────────
+    # ── Group ────────────────────────────────────────────────────────────────
     else:
         chat_title = message.chat.title or "this chat"
 
@@ -187,19 +192,14 @@ async def start_handler(_, message: Message) -> None:
             sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
 
         admin_msg = (
-            "<b>╭──────────────────────▣</b>\n"
-            "<b>│❍ ᴛʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ! 🥀</b>\n"
-            "<b>├──────────────────────▣</b>\n"
-            "<b>│❍ ᴘʟᴇᴀsᴇ ᴍᴀᴋᴇ ᴍᴇ ᴀɴ ᴀᴅᴍɪɴ</b>\n"
-            "<b>│  ᴡɪᴛʜ ᴛʜᴇsᴇ ᴘᴇʀᴍɪssɪᴏɴs:</b>\n"
-            "<b>├──────────────────────▣</b>\n"
-            "<b>│ ❍ ᴅᴇʟᴇᴛᴇ ᴍᴇssᴀɢᴇs</b>\n"
-            "<b>│ ❍ ᴍᴀɴᴀɢᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs</b>\n"
-            "<b>│ ❍ ɪɴᴠɪᴛᴇ ᴜsᴇʀs</b>\n"
-            "<b>├──────────────────────▣</b>\n"
-            "<b>│❍ ᴡɪᴛʜᴏᴜᴛ ᴀᴅᴍɪɴ ᴘᴇʀᴍs</b>\n"
-            "<b>│  sᴏᴍᴇ ғᴇᴀᴛᴜʀᴇs ᴡᴏɴ'ᴛ ᴡᴏʀᴋ! 🚫</b>\n"
-            "<b>╰──────────────────────▣</b>"
+            rich_heading("ᴛʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ! 🥀", level=2)
+            + rich_note(
+                "<p>ᴘʟᴇᴀsᴇ ᴍᴀᴋᴇ ᴍᴇ ᴀɴ ᴀᴅᴍɪɴ ᴡɪᴛʜ ᴛʜᴇsᴇ ᴘᴇʀᴍɪssɪᴏɴs:</p>"
+                "<p>❍ ᴅᴇʟᴇᴛᴇ ᴍᴇssᴀɢᴇs<br>"
+                "❍ ᴍᴀɴᴀɢᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs<br>"
+                "❍ ɪɴᴠɪᴛᴇ ᴜsᴇʀs</p>"
+            )
+            + rich_note("ᴡɪᴛʜᴏᴜᴛ ᴀᴅᴍɪɴ ᴘᴇʀᴍs sᴏᴍᴇ ғᴇᴀᴛᴜʀᴇs ᴡᴏɴ'ᴛ ᴡᴏʀᴋ! 🚫")
         )
         admin_kb = InlineKeyboardMarkup([[
             InlineKeyboardButton(
@@ -269,4 +269,3 @@ async def help_handler(_, message: Message) -> None:
     )
 
     await rich_send(bot, message.chat.id, caption, reply_markup=kb)
-
