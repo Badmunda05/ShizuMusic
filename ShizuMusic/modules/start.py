@@ -23,6 +23,7 @@ from ShizuMusic.utils.rich_ui import (
     rich_details,
     rich_esc,
     rich_heading,
+    rich_img,
     rich_note,
     rich_send,
     rich_table,
@@ -76,7 +77,8 @@ async def start_handler(_, message: Message) -> None:
     if chat_type == ChatType.PRIVATE:
 
         caption = (
-            f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
+            rich_img(photo)
+            + f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
             "ᴡᴇʟᴄᴏᴍᴇ ᴀʙᴏᴀʀᴅ! 🎶</p>"
             + f"<p>ɪ ᴀᴍ <b>{rich_esc(config.BOT_NAME)}</b> — ᴀ ғᴀsᴛ &amp; "
               "ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ᴘʟᴀʏᴇʀ ʙᴏᴛ ᴡɪᴛʜ sᴏᴍᴇ ᴀᴡᴇsᴏᴍᴇ "
@@ -128,17 +130,10 @@ async def start_handler(_, message: Message) -> None:
         ])
 
         try:
-            await message.reply_photo(photo)
+            sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
         except FloodWait as fw:
             await asyncio.sleep(fw.value + 1)
-            try:
-                await message.reply_photo(photo)
-            except Exception:
-                pass
-        except Exception:
-            pass
-
-        sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
+            sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
 
         try:
             add_broadcast_chat(chat_id, "private")
@@ -163,7 +158,8 @@ async def start_handler(_, message: Message) -> None:
         chat_title = message.chat.title or "this chat"
 
         caption = (
-            f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
+            rich_img(photo)
+            + f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
             f"ᴛʜɪs ɪs <b>{rich_esc(config.BOT_NAME)}</b></p>"
             + rich_note(
                 f"ᴛʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ ɪɴ {rich_esc(chat_title)}. "
@@ -185,17 +181,10 @@ async def start_handler(_, message: Message) -> None:
         ])
 
         try:
-            await message.reply_photo(photo)
+            sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
         except FloodWait as fw:
             await asyncio.sleep(fw.value + 1)
-            try:
-                await message.reply_photo(photo)
-            except Exception:
-                pass
-        except Exception:
-            pass
-
-        sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
+            sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
 
         admin_msg = (
             "<b>╭──────────────────────▣</b>\n"
@@ -271,14 +260,10 @@ async def help_handler(_, message: Message) -> None:
 
     photo = random.choice(config.START_PHOTOS)
 
-    try:
-        await message.reply_photo(photo)
-    except Exception:
-        pass
-
     caption = (
-        f"{rich_heading('📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ', level=3)}"
-        f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, ᴘɪᴄᴋ ᴀ "
+        rich_img(photo)
+        + rich_heading('📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ', level=3)
+        + f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, ᴘɪᴄᴋ ᴀ "
         "ᴄᴀᴛᴇɢᴏʀʏ ʙᴇʟᴏᴡ ᴛᴏ sᴇᴇ ɪᴛs ᴄᴏᴍᴍᴀɴᴅs.</p>"
         + rich_note(f"ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
     )
