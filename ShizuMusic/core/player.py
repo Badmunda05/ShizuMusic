@@ -455,15 +455,22 @@ async def play_song(
     # ─────────────────────────────────────────
 
     if config.LOGGER_ID:
-        asyncio.create_task(
-            bot.send_message(
-                config.LOGGER_ID,
-                "<b>#ɴᴏᴡᴘʟᴀʏɪɴɢ</b>\n"
-                f"• <b>ᴛɪᴛʟᴇ :</b> {rich_esc(song.get('title'))}\n"
-                f"• <b>ᴅᴜʀ :</b> {rich_esc(song.get('duration'))}\n"
-                f"• <b>ʙʏ :</b> {rich_esc(song.get('requester'))}",
-                parse_mode=ParseMode.HTML,
+        logger_content = (
+            rich_heading(
+                "🎧 #ɴᴏᴡᴘʟᴀʏɪɴɢ",
+                level=3
             )
+            + rich_kv_table([
+                ("ᴛɪᴛʟᴇ", rich_esc(song.get("title", "?"))),
+                ("ᴅᴜʀᴀᴛɪᴏɴ", rich_esc(song.get("duration", "?"))),
+                ("ʙʏ", rich_esc(song.get("requester", "?"))),
+            ])
         )
 
-                                      
+        asyncio.create_task(
+            rich_send(
+                bot,
+                config.LOGGER_ID,
+                logger_content,
+            )
+        )
