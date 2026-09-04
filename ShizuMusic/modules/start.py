@@ -50,7 +50,7 @@ def _support_updates_pills() -> str:
     )
 
 
-# ── /start ─────────────────────────────────────────────────────────────�[...]
+# ── /start ─────────────────────────────────────────────────────────────────────
 
 @bot.on_message(filters.command("start") & user_allowed)
 async def start_handler(_, message: Message) -> None:
@@ -73,7 +73,7 @@ async def start_handler(_, message: Message) -> None:
     except Exception:
         pass
 
-    # ── Private ───────────────────────────────────────────────────────────��[...]
+    # ── Private ───────────────────────────────────────────────────────────────
     if chat_type == ChatType.PRIVATE:
 
         caption = (
@@ -140,9 +140,9 @@ async def start_handler(_, message: Message) -> None:
         except Exception:
             pass
 
+        # ── Log new user to LOGGER_ID (FIXED) ───────────────────────────────
         if config.LOGGER_ID:
             try:
-                # Safe username handling: avoid passing None into rich_esc
                 username = message.from_user.username
                 username_display = f"@{rich_esc(username)}" if username else "N/A"
 
@@ -155,10 +155,10 @@ async def start_handler(_, message: Message) -> None:
                     + "</p>"
                 )
                 await rich_send(bot, config.LOGGER_ID, logger_caption)
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"[start_handler] Failed to send LOGGER_ID message: {e}")
 
-    # ── Group ────────────────────────────────────────────────────────────�[...]
+    # ── Group ────────────────────────────────────────────────────────────────
     else:
         chat_title = message.chat.title or "this chat"
 
@@ -223,7 +223,7 @@ async def start_handler(_, message: Message) -> None:
             pass
 
 
-# ── /help ─────────────────────────────────────────────────────────────��[...]
+# ── /help ─────────────────────────────────────────────────────────────────────
 
 @bot.on_message(filters.command("help") & user_allowed)
 async def help_handler(_, message: Message) -> None:
@@ -269,4 +269,3 @@ async def help_handler(_, message: Message) -> None:
     )
 
     await rich_send(bot, message.chat.id, caption, reply_markup=kb)
-    
