@@ -24,6 +24,7 @@ from ShizuMusic.utils.rich_ui import (
     rich_esc,
     rich_heading,
     rich_img,
+    rich_kv_table,
     rich_note,
     rich_send,
     rich_table,
@@ -140,7 +141,7 @@ async def start_handler(_, message: Message) -> None:
         except Exception:
             pass
 
-        # ── Log new user to LOGGER_ID (FIXED) ───────────────────────────────
+        # ── Log new user to LOGGER_ID ────────────────────────────────────────
         if config.LOGGER_ID:
             try:
                 username = message.from_user.username
@@ -148,11 +149,11 @@ async def start_handler(_, message: Message) -> None:
 
                 logger_caption = (
                     rich_heading("#ɴᴇᴡᴜsᴇʀ sᴛᴀʀᴛᴇᴅ", level=2)
-                    + "<p>"
-                    + f"<b>❍ ɴᴀᴍᴇ     :</b> <a href='tg://user?id={uid}'>{rich_esc(name)}</a><br>"
-                    + f"<b>❍ ɪᴅ       :</b> <code>{uid}</code><br>"
-                    + f"<b>❍ ᴜsᴇʀɴᴀᴍᴇ :</b> {username_display}"
-                    + "</p>"
+                    + rich_kv_table([
+                        ("ɴᴀᴍᴇ", f'<a href="tg://user?id={uid}">{rich_esc(name)}</a>'),
+                        ("ɪᴅ", f"<code>{uid}</code>"),
+                        ("ᴜsᴇʀɴᴀᴍᴇ", username_display),
+                    ])
                 )
                 await rich_send(bot, config.LOGGER_ID, logger_caption)
             except Exception as e:
