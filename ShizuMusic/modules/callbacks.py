@@ -296,10 +296,12 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
         nxt = peek_current(chat_id)
         if nxt:
             await cbq.answer("ᴘʟᴀʏɪɴɢ ɴᴇxᴛ")
-            dm = await bot.send_message(
-                chat_id,
-                f"<b>❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ :</b> <code>{nxt['title']}</code>",
-                parse_mode=ParseMode.HTML,
+            dm = await rich_send(
+                bot, chat_id,
+                rich_heading("⏭ ɴᴇxᴛ ᴛʀᴀᴄᴋ", level=3)
+                + rich_kv_table([
+                    ("sᴏɴɢ", f"<code>{rich_esc(short(nxt['title']))}</code>"),
+                ]),
             )
             await play_song(chat_id, dm, nxt)
         else:
@@ -442,4 +444,3 @@ async def _go_back(cbq: CallbackQuery) -> None:
         pass
 
     await rich_send(bot, chat_id, caption, reply_markup=kb)
-    
