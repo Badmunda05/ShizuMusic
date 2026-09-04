@@ -91,4 +91,4 @@ async def reboot_cmd(_, message: Message) -> None:
         rich_heading("🔄 ᴄʜᴀᴛ ʀᴇʙᴏᴏᴛᴇᴅ", level=3)
         + rich_note("ᴀʟʟ sᴛᴀᴛᴇs ʀᴇsᴇᴛ"),
     )
-    
+
