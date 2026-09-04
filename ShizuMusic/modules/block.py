@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------------
 
 from pyrogram import filters
-from pyrogram.enums import ParseMode
 from pyrogram.types import Message
 
 import config
@@ -21,6 +20,13 @@ from ShizuMusic.utils.db import (
     unblock_user,
     is_user_blocked_db,
     get_blocked_users,
+)
+from ShizuMusic.utils.rich_ui import (
+    rich_esc,
+    rich_heading,
+    rich_kv_table,
+    rich_note,
+    rich_reply,
 )
 
 
@@ -53,35 +59,37 @@ async def gblock_cmd(_, message: Message) -> None:
         try:
             chat_id = int(args[0])
         except ValueError:
-            await message.reply(
-                "<b>❍ Invalid chat ID.</b>\n"
-                "<b>❍ Usage: /gblock -100xxxxxxx</b>",
-                parse_mode=ParseMode.HTML,
+            await rich_reply(
+                message,
+                rich_heading("❍ ɪɴᴠᴀʟɪᴅ ᴄʜᴀᴛ ɪᴅ", level=3)
+                + rich_note("ᴜsᴀɢᴇ » <code>/gblock -100xxxxxxx</code>"),
             )
             return
     else:
         if message.chat.type.name == "PRIVATE":
-            await message.reply(
-                "<b>❍ Use in a group or provide a chat ID.</b>\n"
-                "<b>❍ Usage: /gblock -100xxxxxxx</b>",
-                parse_mode=ParseMode.HTML,
+            await rich_reply(
+                message,
+                rich_heading("❍ ᴜsᴇ ɪɴ ᴀ ɢʀᴏᴜᴘ", level=3)
+                + rich_note("ᴜsᴇ ᴛʜɪs ɪɴ ᴀ ɢʀᴏᴜᴘ ᴏʀ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴄʜᴀᴛ ɪᴅ. "
+                            "ᴜsᴀɢᴇ » <code>/gblock -100xxxxxxx</code>"),
             )
             return
         chat_id = message.chat.id
 
     if is_group_blocked(chat_id):
-        await message.reply(
-            f"<b>❍ Group <code>{chat_id}</code> is already blocked.</b>",
-            parse_mode=ParseMode.HTML,
+        await rich_reply(
+            message,
+            rich_heading("❍ ᴀʟʀᴇᴀᴅʏ ʙʟᴏᴄᴋᴇᴅ", level=3)
+            + rich_kv_table([("ɢʀᴏᴜᴘ", f"<code>{chat_id}</code>")]),
         )
         return
 
     block_group(chat_id)
-    await message.reply(
-        f"<b>❍ Group Blocked ✅</b>\n"
-        f"<b>❍ Chat ID :</b> <code>{chat_id}</code>\n"
-        f"<b>❍ No commands will work in this group now.</b>",
-        parse_mode=ParseMode.HTML,
+    await rich_reply(
+        message,
+        rich_heading("✅ ɢʀᴏᴜᴘ ʙʟᴏᴄᴋᴇᴅ", level=3)
+        + rich_kv_table([("ᴄʜᴀᴛ ɪᴅ", f"<code>{chat_id}</code>")])
+        + rich_note("ɴᴏ ᴄᴏᴍᴍᴀɴᴅs ᴡɪʟʟ ᴡᴏʀᴋ ɪɴ ᴛʜɪs ɢʀᴏᴜᴘ ɴᴏᴡ."),
     )
 
 
@@ -96,35 +104,37 @@ async def gunblock_cmd(_, message: Message) -> None:
         try:
             chat_id = int(args[0])
         except ValueError:
-            await message.reply(
-                "<b>❍ Invalid chat ID.</b>\n"
-                "<b>❍ Usage: /gunblock -100xxxxxxx</b>",
-                parse_mode=ParseMode.HTML,
+            await rich_reply(
+                message,
+                rich_heading("❍ ɪɴᴠᴀʟɪᴅ ᴄʜᴀᴛ ɪᴅ", level=3)
+                + rich_note("ᴜsᴀɢᴇ » <code>/gunblock -100xxxxxxx</code>"),
             )
             return
     else:
         if message.chat.type.name == "PRIVATE":
-            await message.reply(
-                "<b>❍ Use in a group or provide a chat ID.</b>\n"
-                "<b>❍ Usage: /gunblock -100xxxxxxx</b>",
-                parse_mode=ParseMode.HTML,
+            await rich_reply(
+                message,
+                rich_heading("❍ ᴜsᴇ ɪɴ ᴀ ɢʀᴏᴜᴘ", level=3)
+                + rich_note("ᴜsᴇ ᴛʜɪs ɪɴ ᴀ ɢʀᴏᴜᴘ ᴏʀ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴄʜᴀᴛ ɪᴅ. "
+                            "ᴜsᴀɢᴇ » <code>/gunblock -100xxxxxxx</code>"),
             )
             return
         chat_id = message.chat.id
 
     if not is_group_blocked(chat_id):
-        await message.reply(
-            f"<b>❍ Group <code>{chat_id}</code> is not blocked.</b>",
-            parse_mode=ParseMode.HTML,
+        await rich_reply(
+            message,
+            rich_heading("❍ ɴᴏᴛ ʙʟᴏᴄᴋᴇᴅ", level=3)
+            + rich_kv_table([("ɢʀᴏᴜᴘ", f"<code>{chat_id}</code>")]),
         )
         return
 
     unblock_group(chat_id)
-    await message.reply(
-        f"<b>❍ Group Unblocked ✅</b>\n"
-        f"<b>❍ Chat ID :</b> <code>{chat_id}</code>\n"
-        f"<b>❍ Commands are now enabled in this group.</b>",
-        parse_mode=ParseMode.HTML,
+    await rich_reply(
+        message,
+        rich_heading("✅ ɢʀᴏᴜᴘ ᴜɴʙʟᴏᴄᴋᴇᴅ", level=3)
+        + rich_kv_table([("ᴄʜᴀᴛ ɪᴅ", f"<code>{chat_id}</code>")])
+        + rich_note("ᴄᴏᴍᴍᴀɴᴅs ᴀʀᴇ ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ ɪɴ ᴛʜɪs ɢʀᴏᴜᴘ."),
     )
 
 
@@ -144,41 +154,46 @@ async def ublock_cmd(_, message: Message) -> None:
         try:
             user_id = int(args[0])
         except ValueError:
-            await message.reply(
-                "<b>❍ Invalid user ID.</b>\n"
-                "<b>❍ Usage: /ublock 123456789 or reply to a user.</b>",
-                parse_mode=ParseMode.HTML,
+            await rich_reply(
+                message,
+                rich_heading("❍ ɪɴᴠᴀʟɪᴅ ᴜsᴇʀ ɪᴅ", level=3)
+                + rich_note("ᴜsᴀɢᴇ » <code>/ublock 123456789</code> ᴏʀ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ."),
             )
             return
     else:
-        await message.reply(
-            "<b>❍ Reply to a user's message or provide a user ID.</b>\n"
-            "<b>❍ Usage: /ublock 123456789</b>",
-            parse_mode=ParseMode.HTML,
+        await rich_reply(
+            message,
+            rich_heading("❍ ᴍɪssɪɴɢ ᴛᴀʀɢᴇᴛ", level=3)
+            + rich_note("ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ's ᴍᴇssᴀɢᴇ ᴏʀ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴜsᴇʀ ɪᴅ. "
+                        "ᴜsᴀɢᴇ » <code>/ublock 123456789</code>"),
         )
         return
 
     if user_id == config.OWNER_ID:
-        await message.reply(
-            "<b>❍ You cannot block yourself (owner).</b>",
-            parse_mode=ParseMode.HTML,
+        await rich_reply(
+            message,
+            rich_heading("❍ ɴᴏᴛ ᴀʟʟᴏᴡᴇᴅ", level=3)
+            + rich_note("ʏᴏᴜ ᴄᴀɴɴᴏᴛ ʙʟᴏᴄᴋ ʏᴏᴜʀsᴇʟғ (ᴏᴡɴᴇʀ)."),
         )
         return
 
     if is_user_blocked_db(user_id):
-        await message.reply(
-            f"<b>❍ User <code>{user_id}</code> is already blocked.</b>",
-            parse_mode=ParseMode.HTML,
+        await rich_reply(
+            message,
+            rich_heading("❍ ᴀʟʀᴇᴀᴅʏ ʙʟᴏᴄᴋᴇᴅ", level=3)
+            + rich_kv_table([("ᴜsᴇʀ", f"<code>{user_id}</code>")]),
         )
         return
 
     block_user(user_id)
-    name_str = f" (<b>{user_name}</b>)" if user_name else ""
-    await message.reply(
-        f"<b>❍ User Blocked ✅</b>\n"
-        f"<b>❍ User ID :</b> <code>{user_id}</code>{name_str}\n"
-        f"<b>❍ This user cannot use any bot commands now.</b>",
-        parse_mode=ParseMode.HTML,
+    await rich_reply(
+        message,
+        rich_heading("✅ ᴜsᴇʀ ʙʟᴏᴄᴋᴇᴅ", level=3)
+        + rich_kv_table([
+            ("ᴜsᴇʀ ɪᴅ", f"<code>{user_id}</code>"),
+            ("ɴᴀᴍᴇ", rich_esc(user_name) if user_name else None),
+        ])
+        + rich_note("ᴛʜɪs ᴜsᴇʀ ᴄᴀɴɴᴏᴛ ᴜsᴇ ᴀɴʏ ʙᴏᴛ ᴄᴏᴍᴍᴀɴᴅs ɴᴏᴡ."),
     )
 
 
@@ -198,34 +213,38 @@ async def uunblock_cmd(_, message: Message) -> None:
         try:
             user_id = int(args[0])
         except ValueError:
-            await message.reply(
-                "<b>❍ Invalid user ID.</b>\n"
-                "<b>❍ Usage: /uunblock 123456789 or reply to a user.</b>",
-                parse_mode=ParseMode.HTML,
+            await rich_reply(
+                message,
+                rich_heading("❍ ɪɴᴠᴀʟɪᴅ ᴜsᴇʀ ɪᴅ", level=3)
+                + rich_note("ᴜsᴀɢᴇ » <code>/uunblock 123456789</code> ᴏʀ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ."),
             )
             return
     else:
-        await message.reply(
-            "<b>❍ Reply to a user's message or provide a user ID.</b>\n"
-            "<b>❍ Usage: /uunblock 123456789</b>",
-            parse_mode=ParseMode.HTML,
+        await rich_reply(
+            message,
+            rich_heading("❍ ᴍɪssɪɴɢ ᴛᴀʀɢᴇᴛ", level=3)
+            + rich_note("ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ's ᴍᴇssᴀɢᴇ ᴏʀ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴜsᴇʀ ɪᴅ. "
+                        "ᴜsᴀɢᴇ » <code>/uunblock 123456789</code>"),
         )
         return
 
     if not is_user_blocked_db(user_id):
-        await message.reply(
-            f"<b>❍ User <code>{user_id}</code> is not blocked.</b>",
-            parse_mode=ParseMode.HTML,
+        await rich_reply(
+            message,
+            rich_heading("❍ ɴᴏᴛ ʙʟᴏᴄᴋᴇᴅ", level=3)
+            + rich_kv_table([("ᴜsᴇʀ", f"<code>{user_id}</code>")]),
         )
         return
 
     unblock_user(user_id)
-    name_str = f" (<b>{user_name}</b>)" if user_name else ""
-    await message.reply(
-        f"<b>❍ User Unblocked ✅</b>\n"
-        f"<b>❍ User ID :</b> <code>{user_id}</code>{name_str}\n"
-        f"<b>❍ This user can now use bot commands again.</b>",
-        parse_mode=ParseMode.HTML,
+    await rich_reply(
+        message,
+        rich_heading("✅ ᴜsᴇʀ ᴜɴʙʟᴏᴄᴋᴇᴅ", level=3)
+        + rich_kv_table([
+            ("ᴜsᴇʀ ɪᴅ", f"<code>{user_id}</code>"),
+            ("ɴᴀᴍᴇ", rich_esc(user_name) if user_name else None),
+        ])
+        + rich_note("ᴛʜɪs ᴜsᴇʀ ᴄᴀɴ ɴᴏᴡ ᴜsᴇ ʙᴏᴛ ᴄᴏᴍᴍᴀɴᴅs ᴀɢᴀɪɴ."),
     )
 
 
@@ -238,18 +257,18 @@ async def blocklist_cmd(_, message: Message) -> None:
     users  = get_blocked_users()
 
     g_text = (
-        "\n".join(f"  • <code>{g}</code>" for g in groups)
-        if groups else "  None"
+        "<br>".join(f"• <code>{g}</code>" for g in groups)
+        if groups else "ɴᴏɴᴇ"
     )
     u_text = (
-        "\n".join(f"  • <code>{u}</code>" for u in users)
-        if users else "  None"
+        "<br>".join(f"• <code>{u}</code>" for u in users)
+        if users else "ɴᴏɴᴇ"
     )
 
-    await message.reply(
-        "<b>❍ Block List</b>\n\n"
-        f"<b>❍ Blocked Groups ({len(groups)}):</b>\n{g_text}\n\n"
-        f"<b>❍ Blocked Users ({len(users)}):</b>\n{u_text}",
-        parse_mode=ParseMode.HTML,
+    await rich_reply(
+        message,
+        rich_heading("🚫 ʙʟᴏᴄᴋ ʟɪsᴛ", level=3)
+        + rich_note(f"<b>❍ ʙʟᴏᴄᴋᴇᴅ ɢʀᴏᴜᴘs ({len(groups)})</b><br>{g_text}")
+        + rich_note(f"<b>❍ ʙʟᴏᴄᴋᴇᴅ ᴜsᴇʀs ({len(users)})</b><br>{u_text}"),
     )
     
