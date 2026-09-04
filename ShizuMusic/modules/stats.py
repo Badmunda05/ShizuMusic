@@ -29,7 +29,7 @@ from ShizuMusic.utils.rich_ui import (
     rich_esc,
     rich_heading,
     rich_kv_table,
-    rich_reply,
+    rich_send,
 )
 
 
@@ -40,10 +40,7 @@ from ShizuMusic.utils.rich_ui import (
 async def stats_cmd(_, message: Message) -> None:
     """Full system + MongoDB stats for the bot owner."""
 
-    processing = await rich_reply(
-        message,
-        rich_heading("❍ ғᴇᴛᴄʜɪɴɢ sᴛᴀᴛs...", level=3),
-    )
+    processing = await rich_send(bot, message.chat.id, rich_heading("❍ ғᴇᴛᴄʜɪɴɢ sᴛᴀᴛs, ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...", level=3))
 
     # ── System stats ──────────────────────────────────────────────────────────
     try:
@@ -70,15 +67,15 @@ async def stats_cmd(_, message: Message) -> None:
         os_release   = platform.release()
 
     except Exception as e:
-        err_text = rich_heading("❍ sʏsᴛᴇᴍ sᴛᴀᴛs ᴇʀʀᴏʀ", level=3) + f"<p><code>{rich_esc(e)}</code></p>"
-        if processing is not None:
-            await rich_edit(processing, err_text)
-        else:
-            await rich_reply(message, err_text)
+        await rich_edit(
+            processing,
+            rich_heading("❍ sʏsᴛᴇᴍ sᴛᴀᴛs ᴇʀʀᴏʀ", level=3)
+            + f"<p><code>{rich_esc(e)}</code></p>",
+        )
         return
 
     # ── MongoDB stats ─────────────────────────────────────────────────────────
-    db_rows = [("ᴍᴏɴɢᴏᴅʙ", "<code>ɴᴏᴛ ᴄᴏɴɴᴇᴄᴛᴇᴅ</code>")]
+    db_rows = [("sᴛᴀᴛᴜs", "<code>ɴᴏᴛ ᴄᴏɴɴᴇᴄᴛᴇᴅ</code>")]
     if is_connected():
         try:
             client   = get_mongo_client()
@@ -88,13 +85,13 @@ async def stats_cmd(_, message: Message) -> None:
             col_cnt  = db_stats.get("collections", 0)
             obj_cnt  = db_stats.get("objects",     0)
             db_rows  = [
-                ("ᴅʙ ᴅᴀᴛᴀ", f"<code>{data_kb:.2f} KB</code>"),
-                ("ᴅʙ sᴛᴏʀᴀɢᴇ", f"<code>{stor_kb:.2f} KB</code>"),
+                ("ᴅᴀᴛᴀ", f"<code>{data_kb:.2f} KB</code>"),
+                ("sᴛᴏʀᴀɢᴇ", f"<code>{stor_kb:.2f} KB</code>"),
                 ("ᴄᴏʟʟᴇᴄᴛɪᴏɴs", f"<code>{col_cnt}</code>"),
                 ("ᴏʙᴊᴇᴄᴛs", f"<code>{obj_cnt}</code>"),
             ]
         except Exception as e:
-            db_rows = [("ᴍᴏɴɢᴏᴅʙ ᴇʀʀᴏʀ", f"<code>{rich_esc(e)}</code>")]
+            db_rows = [("ᴇʀʀᴏʀ", f"<code>{rich_esc(e)}</code>")]
 
     # ── Bot DB counts ─────────────────────────────────────────────────────────
     served_chats = get_served_chats_count()
@@ -104,54 +101,39 @@ async def stats_cmd(_, message: Message) -> None:
     bc           = get_broadcast_count()
 
     # ── Final message ─────────────────────────────────────────────────────────
-    text = (
-        rich_heading("📊 sʜɪᴢᴜᴍᴜsɪᴄ sᴛᴀᴛs", level=2)
-
-        + rich_heading("❍ sʏsᴛᴇᴍ", level=4)
+    content = (
+        rich_heading("❍ sʜɪᴢᴜᴍᴜsɪᴄ sᴛᴀᴛs", level=3)
         + rich_kv_table([
-            ("ᴏs", f"<code>{rich_esc(os_name)} {rich_esc(os_release)}</code>"),
-            ("ᴘʏᴛʜᴏɴ", f"<code>{rich_esc(py_version)}</code>"),
+            ("ᴏs", f"<code>{os_name} {os_release}</code>"),
+            ("ᴘʏᴛʜᴏɴ", f"<code>{py_version}</code>"),
             ("ᴄᴘᴜ ᴜsᴀɢᴇ", f"<code>{cpu_percent}%</code>"),
             ("ᴄᴘᴜ ғʀᴇǫ", f"<code>{freq_str}</code>"),
             ("ᴘ-ᴄᴏʀᴇs", f"<code>{p_cores}</code>"),
             ("ᴛ-ᴄᴏʀᴇs", f"<code>{t_cores}</code>"),
-        ])
-
-        + rich_heading("❍ ᴍᴇᴍᴏʀʏ (ʀᴀᴍ)", level=4)
+        ], headers=["sʏsᴛᴇᴍ", ""])
         + rich_kv_table([
             ("ᴛᴏᴛᴀʟ", f"<code>{ram_total:.2f} GB</code>"),
             ("ᴜsᴇᴅ", f"<code>{ram_used:.2f} GB ({ram_percent}%)</code>"),
             ("ғʀᴇᴇ", f"<code>{ram_free:.2f} GB</code>"),
-        ])
-
-        + rich_heading("❍ ᴅɪsᴋ", level=4)
+        ], headers=["ʀᴀᴍ", ""])
         + rich_kv_table([
             ("ᴛᴏᴛᴀʟ", f"<code>{disk_total:.2f} GB</code>"),
             ("ᴜsᴇᴅ", f"<code>{disk_used:.2f} GB ({disk_percent}%)</code>"),
             ("ғʀᴇᴇ", f"<code>{disk_free:.2f} GB</code>"),
-        ])
-
-        + rich_heading("❍ ᴍᴏɴɢᴏᴅʙ", level=4)
-        + rich_kv_table(db_rows)
-
-        + rich_heading("❍ ʙᴏᴛ sᴛᴀᴛs", level=4)
+        ], headers=["ᴅɪsᴋ", ""])
+        + rich_kv_table(db_rows, headers=["ᴍᴏɴɢᴏᴅʙ", ""])
         + rich_kv_table([
             ("sᴇʀᴠᴇᴅ ᴄʜᴀᴛs", f"<code>{served_chats}</code>"),
             ("sᴇʀᴠᴇᴅ ᴜsᴇʀs", f"<code>{served_users}</code>"),
             ("ʙᴀɴɴᴇᴅ ᴄʜᴀᴛs", f"<code>{banned_chats}</code>"),
             ("ᴛᴏᴛᴀʟ ᴘʟᴀʏs", f"<code>{total_plays}</code>"),
-        ])
-
-        + rich_heading("❍ ʙʀᴏᴀᴅᴄᴀsᴛ ʟɪsᴛ", level=4)
+        ], headers=["ʙᴏᴛ sᴛᴀᴛs", ""])
         + rich_kv_table([
             ("ᴛᴏᴛᴀʟ", f"<code>{bc['total']}</code>"),
             ("ɢʀᴏᴜᴘs", f"<code>{bc['groups']}</code>"),
             ("ᴜsᴇʀs", f"<code>{bc['private']}</code>"),
-        ])
+        ], headers=["ʙʀᴏᴀᴅᴄᴀsᴛ ʟɪsᴛ", ""])
     )
 
-    if processing is not None:
-        await rich_edit(processing, text)
-    else:
-        await rich_reply(message, text)
-        
+    await rich_edit(processing, content)
+    
