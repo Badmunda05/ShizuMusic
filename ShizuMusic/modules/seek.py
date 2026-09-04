@@ -254,4 +254,4 @@ async def seek_usage(_, message: Message) -> None:
             rich_heading("❍ sᴇᴇᴋ ᴜsᴀɢᴇ", level=3)
             + rich_kv_table(usage_rows, headers=["ᴄᴏᴍᴍᴀɴᴅ", "ᴅᴇsᴄʀɪᴘᴛɪᴏɴ"]),
         )
-        
+
