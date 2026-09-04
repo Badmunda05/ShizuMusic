@@ -46,4 +46,4 @@ async def pause_cmd(_, message: Message) -> None:
             rich_heading("❍ ᴘᴀᴜsᴇ ғᴀɪʟᴇᴅ", level=3)
             + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
-        
+
