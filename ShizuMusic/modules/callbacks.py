@@ -297,14 +297,9 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
         if nxt:
             await cbq.answer("ᴘʟᴀʏɪɴɢ ɴᴇxᴛ")
             dm = await bot.send_message(
-            dm = await rich_send(
                 chat_id,
-                bot, chat_id,
                 f"<b>❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ :</b> <code>{nxt['title']}</code>",
-                rich_heading("❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ", level=3)
                 parse_mode=ParseMode.HTML,
-                + rich_kv_table([("ᴛɪᴛʟᴇ", f"<code>{rich_esc(nxt['title'])}</code>")]),
-             )
             )
             await play_song(chat_id, dm, nxt)
         else:
