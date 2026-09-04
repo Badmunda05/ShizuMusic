@@ -113,7 +113,7 @@ async def start_handler(_, message: Message) -> None:
                                   style=enums.ButtonStyle.PRIMARY)],
             [
                 InlineKeyboardButton("🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP,
-                                     style=enums.ButtonStyle.PRIMARY),
+                                     style=enums.ButtonStyle.SUCCESS),
                 InlineKeyboardButton("🍹 ᴜᴘᴅᴀᴛᴇs 🍹",  url=config.UPDATES_CHANNEL,
                                      style=enums.ButtonStyle.SUCCESS),
             ],
