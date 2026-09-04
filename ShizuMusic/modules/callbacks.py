@@ -5,12 +5,6 @@
 #  Unauthorized copying, editing, re-uploading or removing credits
 #  from this source code is strictly prohibited.
 # --------------------------------------------------------------------------------
-#
-#  Category screens rebuilt to match the reference bot's structure (heading +
-#  description + a real Command/Description table + Support/Updates pills +
-#  colored Back/Close buttons) — content is ShizuMusic's own commands, taken
-#  straight from the old ASCII-box text, just restructured into rich blocks.
-# --------------------------------------------------------------------------------
 
 import asyncio
 import random
@@ -248,32 +242,32 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
     if data == "pause":
         try:
             await call_py.pause(chat_id)
-            await cbq.answer("Paused")
+            await cbq.answer("ᴘᴀᴜsᴇᴅ")
             await rich_send(
                 bot, chat_id,
                 rich_heading("⏸ ˢᵗʳᵉᵃᵐ ᴘᴀᴜsᴇᴅ", level=3)
                 + rich_note(f"❍ ʙʏ » {user.mention}"),
             )
         except Exception:
-            await cbq.answer("Failed To Pause", show_alert=True)
+            await cbq.answer("ғᴀɪʟᴇᴅ ᴛᴏ ᴘᴀᴜsᴇ", show_alert=True)
 
     # ── RESUME ────────────────────────────────────────────────────────────[...]
     elif data == "resume":
         try:
             await call_py.resume(chat_id)
-            await cbq.answer("Resumed")
+            await cbq.answer("ʀᴇsᴜᴍᴇᴅ")
             await rich_send(
                 bot, chat_id,
                 rich_heading("▶ sᴛʀᴇᴀᴍ ʀᴇsᴜᴍᴇᴅ", level=3)
                 + rich_note(f"❍ ʙʏ » {user.mention}"),
             )
         except Exception:
-            await cbq.answer("Failed To Resume", show_alert=True)
+            await cbq.answer("ғᴀɪʟᴇᴅ ᴛᴏ ʀᴇsᴜᴍᴇ", show_alert=True)
 
     # ── SKIP ────────────────────────────────────────────────────────────[...]
     elif data == "skip":
         if not queue_size(chat_id):
-            await cbq.answer("Queue Is Empty", show_alert=True)
+            await cbq.answer("ǫᴜᴇᴜᴇ ɪs ᴇᴍᴘᴛʏ", show_alert=True)
             return
 
         skipped = pop_current(chat_id)
@@ -301,7 +295,7 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
 
         nxt = peek_current(chat_id)
         if nxt:
-            await cbq.answer("Playing Next")
+            await cbq.answer("ᴘʟᴀʏɪɴɢ ɴᴇxᴛ")
             dm = await bot.send_message(
                 chat_id,
                 f"<b>❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ :</b> <code>{nxt['title']}</code>",
@@ -309,12 +303,12 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
             )
             await play_song(chat_id, dm, nxt)
         else:
-            await cbq.answer("Queue Empty", show_alert=True)
+            await cbq.answer("ǫᴜᴇᴜᴇ ᴇᴍᴘᴛʏ", show_alert=True)
 
     # ── STOP ────────────────────────────────────────────────────────────[...]
     elif data == "stop":
         await leave_vc(chat_id)
-        await cbq.answer("Stopped")
+        await cbq.answer("sᴛᴏᴘᴘᴇᴅ")
         await rich_send(
             bot, chat_id,
             rich_heading("⏹ ᴘʟᴀʏʙᴀᴄᴋ sᴛᴏᴘᴘᴇᴅ", level=3)
@@ -324,7 +318,7 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
     # ── CLEAR ────────────────────────────────────────────────────────────[...]
     elif data == "clear":
         clear_queue(chat_id)
-        await cbq.answer("Queue Cleared")
+        await cbq.answer("ǫᴜᴇᴜᴇ ᴄʟᴇᴀʀᴇᴅ")
         await rich_edit(
             cbq.message,
             rich_heading("🧹 ǫᴜᴇᴜᴇ ᴄʟᴇᴀʀᴇᴅ", level=3)
@@ -448,3 +442,4 @@ async def _go_back(cbq: CallbackQuery) -> None:
         pass
 
     await rich_send(bot, chat_id, caption, reply_markup=kb)
+    
