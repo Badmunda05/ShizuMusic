@@ -21,12 +21,7 @@ from ShizuMusic.utils.db import (
     remove_broadcast_chat,
     remove_served_chat,
 )
-from ShizuMusic.utils.rich_ui import (
-    rich_heading,
-    rich_kv_table,
-    rich_note,
-    rich_reply,
-)
+from ShizuMusic.utils.rich_ui import rich_esc, rich_img, rich_kv_table, rich_send
 
 LEFT_PHOTOS = [
     "https://telegra.ph/file/1949480f01355b4e87d26.jpg",
@@ -70,7 +65,7 @@ async def bot_added_watcher(_, message: Message) -> None:
                 InlineKeyboardButton("⚡ ᴍᴀᴋᴇ ᴍᴇ ᴀᴅᴍɪɴ ⚡", url=f"tg://user?id={me.id}")
             ]])
             try:
-                await rich_reply(message, admin_request_text, reply_markup=admin_kb)
+                await rich_send(bot, chat_id, admin_request_text, reply_markup=admin_kb)
             except Exception:
                 pass
 
@@ -99,15 +94,14 @@ async def bot_added_watcher(_, message: Message) -> None:
             except Exception:
                 chat_photo = None
 
-            log_text = (
-                "<b>📝 #ɴᴇᴡɢʀᴏᴜᴘ — ʙᴏᴛ ᴀᴅᴅᴇᴅ!</b>\n\n"
-                f"<b>📌 ᴄʜᴀᴛ ɴᴀᴍᴇ  :</b> {chat.title}\n"
-                f"<b>🍂 ᴄʜᴀᴛ ɪᴅ    :</b> <code>{chat_id}</code>\n"
-                f"<b>🔐 ᴜsᴇʀɴᴀᴍᴇ   :</b> {username}\n"
-                f"<b>🖇️ ɢʀᴏᴜᴘ ʟɪɴᴋ  :</b> {link_text}\n"
-                f"<b>📈 ᴍᴇᴍʙᴇʀs    :</b> {count}\n"
-                f"<b>🤝 ᴀᴅᴅᴇᴅ ʙʏ   :</b> {added_by_mention}"
-            )
+            log_rows = [
+                ("ᴄʜᴀᴛ ɴᴀᴍᴇ", rich_esc(chat.title)),
+                ("ᴄʜᴀᴛ ɪᴅ", f"<code>{chat_id}</code>"),
+                ("ᴜsᴇʀɴᴀᴍᴇ", rich_esc(username)),
+                ("ɢʀᴏᴜᴘ ʟɪɴᴋ", link_text),
+                ("ᴍᴇᴍʙᴇʀs", str(count)),
+                ("ᴀᴅᴅᴇᴅ ʙʏ", added_by_mention),
+            ]
             log_kb = InlineKeyboardMarkup([[
                 InlineKeyboardButton(
                     f"👤 {added_by.first_name if added_by else 'ᴜsᴇʀ'}",
@@ -117,16 +111,23 @@ async def bot_added_watcher(_, message: Message) -> None:
 
             try:
                 if chat_photo:
+                    # Locally downloaded file — no public URL, so this has
+                    # to stay a caption (rich_img() only takes URLs).
+                    log_text = (
+                        "<b>📝 #ɴᴇᴡɢʀᴏᴜᴘ — ʙᴏᴛ ᴀᴅᴅᴇᴅ!</b>\n\n"
+                        + "\n".join(f"<b>{k} :</b> {v}" for k, v in log_rows)
+                    )
                     await bot.send_photo(
                         config.LOGGER_ID, photo=chat_photo,
                         caption=log_text, parse_mode=ParseMode.HTML, reply_markup=log_kb,
                     )
                 else:
-                    await bot.send_message(
-                        config.LOGGER_ID, log_text,
-                        parse_mode=ParseMode.HTML, reply_markup=log_kb,
-                        disable_web_page_preview=True,
+                    from ShizuMusic.utils.rich_ui import rich_heading
+                    content = (
+                        rich_heading("📝 #ɴᴇᴡɢʀᴏᴜᴘ — ʙᴏᴛ ᴀᴅᴅᴇᴅ!", level=3)
+                        + rich_kv_table(log_rows)
                     )
+                    await rich_send(bot, config.LOGGER_ID, content, reply_markup=log_kb)
             except Exception:
                 pass
 
@@ -160,27 +161,24 @@ async def bot_left_watcher(_, message: Message) -> None:
         if not config.LOGGER_ID:
             return
 
-        left_text = (
-            "<b>✫ #ʟᴇғᴛɢʀᴏᴜᴘ ✫</b>\n\n"
-            f"<b>📌 ᴄʜᴀᴛ ᴛɪᴛʟᴇ   :</b> {chat.title}\n"
-            f"<b>🍂 ᴄʜᴀᴛ ɪᴅ     :</b> <code>{chat_id}</code>\n"
-            f"<b>🔐 ᴜsᴇʀɴᴀᴍᴇ    :</b> {username}\n"
-            f"<b>👢 ʀᴇᴍᴏᴠᴇᴅ ʙʏ  :</b> {removed_by_mention}\n"
-            f"<b>🤖 ʙᴏᴛ          :</b> @{me.username}"
+        from ShizuMusic.utils.rich_ui import rich_heading
+
+        content = (
+            rich_heading("✫ #ʟᴇғᴛɢʀᴏᴜᴘ ✫", level=3)
+            + rich_img(random.choice(LEFT_PHOTOS))
+            + rich_kv_table([
+                ("ᴄʜᴀᴛ ᴛɪᴛʟᴇ", rich_esc(chat.title)),
+                ("ᴄʜᴀᴛ ɪᴅ", f"<code>{chat_id}</code>"),
+                ("ᴜsᴇʀɴᴀᴍᴇ", rich_esc(username)),
+                ("ʀᴇᴍᴏᴠᴇᴅ ʙʏ", removed_by_mention),
+                ("ʙᴏᴛ", f"@{me.username}"),
+            ])
         )
 
         try:
-            await bot.send_photo(
-                config.LOGGER_ID,
-                photo=random.choice(LEFT_PHOTOS),
-                caption=left_text,
-                parse_mode=ParseMode.HTML,
-            )
+            await rich_send(bot, config.LOGGER_ID, content)
         except Exception:
-            try:
-                await bot.send_message(config.LOGGER_ID, left_text, parse_mode=ParseMode.HTML)
-            except Exception:
-                pass
+            pass
 
     except Exception as e:
         print(f"[watcher] bot_left_watcher error: {e}")
