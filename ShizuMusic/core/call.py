@@ -20,6 +20,13 @@ from pytgcalls.types import (
 from ShizuMusic import LOGGER, bot, call_py
 from ShizuMusic.core.queue import clear_queue, peek_current, pop_current, queue_size
 from ShizuMusic.utils.helpers import delete_file
+from ShizuMusic.utils.rich_ui import (
+    rich_esc,
+    rich_heading,
+    rich_kv_table,
+    rich_note,
+    rich_send,
+)
 
 
 async def leave_vc(chat_id: int) -> None:
@@ -116,10 +123,10 @@ async def on_stream_end(_: object, update: StreamEnded) -> None:
         except Exception as e:
             LOGGER.error(f"Next Song Error: {e}")
 
-            await bot.send_message(
-                chat_id,
-                f"<b>❍ ᴇʀʀᴏʀ :</b> <code>{e}</code>",
-                parse_mode=ParseMode.HTML,
+            await rich_send(
+                bot, chat_id,
+                rich_heading("❍ ᴇʀʀᴏʀ", level=3)
+                + rich_note(f"<code>{rich_esc(e)}</code>"),
             )
 
     else:
@@ -183,9 +190,9 @@ async def on_stream_end(_: object, update: StreamEnded) -> None:
         # Queue completely finished
         await leave_vc(chat_id)
 
-        await bot.send_message(
-            chat_id,
-            "<b>❍ ǫᴜᴇᴜᴇ ꜰɪɴɪꜱʜᴇᴅ</b>\n"
-            "<b>❍ ʟᴇꜰᴛ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ.</b>",
-            parse_mode=ParseMode.HTML,
-                    )
+        await rich_send(
+            bot, chat_id,
+            rich_heading("❍ ǫᴜᴇᴜᴇ ғɪɴɪsʜᴇᴅ", level=3)
+            + rich_note("ʟᴇғᴛ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ."),
+        )
+        
