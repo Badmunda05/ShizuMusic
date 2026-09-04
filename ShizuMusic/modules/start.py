@@ -50,7 +50,7 @@ def _support_updates_pills() -> str:
     )
 
 
-# ── /start ─────────────────────────────────────────────────────────────────────
+# ── /start ─────────────────────────────────────────────────────────────�[...]
 
 @bot.on_message(filters.command("start") & user_allowed)
 async def start_handler(_, message: Message) -> None:
@@ -73,7 +73,7 @@ async def start_handler(_, message: Message) -> None:
     except Exception:
         pass
 
-    # ── Private ───────────────────────────────────────────────────────────────
+    # ── Private ───────────────────────────────────────────────────────────��[...]
     if chat_type == ChatType.PRIVATE:
 
         caption = (
@@ -142,19 +142,23 @@ async def start_handler(_, message: Message) -> None:
 
         if config.LOGGER_ID:
             try:
+                # Safe username handling: avoid passing None into rich_esc
+                username = message.from_user.username
+                username_display = f"@{rich_esc(username)}" if username else "N/A"
+
                 logger_caption = (
                     rich_heading("#ɴᴇᴡᴜsᴇʀ sᴛᴀʀᴛᴇᴅ", level=2)
                     + "<p>"
                     + f"<b>❍ ɴᴀᴍᴇ     :</b> <a href='tg://user?id={uid}'>{rich_esc(name)}</a><br>"
                     + f"<b>❍ ɪᴅ       :</b> <code>{uid}</code><br>"
-                    + f"<b>❍ ᴜsᴇʀɴᴀᴍᴇ :</b> @{rich_esc(message.from_user.username) or 'N/A'}"
+                    + f"<b>❍ ᴜsᴇʀɴᴀᴍᴇ :</b> {username_display}"
                     + "</p>"
                 )
                 await rich_send(bot, config.LOGGER_ID, logger_caption)
             except Exception:
                 pass
 
-    # ── Group ────────────────────────────────────────────────────────────────
+    # ── Group ────────────────────────────────────────────────────────────�[...]
     else:
         chat_title = message.chat.title or "this chat"
 
@@ -219,7 +223,7 @@ async def start_handler(_, message: Message) -> None:
             pass
 
 
-# ── /help ─────────────────────────────────────────────────────────────────────
+# ── /help ─────────────────────────────────────────────────────────────��[...]
 
 @bot.on_message(filters.command("help") & user_allowed)
 async def help_handler(_, message: Message) -> None:
