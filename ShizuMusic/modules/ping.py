@@ -164,4 +164,5 @@ async def speedtest_cmd(client, message: Message) -> None:
         parse_mode=ParseMode.HTML,
         reply_markup=supp_markup(),
     )
+
     
