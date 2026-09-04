@@ -426,4 +426,5 @@ async def effects_status_cmd(_, message: Message) -> None:
             headers=["ᴄᴏᴍᴍᴀɴᴅ", "ᴅᴇsᴄʀɪᴘᴛɪᴏɴ"],
         ),
 )
+
     
