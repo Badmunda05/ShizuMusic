@@ -14,11 +14,11 @@ Previously this logic was inline in play.py — now centralised here.
 
 import asyncio
 
-from pyrogram.enums import ParseMode
 from pyrogram.errors import RPCError, UserAlreadyParticipant
 from pyrogram.types import Message
 
 from ShizuMusic import assistant, bot
+from ShizuMusic.utils.rich_ui import rich_edit, rich_esc, rich_heading, rich_note
 
 
 async def is_assistant_in(chat_id: int):
@@ -57,10 +57,10 @@ async def try_join_assistant(chat_id: int, pm: Message) -> bool:
         invite_link = await bot.export_chat_invite_link(chat_id)
 
     except Exception as e:
-        await pm.edit_text(
-            f"<b>❍ ɪ ɴᴇᴇᴅ ɪɴᴠɪᴛᴇ ʟɪɴᴋ ᴘᴇʀᴍɪssɪᴏɴ</b>\n"
-            f"<code>{e}</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_edit(
+            pm,
+            rich_heading("❍ ɪ ɴᴇᴇᴅ ɪɴᴠɪᴛᴇ ʟɪɴᴋ ᴘᴇʀᴍɪssɪᴏɴ", level=3)
+            + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
         return False
 
@@ -80,18 +80,18 @@ async def try_join_assistant(chat_id: int, pm: Message) -> bool:
         return True
 
     except RPCError as e:
-        await pm.edit_text(
-            f"<b>❍ ᴀssɪsᴛᴀɴᴛ ᴊᴏɪɴ ғᴀɪʟᴇᴅ</b>\n"
-            f"<code>{e}</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_edit(
+            pm,
+            rich_heading("❍ ᴀssɪsᴛᴀɴᴛ ᴊᴏɪɴ ғᴀɪʟᴇᴅ", level=3)
+            + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
         return False
 
     except Exception as e:
-        await pm.edit_text(
-            f"<b>❍ ᴊᴏɪɴ ᴇʀʀᴏʀ</b>\n"
-            f"<code>{e}</code>",
-            parse_mode=ParseMode.HTML,
+        await rich_edit(
+            pm,
+            rich_heading("❍ ᴊᴏɪɴ ᴇʀʀᴏʀ", level=3)
+            + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
         return False
-      
+        
