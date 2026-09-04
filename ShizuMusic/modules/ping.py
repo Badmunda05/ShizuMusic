@@ -21,9 +21,9 @@ import config
 from ShizuMusic import bot, assistant, bot_start_time
 from ShizuMusic.modules.block import user_allowed
 from ShizuMusic.utils.rich_ui import (
-    rich_caption,
     rich_esc,
     rich_heading,
+    rich_img,
     rich_kv_table,
     rich_send,
 )
@@ -74,6 +74,7 @@ async def ping_cmd(client, message: Message) -> None:
 
     caption = (
         rich_heading(f"🏓 ᴘᴏɴɢ : {latency}ms", level=3)
+        + rich_img(config.PING_IMG_URL)
         + rich_kv_table([
             ("ᴜᴘᴛɪᴍᴇ", f"<code>{uptime}</code>"),
             ("ʀᴀᴍ", f"<code>{ram:.2f} MB</code>"),
@@ -84,12 +85,7 @@ async def ping_cmd(client, message: Message) -> None:
         + f"<p>❍ ʙʏ » <a href=\"{config.SUPPORT_GROUP}\">sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></p>"
     )
 
-    await message.reply_photo(
-        photo=config.PING_IMG_URL,
-        caption=rich_caption(caption),
-        parse_mode=ParseMode.HTML,
-        reply_markup=supp_markup(),
-    )
+    await rich_send(bot, chat_id, caption, reply_markup=supp_markup())
 
 
 # ── /speedtest ─────────────────────────────────────────────────────────────────
@@ -136,6 +132,7 @@ async def speedtest_cmd(client, message: Message) -> None:
 
     caption = (
         rich_heading("⚡ sᴘᴇᴇᴅᴛᴇsᴛ ʀᴇsᴜʟᴛs", level=3)
+        + rich_img(share)
         + rich_kv_table([
             ("ɪsᴘ", f"<code>{rich_esc(isp)}</code>"),
             ("ᴄᴏᴜɴᴛʀʏ", f"<code>{rich_esc(country)}</code>"),
@@ -158,11 +155,5 @@ async def speedtest_cmd(client, message: Message) -> None:
         await m.delete()
     except Exception:
         pass
-    await message.reply_photo(
-        photo=share,
-        caption=rich_caption(caption),
-        parse_mode=ParseMode.HTML,
-        reply_markup=supp_markup(),
-    )
+    await rich_send(bot, chat_id, caption, reply_markup=supp_markup())
 
-    
