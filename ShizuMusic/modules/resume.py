@@ -46,4 +46,4 @@ async def resume_cmd(_, message: Message) -> None:
             rich_heading("❍ ʀᴇsᴜᴍᴇ ғᴀɪʟᴇᴅ", level=3)
             + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
-        
+
