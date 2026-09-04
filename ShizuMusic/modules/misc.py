@@ -13,8 +13,7 @@ Utility commands:
 """
 
 import config
-from pyrogram import filters
-from pyrogram.enums import ParseMode
+from pyrogram import enums, filters
 from pyrogram.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
@@ -23,6 +22,13 @@ from pyrogram.types import (
 
 from ShizuMusic import bot
 from ShizuMusic.modules.block import user_allowed
+from ShizuMusic.utils.rich_ui import (
+    rich_details,
+    rich_heading,
+    rich_kv_table,
+    rich_note,
+    rich_reply,
+)
 
 # ── Source repo URL ────────────────────────────────────────────────────────────
 SOURCE_URL = "https://github.com/Badmunda05/ShizuMusic"
@@ -38,52 +44,46 @@ async def repo_cmd(_, message: Message) -> None:
                 InlineKeyboardButton(
                     "🍡 sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ 🍡",
                     url=SOURCE_URL,
+                    style=enums.ButtonStyle.PRIMARY,
                 ),
                 InlineKeyboardButton(
                     "🔱 ғᴏʀᴋ 🔱",
                     url=f"{SOURCE_URL}/fork",
+                    style=enums.ButtonStyle.PRIMARY,
                 ),
             ],
             [
                 InlineKeyboardButton(
                     "🍬 sᴜᴘᴘᴏʀᴛ 🍬",
                     url=config.SUPPORT_GROUP,
+                    style=enums.ButtonStyle.SUCCESS,
                 ),
                 InlineKeyboardButton(
                     "🍹 ᴜᴘᴅᴀᴛᴇs 🍹",
                     url=config.UPDATES_CHANNEL,
+                    style=enums.ButtonStyle.SUCCESS,
                 ),
             ],
         ]
     )
 
-    await message.reply(
-        "<b>╭────────────────────▣</b>\n"
-        "<b>│ 🍡 sʜɪᴢᴜᴍᴜsɪᴄ sᴏᴜʀᴄᴇ</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│ ❍ ᴏᴘᴇɴ sᴏᴜʀᴄᴇ ᴍᴜsɪᴄ ʙᴏᴛ</b>\n"
-        "<b>│ ❍ ᴅᴇᴠᴇʟᴏᴘᴇᴅ ʙʏ ʙᴀᴅ ᴍᴜɴᴅᴀ ❤️</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        "<b>│ ⚡ ʜᴏsᴛɪɴɢ sᴜᴘᴘᴏʀᴛ</b>\n"
-        "<b>│</b>\n"
-        "<b>│ ❍ ʀᴇɴᴅᴇʀ ✅</b>\n"
-        "<b>│ ❍ ᴋᴏʏᴇʙ ✅</b>\n"
-        "<b>│ ❍ ʀᴀɪʟᴡᴀʏ ✅</b>\n"
-        "<b>│ ❍ ғʀᴇᴇ ʜᴏsᴛɪɴɢ ⚡</b>\n"
-        "<b>│ ❍ sᴍᴏᴏᴛʜ ᴘᴇʀғᴏʀᴍᴀɴᴄᴇ 🚀</b>\n"
-        "<b>│</b>\n"
-        "<b>│ 💎 ᴘʀᴇᴍɪᴜᴍ ʜᴏsᴛɪɴɢ</b>\n"
-        "<b>│ ❍ ʜᴇʀᴏᴋᴜ 💎</b>\n"
-        "<b>│ ❍ ᴠᴘs 🚀</b>\n"
-        "<b>│ ❍ 24x7 sᴍᴏᴏᴛʜ ʜᴏsᴛ ⚡</b>\n"
-        "<b>├────────────────────▣</b>\n"
-        f"<b>│ ❍ <a href='{SOURCE_URL}'>ɢɪᴛʜᴜʙ ʀᴇᴘᴏ</a></b>\n"
-        "<b>│ ❍ ғᴇᴇʟ ғʀᴇᴇ ᴛᴏ ʜɪᴛ ⭐ ᴏɴ ɢɪᴛʜᴜʙ</b>\n"
-        "<b>╰────────────────────▣</b>",
-        parse_mode=ParseMode.HTML,
-        reply_markup=kb,
-        disable_web_page_preview=True,
+    content = (
+        rich_heading("🍡 sʜɪᴢᴜᴍᴜsɪᴄ sᴏᴜʀᴄᴇ", level=3)
+        + "<p>❍ ᴏᴘᴇɴ sᴏᴜʀᴄᴇ ᴍᴜsɪᴄ ʙᴏᴛ, ᴅᴇᴠᴇʟᴏᴘᴇᴅ ʙʏ <b>ʙᴀᴅ ᴍᴜɴᴅᴀ</b> ❤️</p>"
+        + rich_details(
+            "⚡ ʜᴏsᴛɪɴɢ sᴜᴘᴘᴏʀᴛ",
+            rich_kv_table([
+                ("ғʀᴇᴇ", "ʀᴇɴᴅᴇʀ ✅ · ᴋᴏʏᴇʙ ✅ · ʀᴀɪʟᴡᴀʏ ✅"),
+                ("ᴘʀᴇᴍɪᴜᴍ", "ʜᴇʀᴏᴋᴜ 💎 · ᴠᴘs 🚀 (24x7 sᴍᴏᴏᴛʜ ʜᴏsᴛ)"),
+            ]),
+            open=True,
+        )
+        + rich_note(
+            f"❍ <a href='{SOURCE_URL}'>ɢɪᴛʜᴜʙ ʀᴇᴘᴏ</a> — ғᴇᴇʟ ғʀᴇᴇ ᴛᴏ ʜɪᴛ ⭐ ᴏɴ ɢɪᴛʜᴜʙ!"
+        )
     )
+
+    await rich_reply(message, content, reply_markup=kb)
 
 
 # ── /id ────────────────────────────────────────────────────────────────────────
@@ -96,9 +96,11 @@ async def id_cmd(client, message: Message) -> None:
     message_id = message.id
     reply      = message.reply_to_message
 
-    # ── Base text ──────────────────────────────────────────────────────────────
-    text  = f"<b>❍ <a href='{message.link}'>ᴍᴇssᴀɢᴇ ɪᴅ</a> :</b> <code>{message_id}</code>\n"
-    text += f"<b>❍ <a href='tg://user?id={your_id}'>ʏᴏᴜʀ ɪᴅ</a>     :</b> <code>{your_id}</code>\n"
+    # ── Base rows ──────────────────────────────────────────────────────────────
+    rows = [
+        ("<a href='{}'>ᴍᴇssᴀɢᴇ ɪᴅ</a>".format(message.link), f"<code>{message_id}</code>"),
+        (f"<a href='tg://user?id={your_id}'>ʏᴏᴜʀ ɪᴅ</a>", f"<code>{your_id}</code>"),
+    ]
 
     # ── Optional: lookup another user by username or ID ───────────────────────
     args = message.command[1:]
@@ -106,11 +108,11 @@ async def id_cmd(client, message: Message) -> None:
         try:
             target    = await client.get_users(args[0])
             target_id = target.id
-            text += f"<b>❍ <a href='tg://user?id={target_id}'>ᴜsᴇʀ ɪᴅ</a>      :</b> <code>{target_id}</code>\n"
+            rows.append((f"<a href='tg://user?id={target_id}'>ᴜsᴇʀ ɪᴅ</a>", f"<code>{target_id}</code>"))
         except Exception:
-            await message.reply(
-                "<b>❍ User not found.</b>",
-                parse_mode=ParseMode.HTML,
+            await rich_reply(
+                message,
+                rich_heading("❍ ᴜsᴇʀ ɴᴏᴛ ғᴏᴜɴᴅ", level=3),
             )
             return
 
@@ -120,36 +122,35 @@ async def id_cmd(client, message: Message) -> None:
     else:
         chat_link = f"tg://user?id={chat.id}"
 
-    text += f"<b>❍ <a href='{chat_link}'>ᴄʜᴀᴛ ɪᴅ</a>      :</b> <code>{chat.id}</code>\n"
+    rows.append((f"<a href='{chat_link}'>ᴄʜᴀᴛ ɪᴅ</a>", f"<code>{chat.id}</code>"))
 
     # ── Replied message ────────────────────────────────────────────────────────
     if reply and not getattr(reply, "empty", True):
 
         # Replied user ID
         if reply.from_user and not getattr(reply, "sender_chat", None):
-            text += (
-                f"\n<b>❍ <a href='{reply.link}'>ʀᴇᴘʟɪᴇᴅ ᴍsɢ ɪᴅ</a> :</b> <code>{reply.id}</code>\n"
-                f"<b>❍ <a href='tg://user?id={reply.from_user.id}'>ʀᴇᴘʟɪᴇᴅ ᴜsᴇʀ</a>    :</b> <code>{reply.from_user.id}</code>\n"
-            )
+            rows.append((f"<a href='{reply.link}'>ʀᴇᴘʟɪᴇᴅ ᴍsɢ ɪᴅ</a>", f"<code>{reply.id}</code>"))
+            rows.append((
+                f"<a href='tg://user?id={reply.from_user.id}'>ʀᴇᴘʟɪᴇᴅ ᴜsᴇʀ</a>",
+                f"<code>{reply.from_user.id}</code>",
+            ))
 
         # Forwarded from channel
-        if getattr(reply, "forward_from_chat", None):
-            fwd = reply.forward_from_chat
-            text += (
-                f"\n<b>❍ ғᴡᴅ ᴄʜᴀɴɴᴇʟ    :</b> {fwd.title}\n"
-                f"<b>❍ ғᴡᴅ ᴄʜᴀɴɴᴇʟ ɪᴅ :</b> <code>{fwd.id}</code>\n"
-            )
+        fwd_chat = getattr(reply, "forward_from_chat", None)
+        if fwd_chat:
+            rows.append(("ғᴡᴅ ᴄʜᴀɴɴᴇʟ", fwd_chat.title))
+            rows.append(("ғᴡᴅ ᴄʜᴀɴɴᴇʟ ɪᴅ", f"<code>{fwd_chat.id}</code>"))
 
         # Sender chat (anonymous group admin / channel post)
-        if getattr(reply, "sender_chat", None):
-            sc = reply.sender_chat
-            text += (
-                f"\n<b>❍ sᴇɴᴅᴇʀ ᴄʜᴀᴛ    :</b> {sc.title}\n"
-                f"<b>❍ sᴇɴᴅᴇʀ ᴄʜᴀᴛ ɪᴅ :</b> <code>{sc.id}</code>\n"
-            )
+        sender_chat = getattr(reply, "sender_chat", None)
+        if sender_chat:
+            rows.append(("sᴇɴᴅᴇʀ ᴄʜᴀᴛ", sender_chat.title))
+            rows.append(("sᴇɴᴅᴇʀ ᴄʜᴀᴛ ɪᴅ", f"<code>{sender_chat.id}</code>"))
 
-    await message.reply(
-        text,
-        parse_mode=ParseMode.HTML,
-        disable_web_page_preview=True,
+    content = (
+        rich_heading("❍ ɪᴅ ɪɴғᴏ", level=3)
+        + rich_kv_table(rows)
     )
+
+    await rich_reply(message, content)
+  
