@@ -21,7 +21,14 @@ from ShizuMusic.utils.db import (
     remove_broadcast_chat,
     remove_served_chat,
 )
-from ShizuMusic.utils.rich_ui import rich_esc, rich_img, rich_kv_table, rich_send
+from ShizuMusic.utils.rich_ui import (
+    rich_esc,
+    rich_heading,
+    rich_img,
+    rich_kv_table,
+    rich_note,
+    rich_send,
+)
 
 LEFT_PHOTOS = [
     "https://telegra.ph/file/1949480f01355b4e87d26.jpg",
@@ -122,7 +129,6 @@ async def bot_added_watcher(_, message: Message) -> None:
                         caption=log_text, parse_mode=ParseMode.HTML, reply_markup=log_kb,
                     )
                 else:
-                    from ShizuMusic.utils.rich_ui import rich_heading
                     content = (
                         rich_heading("📝 #ɴᴇᴡɢʀᴏᴜᴘ — ʙᴏᴛ ᴀᴅᴅᴇᴅ!", level=3)
                         + rich_kv_table(log_rows)
@@ -161,8 +167,6 @@ async def bot_left_watcher(_, message: Message) -> None:
         if not config.LOGGER_ID:
             return
 
-        from ShizuMusic.utils.rich_ui import rich_heading
-
         content = (
             rich_heading("✫ #ʟᴇғᴛɢʀᴏᴜᴘ ✫", level=3)
             + rich_img(random.choice(LEFT_PHOTOS))
@@ -182,4 +186,3 @@ async def bot_left_watcher(_, message: Message) -> None:
 
     except Exception as e:
         print(f"[watcher] bot_left_watcher error: {e}")
-        
