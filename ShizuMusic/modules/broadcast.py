@@ -36,7 +36,7 @@ from ShizuMusic.utils.rich_ui import (
     rich_heading,
     rich_kv_table,
     rich_note,
-    rich_reply,
+    rich_send,
 )
 
 logger = logging.getLogger(__name__)
@@ -114,9 +114,9 @@ async def broadcast_cmd(_, message: Message) -> None:
 
     async with _broadcast_lock:
         if _IS_BROADCASTING:
-            await rich_reply(
-                message,
-                rich_heading("❍ ʙʀᴏᴀᴅᴄᴀsᴛ ᴀʟʀᴇᴀᴅʏ ʀᴜɴɴɪɴɢ", level=3)
+            await rich_send(
+                bot, message.chat.id,
+                rich_heading("❍ ᴀ ʙʀᴏᴀᴅᴄᴀsᴛ ɪs ᴀʟʀᴇᴀᴅʏ ʀᴜɴɴɪɴɢ", level=3)
                 + rich_note("ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ғᴏʀ ɪᴛ ᴛᴏ ғɪɴɪsʜ."),
             )
             return
@@ -148,18 +148,15 @@ async def _run_broadcast(message: Message) -> None:
         bm             = None
         broadcast_type = "text"
     else:
-        await rich_reply(
-            message,
-            rich_heading("❍ ʀᴇᴘʟʏ ᴏʀ ᴘʀᴏᴠɪᴅᴇ ᴛᴇxᴛ", level=3)
-            + rich_note(
-                "ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴍᴇssᴀɢᴇ ᴏʀ ᴘʀᴏᴠɪᴅᴇ ᴛᴇxᴛ ᴀғᴛᴇʀ ᴛʜᴇ ᴄᴏᴍᴍᴀɴᴅ."
-            )
+        await rich_send(
+            bot, message.chat.id,
+            rich_heading("❍ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴍᴇssᴀɢᴇ ᴏʀ ᴘʀᴏᴠɪᴅᴇ ᴛᴇxᴛ", level=3)
             + rich_kv_table([
-                ("<code>-pin</code>", "ᴘɪɴ sɪʟᴇɴᴛʟʏ ɪɴ ɢʀᴏᴜᴘs"),
-                ("<code>-pinloud</code>", "ᴘɪɴ ᴡɪᴛʜ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ"),
-                ("<code>-nogroup</code>", "sᴋɪᴘ ɢʀᴏᴜᴘs"),
-                ("<code>-user</code>", "ᴀʟsᴏ sᴇɴᴅ ᴛᴏ ᴘʀɪᴠᴀᴛᴇ ᴜsᴇʀs"),
-            ]),
+                ("-pin", "ᴘɪɴ sɪʟᴇɴᴛʟʏ ɪɴ ɢʀᴏᴜᴘs"),
+                ("-pinloud", "ᴘɪɴ ᴡɪᴛʜ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ"),
+                ("-nogroup", "sᴋɪᴘ ɢʀᴏᴜᴘs"),
+                ("-user", "ᴀʟsᴏ sᴇɴᴅ ᴛᴏ ᴘʀɪᴠᴀᴛᴇ ᴜsᴇʀs"),
+            ], headers=["ғʟᴀɢ", "ᴇғғᴇᴄᴛ"]),
         )
         return
 
@@ -172,11 +169,7 @@ async def _run_broadcast(message: Message) -> None:
     targets = (0 if flag_nogroup else len(groups)) + (len(private) if flag_user else 0)
 
     if targets == 0:
-        await rich_reply(
-            message,
-            rich_heading("❍ ɴᴏ ᴛᴀʀɢᴇᴛs", level=3)
-            + rich_note("ɴᴏ ᴛᴀʀɢᴇᴛs ғᴏᴜɴᴅ ɪɴ ʙʀᴏᴀᴅᴄᴀsᴛ ʟɪsᴛ."),
-        )
+        await rich_send(bot, message.chat.id, rich_heading("❍ ɴᴏ ᴛᴀʀɢᴇᴛs ғᴏᴜɴᴅ ɪɴ ʙʀᴏᴀᴅᴄᴀsᴛ ʟɪsᴛ", level=3))
         return
 
     # Active flags text
@@ -187,9 +180,9 @@ async def _run_broadcast(message: Message) -> None:
         "-user"    if flag_user    else "",
     ])) or "none"
 
-    pm = await rich_reply(
-        message,
-        rich_heading("📢 ʙʀᴏᴀᴅᴄᴀsᴛ sᴛᴀʀᴛᴇᴅ", level=3)
+    pm = await rich_send(
+        bot, message.chat.id,
+        rich_heading("❍ ʙʀᴏᴀᴅᴄᴀsᴛ sᴛᴀʀᴛᴇᴅ", level=3)
         + rich_kv_table([
             ("ᴛᴏᴛᴀʟ", f"<code>{counts['total']}</code>"),
             ("ɢʀᴏᴜᴘs", f"<code>{len(groups)}</code>"),
@@ -274,17 +267,14 @@ async def _run_broadcast(message: Message) -> None:
             await asyncio.sleep(0.4)
 
     # ── Done ──────────────────────────────────────────────────────────────────
-    result_text = (
-        rich_heading("✅ ʙʀᴏᴀᴅᴄᴀsᴛ ᴄᴏᴍᴘʟᴇᴛᴇᴅ", level=3)
+    await rich_edit(
+        pm,
+        rich_heading("❍ ʙʀᴏᴀᴅᴄᴀsᴛ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ✅", level=3)
         + rich_kv_table([
             ("ɢʀᴏᴜᴘs", f"<code>{success_g}</code>"),
             ("ᴜsᴇʀs", f"<code>{success_u}</code>"),
             ("ᴘɪɴɴᴇᴅ", f"<code>{pinned}</code>"),
             ("ғᴀɪʟᴇᴅ", f"<code>{failed}</code>"),
-        ])
+        ]),
     )
-    if pm is not None:
-        await rich_edit(pm, result_text)
-    else:
-        await rich_reply(message, result_text)
-        
+    
