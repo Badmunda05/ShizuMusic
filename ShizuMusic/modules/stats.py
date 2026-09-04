@@ -11,7 +11,6 @@ import sys
 
 import psutil
 from pyrogram import filters
-from pyrogram.enums import ParseMode
 from pyrogram.types import Message
 
 import config
@@ -25,6 +24,13 @@ from ShizuMusic.utils.db import (
     get_broadcast_count,
     is_connected,
 )
+from ShizuMusic.utils.rich_ui import (
+    rich_edit,
+    rich_esc,
+    rich_heading,
+    rich_kv_table,
+    rich_reply,
+)
 
 
 @bot.on_message(
@@ -34,9 +40,9 @@ from ShizuMusic.utils.db import (
 async def stats_cmd(_, message: Message) -> None:
     """Full system + MongoDB stats for the bot owner."""
 
-    processing = await message.reply(
-        "<b>❍ Fetching stats, please wait...</b>",
-        parse_mode=ParseMode.HTML,
+    processing = await rich_reply(
+        message,
+        rich_heading("❍ ғᴇᴛᴄʜɪɴɢ sᴛᴀᴛs...", level=3),
     )
 
     # ── System stats ──────────────────────────────────────────────────────────
@@ -64,14 +70,15 @@ async def stats_cmd(_, message: Message) -> None:
         os_release   = platform.release()
 
     except Exception as e:
-        await processing.edit_text(
-            f"<b>❍ System stats error:</b> <code>{e}</code>",
-            parse_mode=ParseMode.HTML,
-        )
+        err_text = rich_heading("❍ sʏsᴛᴇᴍ sᴛᴀᴛs ᴇʀʀᴏʀ", level=3) + f"<p><code>{rich_esc(e)}</code></p>"
+        if processing is not None:
+            await rich_edit(processing, err_text)
+        else:
+            await rich_reply(message, err_text)
         return
 
     # ── MongoDB stats ─────────────────────────────────────────────────────────
-    db_line = "<b>❍ MongoDB :</b> <code>Not connected</code>"
+    db_rows = [("ᴍᴏɴɢᴏᴅʙ", "<code>ɴᴏᴛ ᴄᴏɴɴᴇᴄᴛᴇᴅ</code>")]
     if is_connected():
         try:
             client   = get_mongo_client()
@@ -80,14 +87,14 @@ async def stats_cmd(_, message: Message) -> None:
             stor_kb  = db_stats.get("storageSize", 0) / 1024
             col_cnt  = db_stats.get("collections", 0)
             obj_cnt  = db_stats.get("objects",     0)
-            db_line  = (
-                f"<b>❍ DB Data    :</b> <code>{data_kb:.2f} KB</code>\n"
-                f"<b>❍ DB Storage :</b> <code>{stor_kb:.2f} KB</code>\n"
-                f"<b>❍ Collections:</b> <code>{col_cnt}</code>\n"
-                f"<b>❍ Objects    :</b> <code>{obj_cnt}</code>"
-            )
+            db_rows  = [
+                ("ᴅʙ ᴅᴀᴛᴀ", f"<code>{data_kb:.2f} KB</code>"),
+                ("ᴅʙ sᴛᴏʀᴀɢᴇ", f"<code>{stor_kb:.2f} KB</code>"),
+                ("ᴄᴏʟʟᴇᴄᴛɪᴏɴs", f"<code>{col_cnt}</code>"),
+                ("ᴏʙᴊᴇᴄᴛs", f"<code>{obj_cnt}</code>"),
+            ]
         except Exception as e:
-            db_line = f"<b>❍ MongoDB stats error:</b> <code>{e}</code>"
+            db_rows = [("ᴍᴏɴɢᴏᴅʙ ᴇʀʀᴏʀ", f"<code>{rich_esc(e)}</code>")]
 
     # ── Bot DB counts ─────────────────────────────────────────────────────────
     served_chats = get_served_chats_count()
@@ -98,41 +105,53 @@ async def stats_cmd(_, message: Message) -> None:
 
     # ── Final message ─────────────────────────────────────────────────────────
     text = (
-        "<b>━━━━━━━━ ShizuMusic Stats ━━━━━━━━</b>\n\n"
+        rich_heading("📊 sʜɪᴢᴜᴍᴜsɪᴄ sᴛᴀᴛs", level=2)
 
-        "<b>❍ System</b>\n"
-        f"<b>  OS        :</b> <code>{os_name} {os_release}</code>\n"
-        f"<b>  Python    :</b> <code>{py_version}</code>\n"
-        f"<b>  CPU Usage :</b> <code>{cpu_percent}%</code>\n"
-        f"<b>  CPU Freq  :</b> <code>{freq_str}</code>\n"
-        f"<b>  P-Cores   :</b> <code>{p_cores}</code>\n"
-        f"<b>  T-Cores   :</b> <code>{t_cores}</code>\n\n"
+        + rich_heading("❍ sʏsᴛᴇᴍ", level=4)
+        + rich_kv_table([
+            ("ᴏs", f"<code>{rich_esc(os_name)} {rich_esc(os_release)}</code>"),
+            ("ᴘʏᴛʜᴏɴ", f"<code>{rich_esc(py_version)}</code>"),
+            ("ᴄᴘᴜ ᴜsᴀɢᴇ", f"<code>{cpu_percent}%</code>"),
+            ("ᴄᴘᴜ ғʀᴇǫ", f"<code>{freq_str}</code>"),
+            ("ᴘ-ᴄᴏʀᴇs", f"<code>{p_cores}</code>"),
+            ("ᴛ-ᴄᴏʀᴇs", f"<code>{t_cores}</code>"),
+        ])
 
-        "<b>❍ Memory (RAM)</b>\n"
-        f"<b>  Total :</b> <code>{ram_total:.2f} GB</code>\n"
-        f"<b>  Used  :</b> <code>{ram_used:.2f} GB  ({ram_percent}%)</code>\n"
-        f"<b>  Free  :</b> <code>{ram_free:.2f} GB</code>\n\n"
+        + rich_heading("❍ ᴍᴇᴍᴏʀʏ (ʀᴀᴍ)", level=4)
+        + rich_kv_table([
+            ("ᴛᴏᴛᴀʟ", f"<code>{ram_total:.2f} GB</code>"),
+            ("ᴜsᴇᴅ", f"<code>{ram_used:.2f} GB ({ram_percent}%)</code>"),
+            ("ғʀᴇᴇ", f"<code>{ram_free:.2f} GB</code>"),
+        ])
 
-        "<b>❍ Disk</b>\n"
-        f"<b>  Total :</b> <code>{disk_total:.2f} GB</code>\n"
-        f"<b>  Used  :</b> <code>{disk_used:.2f} GB  ({disk_percent}%)</code>\n"
-        f"<b>  Free  :</b> <code>{disk_free:.2f} GB</code>\n\n"
+        + rich_heading("❍ ᴅɪsᴋ", level=4)
+        + rich_kv_table([
+            ("ᴛᴏᴛᴀʟ", f"<code>{disk_total:.2f} GB</code>"),
+            ("ᴜsᴇᴅ", f"<code>{disk_used:.2f} GB ({disk_percent}%)</code>"),
+            ("ғʀᴇᴇ", f"<code>{disk_free:.2f} GB</code>"),
+        ])
 
-        "<b>❍ MongoDB</b>\n"
-        f"{db_line}\n\n"
+        + rich_heading("❍ ᴍᴏɴɢᴏᴅʙ", level=4)
+        + rich_kv_table(db_rows)
 
-        "<b>❍ Bot Stats</b>\n"
-        f"<b>  Served Chats :</b> <code>{served_chats}</code>\n"
-        f"<b>  Served Users :</b> <code>{served_users}</code>\n"
-        f"<b>  Banned Chats :</b> <code>{banned_chats}</code>\n"
-        f"<b>  Total Plays  :</b> <code>{total_plays}</code>\n\n"
+        + rich_heading("❍ ʙᴏᴛ sᴛᴀᴛs", level=4)
+        + rich_kv_table([
+            ("sᴇʀᴠᴇᴅ ᴄʜᴀᴛs", f"<code>{served_chats}</code>"),
+            ("sᴇʀᴠᴇᴅ ᴜsᴇʀs", f"<code>{served_users}</code>"),
+            ("ʙᴀɴɴᴇᴅ ᴄʜᴀᴛs", f"<code>{banned_chats}</code>"),
+            ("ᴛᴏᴛᴀʟ ᴘʟᴀʏs", f"<code>{total_plays}</code>"),
+        ])
 
-        "<b>❍ Broadcast List</b>\n"
-        f"<b>  Total   :</b> <code>{bc['total']}</code>\n"
-        f"<b>  Groups  :</b> <code>{bc['groups']}</code>\n"
-        f"<b>  Users   :</b> <code>{bc['private']}</code>\n\n"
-
-        "<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>"
+        + rich_heading("❍ ʙʀᴏᴀᴅᴄᴀsᴛ ʟɪsᴛ", level=4)
+        + rich_kv_table([
+            ("ᴛᴏᴛᴀʟ", f"<code>{bc['total']}</code>"),
+            ("ɢʀᴏᴜᴘs", f"<code>{bc['groups']}</code>"),
+            ("ᴜsᴇʀs", f"<code>{bc['private']}</code>"),
+        ])
     )
 
-    await processing.edit_text(text, parse_mode=ParseMode.HTML)
+    if processing is not None:
+        await rich_edit(processing, text)
+    else:
+        await rich_reply(message, text)
+        
