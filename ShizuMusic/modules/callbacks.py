@@ -346,11 +346,22 @@ async def on_callback(client, cbq: CallbackQuery) -> None:
         name = sanitize_display_name(cbq.from_user.first_name)
         photo = random.choice(config.START_PHOTOS)
         content = (
-            rich_img(photo)
-            + rich_heading("📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ", level=3)
-            + f'<p>❍ ʜᴇʏ <a href="tg://user?id={uid}">{rich_esc(name)}</a>, ᴘɪᴄᴋ ᴀ '
-              "ᴄᴀᴛᴇɢᴏʀʏ ʙᴇʟᴏᴡ ᴛᴏ sᴇᴇ ɪᴛs ᴄᴏᴍᴍᴀɴᴅs.</p>"
-            + rich_note(f'ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href="https://t.me/PBXCHATS">sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>')
+        rich_heading('📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ', level=3)
+        + rich_img(photo)
+        + rich_note(f'<p>❍ ʜᴇʏ <a href="tg://user?id={uid}">{rich_esc(name)}</a>, ᴘɪᴄᴋ ᴀ '
+        "ᴄᴀᴛᴇɢᴏʀʏ ʙᴇʟᴏᴡ ᴛᴏ sᴇᴇ ɪᴛs ᴄᴏᴍᴍᴀɴᴅs.</p>")
+        + rich_details(
+                "✦ ʜᴇʟᴘ ғᴇᴀᴛᴜʀᴇs ✦",
+                rich_table(
+                    ["ғᴇᴀᴛᴜʀᴇ", "ᴅᴇᴛᴀɪʟs"],
+                    [
+                        ("✉️ ʜᴇʟᴘ ᴍᴇɴᴜ", "ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴡɪᴛʜ : /"),
+                    ],
+                ),
+                open=True,
+            )
+        + rich_note(f"ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
+        + _support_updates_pills()
         )
         if getattr(cbq.message, "photo", None):
             # /start's message is a photo — can't edit its caption into a
