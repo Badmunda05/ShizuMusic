@@ -31,7 +31,7 @@ from ShizuMusic.utils.rich_ui import (
 )
 
 # ── Source repo URL ────────────────────────────────────────────────────────────
-SOURCE_URL = "https://github.com/Badmunda05/ShizuMusic"
+SOURCE_URL = "https://github.com/Badmunda05/ShizuMusic/fork"
 
 
 # ── /repo ──────────────────────────────────────────────────────────────────────
@@ -48,7 +48,7 @@ async def repo_cmd(_, message: Message) -> None:
                 ),
                 InlineKeyboardButton(
                     "🔱 ғᴏʀᴋ 🔱",
-                    url=f"{SOURCE_URL}/fork",
+                    url=SOURCE_URL,
                     style=enums.ButtonStyle.PRIMARY,
                 ),
             ],
