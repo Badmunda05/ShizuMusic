@@ -31,6 +31,13 @@ from ShizuMusic.utils.db import (
     get_broadcast_count,
     remove_broadcast_chat,
 )
+from ShizuMusic.utils.rich_ui import (
+    rich_edit,
+    rich_heading,
+    rich_kv_table,
+    rich_note,
+    rich_reply,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -107,10 +114,10 @@ async def broadcast_cmd(_, message: Message) -> None:
 
     async with _broadcast_lock:
         if _IS_BROADCASTING:
-            await message.reply(
-                "<b>❍ A broadcast is already running.</b>\n"
-                "<b>❍ Please wait for it to finish.</b>",
-                parse_mode=ParseMode.HTML,
+            await rich_reply(
+                message,
+                rich_heading("❍ ʙʀᴏᴀᴅᴄᴀsᴛ ᴀʟʀᴇᴀᴅʏ ʀᴜɴɴɪɴɢ", level=3)
+                + rich_note("ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ғᴏʀ ɪᴛ ᴛᴏ ғɪɴɪsʜ."),
             )
             return
         _IS_BROADCASTING = True
@@ -141,14 +148,18 @@ async def _run_broadcast(message: Message) -> None:
         bm             = None
         broadcast_type = "text"
     else:
-        await message.reply(
-            "<b>❍ Reply to a message or provide text.</b>\n\n"
-            "<b>❍ Flags :</b>\n"
-            "<code>-pin</code>      → pin silently in groups\n"
-            "<code>-pinloud</code>  → pin with notification\n"
-            "<code>-nogroup</code>  → skip groups\n"
-            "<code>-user</code>     → also send to private users",
-            parse_mode=ParseMode.HTML,
+        await rich_reply(
+            message,
+            rich_heading("❍ ʀᴇᴘʟʏ ᴏʀ ᴘʀᴏᴠɪᴅᴇ ᴛᴇxᴛ", level=3)
+            + rich_note(
+                "ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴍᴇssᴀɢᴇ ᴏʀ ᴘʀᴏᴠɪᴅᴇ ᴛᴇxᴛ ᴀғᴛᴇʀ ᴛʜᴇ ᴄᴏᴍᴍᴀɴᴅ."
+            )
+            + rich_kv_table([
+                ("<code>-pin</code>", "ᴘɪɴ sɪʟᴇɴᴛʟʏ ɪɴ ɢʀᴏᴜᴘs"),
+                ("<code>-pinloud</code>", "ᴘɪɴ ᴡɪᴛʜ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ"),
+                ("<code>-nogroup</code>", "sᴋɪᴘ ɢʀᴏᴜᴘs"),
+                ("<code>-user</code>", "ᴀʟsᴏ sᴇɴᴅ ᴛᴏ ᴘʀɪᴠᴀᴛᴇ ᴜsᴇʀs"),
+            ]),
         )
         return
 
@@ -161,9 +172,10 @@ async def _run_broadcast(message: Message) -> None:
     targets = (0 if flag_nogroup else len(groups)) + (len(private) if flag_user else 0)
 
     if targets == 0:
-        await message.reply(
-            "<b>❍ No targets found in broadcast list.</b>",
-            parse_mode=ParseMode.HTML,
+        await rich_reply(
+            message,
+            rich_heading("❍ ɴᴏ ᴛᴀʀɢᴇᴛs", level=3)
+            + rich_note("ɴᴏ ᴛᴀʀɢᴇᴛs ғᴏᴜɴᴅ ɪɴ ʙʀᴏᴀᴅᴄᴀsᴛ ʟɪsᴛ."),
         )
         return
 
@@ -175,14 +187,16 @@ async def _run_broadcast(message: Message) -> None:
         "-user"    if flag_user    else "",
     ])) or "none"
 
-    pm = await message.reply(
-        f"<b>❍ Broadcast Started</b>\n\n"
-        f"<b>❍ Total   :</b> <code>{counts['total']}</code>\n"
-        f"<b>❍ Groups  :</b> <code>{len(groups)}</code>\n"
-        f"<b>❍ Users   :</b> <code>{len(private)}</code>\n"
-        f"<b>❍ Targets :</b> <code>{targets}</code>\n"
-        f"<b>❍ Flags   :</b> <code>{active_flags}</code>",
-        parse_mode=ParseMode.HTML,
+    pm = await rich_reply(
+        message,
+        rich_heading("📢 ʙʀᴏᴀᴅᴄᴀsᴛ sᴛᴀʀᴛᴇᴅ", level=3)
+        + rich_kv_table([
+            ("ᴛᴏᴛᴀʟ", f"<code>{counts['total']}</code>"),
+            ("ɢʀᴏᴜᴘs", f"<code>{len(groups)}</code>"),
+            ("ᴜsᴇʀs", f"<code>{len(private)}</code>"),
+            ("ᴛᴀʀɢᴇᴛs", f"<code>{targets}</code>"),
+            ("ғʟᴀɢs", f"<code>{active_flags}</code>"),
+        ]),
     )
 
     success_g = success_u = pinned = failed = 0
@@ -260,11 +274,17 @@ async def _run_broadcast(message: Message) -> None:
             await asyncio.sleep(0.4)
 
     # ── Done ──────────────────────────────────────────────────────────────────
-    await pm.edit_text(
-        "<b>❍ Broadcast Completed ✅</b>\n\n"
-        f"<b>❍ Groups :</b> <code>{success_g}</code>\n"
-        f"<b>❍ Users  :</b> <code>{success_u}</code>\n"
-        f"<b>❍ Pinned :</b> <code>{pinned}</code>\n"
-        f"<b>❍ Failed :</b> <code>{failed}</code>",
-        parse_mode=ParseMode.HTML,
-                )
+    result_text = (
+        rich_heading("✅ ʙʀᴏᴀᴅᴄᴀsᴛ ᴄᴏᴍᴘʟᴇᴛᴇᴅ", level=3)
+        + rich_kv_table([
+            ("ɢʀᴏᴜᴘs", f"<code>{success_g}</code>"),
+            ("ᴜsᴇʀs", f"<code>{success_u}</code>"),
+            ("ᴘɪɴɴᴇᴅ", f"<code>{pinned}</code>"),
+            ("ғᴀɪʟᴇᴅ", f"<code>{failed}</code>"),
+        ])
+    )
+    if pm is not None:
+        await rich_edit(pm, result_text)
+    else:
+        await rich_reply(message, result_text)
+        
