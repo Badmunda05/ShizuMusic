@@ -82,10 +82,10 @@ async def skip_cmd(_, message: Message) -> None:
                 ("ɴᴏᴡ ᴘʟᴀʏɪɴɢ", f"<code>{rich_esc(nxt['title'])}</code>"),
             ]),
         )
-        dm = await bot.send_message(
-            chat_id,
-            f"<b>❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ :</b> <code>{nxt['title']}</code>",
-            parse_mode=ParseMode.HTML,
+        dm = await rich_send(
+            bot, chat_id,
+            rich_heading("❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ", level=3)
+            + rich_kv_table([("ᴛɪᴛʟᴇ", f"<code>{rich_esc(nxt['title'])}</code>")]),
         )
         await play_song(chat_id, dm, nxt)
     else:
