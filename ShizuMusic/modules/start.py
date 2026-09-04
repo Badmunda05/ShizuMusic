@@ -266,7 +266,18 @@ async def help_handler(_, message: Message) -> None:
         + rich_img(photo)
         + f'<p>❍ ʜᴇʏ <a href="tg://user?id={uid}">{rich_esc(name)}</a>, ᴘɪᴄᴋ ᴀ '
         "ᴄᴀᴛᴇɢᴏʀʏ ʙᴇʟᴏᴡ ᴛᴏ sᴇᴇ ɪᴛs ᴄᴏᴍᴍᴀɴᴅs.</p>"
+        + rich_details(
+                "✦ ʜᴇʟᴘ ғᴇᴀᴛᴜʀᴇs ✦",
+                rich_table(
+                    ["ғᴇᴀᴛᴜʀᴇ", "ᴅᴇᴛᴀɪʟs"],
+                    [
+                        ("✉️ ʜᴇʟᴘ ᴍᴇɴᴜ", "ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴡɪᴛʜ : /"),
+                    ],
+                ),
+                open=True,
+            )
         + rich_note(f"ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
+        + _support_updates_pills()
     )
 
     await rich_send(bot, message.chat.id, caption, reply_markup=kb)
