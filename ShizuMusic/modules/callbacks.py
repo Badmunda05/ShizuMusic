@@ -396,11 +396,11 @@ async def _go_back(cbq: CallbackQuery) -> None:
 
     caption = (
             rich_img(photo)
-            + f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
+            + rich_note(f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
             "ᴡᴇʟᴄᴏᴍᴇ ᴀʙᴏᴀʀᴅ! 🎶</p>"
             + f"<p>ɪ ᴀᴍ <b>{rich_esc(config.BOT_NAME)}</b> — ᴀ ғᴀsᴛ &amp; "
               "ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ᴘʟᴀʏᴇʀ ʙᴏᴛ ᴡɪᴛʜ sᴏᴍᴇ ᴀᴡᴇsᴏᴍᴇ "
-              "ғᴇᴀᴛᴜʀᴇs.</p>"
+              "ғᴇᴀᴛᴜʀᴇs.</p>")
             + rich_details(
                 "✦ ᴋᴇʏ ғᴇᴀᴛᴜʀᴇs ✦",
                 rich_table(
