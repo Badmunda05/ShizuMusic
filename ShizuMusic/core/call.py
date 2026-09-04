@@ -8,7 +8,6 @@
 
 import asyncio
 
-from pyrogram.enums import ParseMode
 from pytgcalls import filters as fl
 from ntgcalls import TelegramServerError
 from pytgcalls.exceptions import NoActiveGroupCall
@@ -20,13 +19,7 @@ from pytgcalls.types import (
 from ShizuMusic import LOGGER, bot, call_py
 from ShizuMusic.core.queue import clear_queue, peek_current, pop_current, queue_size
 from ShizuMusic.utils.helpers import delete_file
-from ShizuMusic.utils.rich_ui import (
-    rich_esc,
-    rich_heading,
-    rich_kv_table,
-    rich_note,
-    rich_send,
-)
+from ShizuMusic.utils.rich_ui import rich_esc, rich_heading, rich_kv_table, rich_note, rich_send
 
 
 async def leave_vc(chat_id: int) -> None:
@@ -108,11 +101,10 @@ async def on_stream_end(_: object, update: StreamEnded) -> None:
         from ShizuMusic.core.player import play_song
 
         try:
-            msg = await bot.send_message(
-                chat_id,
-                f"<b>❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ :</b>\n"
-                f"<b>❍ ᴛɪᴛʟᴇ :</b> <code>{nxt['title']}</code>",
-                parse_mode=ParseMode.HTML,
+            msg = await rich_send(
+                bot, chat_id,
+                rich_heading("❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ", level=3)
+                + rich_kv_table([("ᴛɪᴛʟᴇ", f"<code>{rich_esc(nxt['title'])}</code>")]),
             )
 
             await play_song(chat_id, msg, nxt)
@@ -157,11 +149,10 @@ async def on_stream_end(_: object, update: StreamEnded) -> None:
 
                     from ShizuMusic.core.player import play_song
 
-                    msg2 = await bot.send_message(
-                        chat_id,
-                        f"<b>❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ :</b> "
-                        f"<code>{nxt2['title']}</code>",
-                        parse_mode=ParseMode.HTML,
+                    msg2 = await rich_send(
+                        bot, chat_id,
+                        rich_heading("❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ", level=3)
+                        + rich_kv_table([("ᴛɪᴛʟᴇ", f"<code>{rich_esc(nxt2['title'])}</code>")]),
                     )
 
                     await play_song(chat_id, msg2, nxt2)
@@ -175,11 +166,10 @@ async def on_stream_end(_: object, update: StreamEnded) -> None:
                 nxt3 = peek_current(chat_id)
                 if nxt3:
                     from ShizuMusic.core.player import play_song
-                    msg3 = await bot.send_message(
-                        chat_id,
-                        f"<b>❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ :</b> "
-                        f"<code>{nxt3['title']}</code>",
-                        parse_mode=ParseMode.HTML,
+                    msg3 = await rich_send(
+                        bot, chat_id,
+                        rich_heading("❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ", level=3)
+                        + rich_kv_table([("ᴛɪᴛʟᴇ", f"<code>{rich_esc(nxt3['title'])}</code>")]),
                     )
                     await play_song(chat_id, msg3, nxt3)
                     return
