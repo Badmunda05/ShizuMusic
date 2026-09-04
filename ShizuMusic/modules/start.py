@@ -150,11 +150,7 @@ async def start_handler(_, message: Message) -> None:
                     + f"<b>❍ ᴜsᴇʀɴᴀᴍᴇ :</b> @{rich_esc(message.from_user.username) or 'N/A'}"
                     + "</p>"
                 )
-                await bot.send_message(
-                    config.LOGGER_ID,
-                    logger_caption,
-                    parse_mode=ParseMode.HTML,
-                )
+                await rich_send(bot, config.LOGGER_ID, logger_caption)
             except Exception:
                 pass
 
@@ -209,9 +205,9 @@ async def start_handler(_, message: Message) -> None:
             )
         ]])
         try:
-            admin_sent = await message.reply_text(
+            admin_sent = await rich_send(
+                bot, chat_id,
                 admin_msg,
-                parse_mode=ParseMode.HTML,
                 reply_markup=admin_kb,
             )
         except Exception:
@@ -269,3 +265,4 @@ async def help_handler(_, message: Message) -> None:
     )
 
     await rich_send(bot, message.chat.id, caption, reply_markup=kb)
+    
