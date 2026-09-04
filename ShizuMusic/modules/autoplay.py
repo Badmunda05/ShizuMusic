@@ -109,10 +109,10 @@ async def autoplay_cmd(_, message: Message) -> None:
     )
 
     if not was_playing and first:
-        dm = await bot.send_message(
-            chat_id,
-            f"<b>❍ ɴᴏᴡ ᴘʟᴀʏɪɴɢ :</b> <code>{short(first['title'])}</code>",
-            parse_mode=ParseMode.HTML,
+        dm = await rich_send(
+            bot, chat_id,
+            rich_heading("❍ ɴᴏᴡ ᴘʟᴀʏɪɴɢ", level=3)
+            + rich_kv_table([("ᴛɪᴛʟᴇ", f"<code>{rich_esc(short(first['title']))}</code>")]),
         )
         await play_song(chat_id, dm, first)
 
@@ -120,4 +120,4 @@ async def autoplay_cmd(_, message: Message) -> None:
         await message.delete()
     except Exception:
         pass
-        
+
