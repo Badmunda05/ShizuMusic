@@ -21,6 +21,12 @@ from ShizuMusic.utils.db import (
     remove_broadcast_chat,
     remove_served_chat,
 )
+from ShizuMusic.utils.rich_ui import (
+    rich_heading,
+    rich_kv_table,
+    rich_note,
+    rich_reply,
+)
 
 LEFT_PHOTOS = [
     "https://telegra.ph/file/1949480f01355b4e87d26.jpg",
@@ -51,25 +57,20 @@ async def bot_added_watcher(_, message: Message) -> None:
             added_by_mention = added_by.mention if added_by else "ᴜɴᴋɴᴏᴡɴ"
 
             admin_request_text = (
-                "<b>╭──────────────────────▣</b>\n"
-                "<b>│❍ ᴛʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ! 🥀</b>\n"
-                "<b>├──────────────────────▣</b>\n"
-                "<b>│❍ ᴘʟᴇᴀsᴇ ᴍᴀᴋᴇ ᴍᴇ ᴀɴ ᴀᴅᴍɪɴ</b>\n"
-                "<b>│  ᴡɪᴛʜ ᴛʜᴇsᴇ ᴘᴇʀᴍɪssɪᴏɴs:</b>\n"
-                "<b>├──────────────────────▣</b>\n"
-                "<b>│ ❍ ᴅᴇʟᴇᴛᴇ ᴍᴇssᴀɢᴇs</b>\n"
-                "<b>│ ❍ ᴍᴀɴᴀɢᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs</b>\n"
-                "<b>│ ❍ ɪɴᴠɪᴛᴇ ᴜsᴇʀs</b>\n"
-                "<b>├──────────────────────▣</b>\n"
-                "<b>│❍ ᴡɪᴛʜᴏᴜᴛ ᴀᴅᴍɪɴ ᴘᴇʀᴍs</b>\n"
-                "<b>│  sᴏᴍᴇ ғᴇᴀᴛᴜʀᴇs ᴡᴏɴ'ᴛ ᴡᴏʀᴋ! 🚫</b>\n"
-                "<b>╰──────────────────────▣</b>"
+                rich_heading("❍ ᴛʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ! 🥀", level=3)
+                + rich_note(
+                    "<p>❍ ᴘʟᴇᴀsᴇ ᴍᴀᴋᴇ ᴍᴇ ᴀɴ ᴀᴅᴍɪɴ ᴡɪᴛʜ ᴛʜᴇsᴇ ᴘᴇʀᴍɪssɪᴏɴs:</p>"
+                    "<p>❍ ᴅᴇʟᴇᴛᴇ ᴍᴇssᴀɢᴇs<br>"
+                    "❍ ᴍᴀɴᴀɢᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs<br>"
+                    "❍ ɪɴᴠɪᴛᴇ ᴜsᴇʀs</p>"
+                )
+                + rich_note("ᴡɪᴛʜᴏᴜᴛ ᴀᴅᴍɪɴ ᴘᴇʀᴍs sᴏᴍᴇ ғᴇᴀᴛᴜʀᴇs ᴡᴏɴ'ᴛ ᴡᴏʀᴋ! 🚫")
             )
             admin_kb = InlineKeyboardMarkup([[
                 InlineKeyboardButton("⚡ ᴍᴀᴋᴇ ᴍᴇ ᴀᴅᴍɪɴ ⚡", url=f"tg://user?id={me.id}")
             ]])
             try:
-                await message.reply_text(admin_request_text, parse_mode=ParseMode.HTML, reply_markup=admin_kb)
+                await rich_reply(message, admin_request_text, reply_markup=admin_kb)
             except Exception:
                 pass
 
@@ -183,3 +184,4 @@ async def bot_left_watcher(_, message: Message) -> None:
 
     except Exception as e:
         print(f"[watcher] bot_left_watcher error: {e}")
+        
