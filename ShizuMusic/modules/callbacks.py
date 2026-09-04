@@ -430,7 +430,7 @@ async def _go_back(cbq: CallbackQuery) -> None:
                               style=enums.ButtonStyle.PRIMARY)],
         [
             InlineKeyboardButton("🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP,
-                                 style=enums.ButtonStyle.PRIMARY),
+                                 style=enums.ButtonStyle.SUCCESS),
             InlineKeyboardButton("🍹 ᴜᴘᴅᴀᴛᴇs 🍹",  url=config.UPDATES_CHANNEL,
                                  style=enums.ButtonStyle.SUCCESS),
         ],
