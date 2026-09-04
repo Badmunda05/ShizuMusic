@@ -20,6 +20,7 @@ from ShizuMusic.utils.rich_ui import (
     rich_edit,
     rich_esc,
     rich_heading,
+    rich_img,
     rich_kv_table,
     rich_note,
     rich_send,
@@ -105,16 +106,17 @@ async def _seek_to(chat_id: int, target_sec: int, message: Message) -> None:
 
     set_seek_state(chat_id, target_sec)
 
-    # Live now-playing caption — must stay a caption (periodically re-edited
-    # elsewhere via edit_message_caption), so plain HTML, not rich blocks.
-    caption = (
-        "<blockquote>"
-        "<b>🎧 sʜɪᴢᴜ ᴍᴜsɪᴄ</b>\n\n"
-        f"<b>❍ ᴛɪᴛʟᴇ :</b> {rich_esc(short(song['title']))}\n"
-        f"<b>❍ ᴅᴜʀᴀᴛɪᴏɴ :</b> {rich_esc(song.get('duration', '?'))}\n"
-        f"<b>❍ ʙʏ :</b> {rich_esc(song['requester'])}\n"
-        f"<b>❍ sᴇᴇᴋᴇᴅ ᴛᴏ :</b> <code>{fmt_time(target_sec)}</code>"
-        "</blockquote>"
+    # True rich card — same pattern as the now-playing message in player.py
+    # (embedded thumbnail via rich_img, real heading + table), not a caption.
+    content = (
+        rich_heading("🎧 sʜɪᴢᴜ ᴍᴜsɪᴄ — ɴᴏᴡ ᴘʟᴀʏɪɴɢ", level=3)
+        + (rich_img(song["thumbnail"]) if song.get("thumbnail") else "")
+        + rich_kv_table([
+            ("ᴛɪᴛʟᴇ", rich_esc(short(song["title"]))),
+            ("ᴅᴜʀᴀᴛɪᴏɴ", rich_esc(song.get("duration", "?"))),
+            ("ʙʏ", rich_esc(song["requester"])),
+            ("sᴇᴇᴋᴇᴅ ᴛᴏ", f"<code>{fmt_time(target_sec)}</code>"),
+        ])
     )
     btns = [
         InlineKeyboardButton("▷",   callback_data="resume"),
@@ -131,7 +133,7 @@ async def _seek_to(chat_id: int, target_sec: int, message: Message) -> None:
         await pm.delete()
     except Exception:
         pass
-    await bot.send_message(chat_id, caption, reply_markup=kb, parse_mode=ParseMode.HTML)
+    await rich_send(bot, chat_id, content, reply_markup=kb)
 
 
 # ── /seek ──────────────────────────────────────────────────────────────────────
