@@ -264,9 +264,9 @@ async def help_handler(_, message: Message) -> None:
     caption = (
         rich_img(photo)
         + rich_heading('📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ', level=3)
-        + f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, ᴘɪᴄᴋ ᴀ "
+        + f'<p>❍ ʜᴇʏ <a href="tg://user?id={uid}">{rich_esc(name)}</a>, ᴘɪᴄᴋ ᴀ '
         "ᴄᴀᴛᴇɢᴏʀʏ ʙᴇʟᴏᴡ ᴛᴏ sᴇᴇ ɪᴛs ᴄᴏᴍᴍᴀɴᴅs.</p>"
-        + rich_note(f"ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
+        + rich_note(f'ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href="https://t.me/PBXCHATS">sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>')
     )
 
     await rich_send(bot, message.chat.id, caption, reply_markup=kb)
