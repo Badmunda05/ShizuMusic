@@ -95,4 +95,4 @@ async def skip_cmd(_, message: Message) -> None:
             + rich_kv_table([("sᴋɪᴘᴘᴇᴅ", f"<code>{rich_esc(short(skipped['title']))}</code>")])
             + rich_note("ǫᴜᴇᴜᴇ ɪs ɴᴏᴡ ᴇᴍᴘᴛʏ"),
         )
-        
+
