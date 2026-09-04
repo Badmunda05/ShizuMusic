@@ -31,15 +31,6 @@ from ShizuMusic.utils.rich_ui import (
     sanitize_display_name,
 )
 
-# ── Message effect IDs (Telegram premium effects) ─────────────────────────────
-EFFECT_ID = [
-    5046509860389126442,
-    5107584321108051014,
-    5104841245755180586,
-    5159385139981059251,
-]
-
-
 def _support_updates_pills() -> str:
     return (
         "<p>"
@@ -79,11 +70,11 @@ async def start_handler(_, message: Message) -> None:
 
         caption = (
             rich_img(photo)
-            + f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
+            + rich_note(f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
             "ᴡᴇʟᴄᴏᴍᴇ ᴀʙᴏᴀʀᴅ! 🎶</p>"
             + f"<p>ɪ ᴀᴍ <b>{rich_esc(config.BOT_NAME)}</b> — ᴀ ғᴀsᴛ &amp; "
               "ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ᴘʟᴀʏᴇʀ ʙᴏᴛ ᴡɪᴛʜ sᴏᴍᴇ ᴀᴡᴇsᴏᴍᴇ "
-              "ғᴇᴀᴛᴜʀᴇs.</p>"
+              "ғᴇᴀᴛᴜʀᴇs.</p>")
             + rich_details(
                 "✦ ᴋᴇʏ ғᴇᴀᴛᴜʀᴇs ✦",
                 rich_table(
