@@ -1,3 +1,12 @@
+# --------------------------------------------------------------------------------
+#  ShizuMusic © 2026
+#  Developed by Bad Munda ❤️
+#
+#  Unauthorized copying, editing, re-uploading or removing credits
+#  from this source code is strictly prohibited.
+# --------------------------------------------------------------------------------
+
+
 from __future__ import annotations
 
 import html as _html
@@ -666,6 +675,7 @@ async def _rich_edit_via_client(app, chat_id, message_id, html_text, reply_marku
     # MTProto invoke needed. (Earlier version of this file guessed at a raw
     # `raw.functions.messages.EditMessage(..., rich_message=...)` invoke, which
     # was unverified and fragile — replaced.)
+    # Bad Munda 
     if RICH_AVAILABLE and _has_rich_only_tags(html_text):
         try:
             return await app.edit_message_text(
