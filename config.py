@@ -25,6 +25,13 @@ PING_IMG_URL     = os.getenv("PING_IMG_URL", "https://files.catbox.moe/ddzvc0.jp
 SESSION_NAME     = os.getenv("SESSION_NAME", "ShizuMusic")
 PORT             = int(os.getenv("PORT", 10000))
 
+# ── API config ────────────────────────────────────────────────────────────────
+SHRUTI_API_URL        = os.environ.get("SHRUTI_API_URL", "https://api.shrutibots.site")
+SHRUTI_API_KEY        = os.environ.get("SHRUTI_API_KEY", "PASTE YOUR KEY")  # Get from @SHRUTIAPIBOT on Telegram
+DOWNLOAD_DIR          = "downloads"
+SHRUTI_TOKEN_TIMEOUT  = 10    # seconds — fetch download token
+SHRUTI_STREAM_TIMEOUT = 900   # 15 min  — stream long songs
+
 # ── NSFW Moderation API ─────────────────────────────────────────────────────
 #NSFW_API_URL = os.getenv("NSFW_API_URL", "https://ai-moderation-api-khyr.onrender.com")
 #NSFW_API_KEY = os.getenv("NSFW_API_KEY", "nsfwBad")
