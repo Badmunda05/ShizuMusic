@@ -18,17 +18,10 @@ import yt_dlp
 from py_yt import Playlist, VideosSearch
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
-
+from config import *
 from ShizuMusic.utils.formatters import sec_to_iso
 
 logger = logging.getLogger(__name__)
-
-# ── API config ────────────────────────────────────────────────────────────────
-SHRUTI_API_URL        = os.environ.get("SHRUTI_API_URL", "https://api.shrutibots.site")
-SHRUTI_API_KEY        = os.environ.get("SHRUTI_API_KEY", "ShrutiBots1JyNWUFBwhFiouHmUyXC")  # Get from @SHRUTIAPIBOT on Telegram
-DOWNLOAD_DIR          = "downloads"
-SHRUTI_TOKEN_TIMEOUT  = 10    # seconds — fetch download token
-SHRUTI_STREAM_TIMEOUT = 900   # 15 min  — stream long songs
 
 _file_cache: dict[str, str] = {}
 
