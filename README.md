@@ -183,6 +183,9 @@ PORT=               # default: 10000 (Render / Koyeb)
   </a>
   <a href="mailto:munda.bad1322@gmail.com">
     <img src="https://img.shields.io/badge/Contact-Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" />
+    <a href="https://t.me/Badmundaxd">
+    <img src="https://img.shields.io/badge/Contact_Owner-Telegram-4CAF50?style=for-the-badge&logo=telegram&logoColor=white" />
+  </a>
   </a>
 </p>
 
