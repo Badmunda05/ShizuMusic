@@ -1,10 +1,16 @@
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
 #
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+#                   © 2026 BAD MUNDA
+#
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
 
 import asyncio
 import importlib
@@ -22,7 +28,8 @@ from pyrogram.types import BotCommand
 import config
 from ShizuMusic import LOGGER, assistant, bot, call_py
 from ShizuMusic.modules import ALL_MODULES
-from ShizuMusic.utils.rich_ui import (
+from ShizuMusic.utils.logs import logger_active
+from richgram import (
     rich_esc,
     rich_heading,
     rich_kv_table,
@@ -67,7 +74,7 @@ def _keep_alive() -> None:
 
 
 async def _notify_owner(me, assistant_username: str) -> None:
-    if not config.LOGGER_ID:
+    if not logger_active():
         return
 
     try:
@@ -122,11 +129,7 @@ if __name__ == "__main__":
     threading.Thread(target=_keep_alive, daemon=True).start()
     LOGGER.info("Keep-alive thread started")
 
-    # 4. PyTgCalls
-    call_py.start()
-    LOGGER.info("PyTgCalls started")
-
-    # 5. Bot start (with FLOOD_WAIT retry)
+    # 4. Bot start
     for attempt in range(10):
         try:
             bot.start()
@@ -147,8 +150,12 @@ if __name__ == "__main__":
 
     me = bot.get_me()
     LOGGER.info(f"Bot: @{me.username}")
+    import ShizuMusic
+    from pytgcalls import PyTgCalls
+    ShizuMusic.call_py = PyTgCalls(assistant)
+    call_py = ShizuMusic.call_py
 
-    # 6. Set bot commands
+    # 5. Set bot commands
     try:
         bot.set_bot_commands([
             BotCommand("start",  "✧ sᴛᴀʀᴛ ᴛʜᴇ ʙᴏᴛ ✧"),
@@ -159,13 +166,31 @@ if __name__ == "__main__":
             BotCommand("skip",   "✧ sᴋɪᴘ sᴏɴɢ ✧"),
             BotCommand("stop",   "✧ sᴛᴏᴘ & ᴄʟᴇᴀʀ ✧"),
             BotCommand("ping",   "✧ ʙᴏᴛ sᴛᴀᴛs ✧"),
+            BotCommand("autoplay", "✧ ᴀᴜᴛᴏ-ᴘʟᴀʏ ʀᴇʟᴀᴛᴇᴅ sᴏɴɢs ✧"),
+            BotCommand("language", "✧ ᴄʜᴀɴɢᴇ ʙᴏᴛ ʟᴀɴɢᴜᴀɢᴇ ✧"),
+            BotCommand("playforce", "✧ ᴘʟᴀʏ ɴᴏᴡ, ᴋᴇᴇᴘ ǫᴜᴇᴜᴇ ✧"),
+            BotCommand("pcreate", "✧ ᴄʀᴇᴀᴛᴇ ᴀ ᴘʟᴀʏʟɪsᴛ ✧"),
+            BotCommand("padd", "✧ ᴀᴅᴅ sᴏɴɢ ᴛᴏ ᴘʟᴀʏʟɪsᴛ ✧"),
+            BotCommand("premove", "✧ ʀᴇᴍᴏᴠᴇ sᴏɴɢ ғʀᴏᴍ ᴘʟᴀʏʟɪsᴛ ✧"),
+            BotCommand("pview", "✧ ᴠɪᴇᴡ ᴘʟᴀʏʟɪsᴛs ✧"),
+            BotCommand("pplay", "✧ ᴘʟᴀʏ ᴀ ᴘʟᴀʏʟɪsᴛ ✧"),
+            BotCommand("pdelete", "✧ ᴅᴇʟᴇᴛᴇ ᴀ ᴘʟᴀʏʟɪsᴛ ✧"),
+            BotCommand("addchannel", "✧ ʟɪɴᴋ ᴀ ᴄʜᴀɴɴᴇʟ ғᴏʀ ᴘʟᴀʏ ✧"),
+            BotCommand("delchannel", "✧ ᴜɴʟɪɴᴋ ᴄʜᴀɴɴᴇʟ ✧"),
+            BotCommand("cplay", "✧ ᴘʟᴀʏ ɪɴ ᴄʜᴀɴɴᴇʟ ✧"),
+            BotCommand("cvplay", "✧ ᴠɪᴅᴇᴏ ɪɴ ᴄʜᴀɴɴᴇʟ ✧"),
+            BotCommand("cpause", "✧ ᴘᴀᴜsᴇ ᴄʜᴀɴɴᴇʟ ✧"),
+            BotCommand("cresume", "✧ ʀᴇsᴜᴍᴇ ᴄʜᴀɴɴᴇʟ ✧"),
+            BotCommand("cskip", "✧ sᴋɪᴘ ɪɴ ᴄʜᴀɴɴᴇʟ ✧"),
+            BotCommand("cstop", "✧ sᴛᴏᴘ ᴄʜᴀɴɴᴇʟ ✧"),
+            BotCommand("thumbnail", "✧ sᴏɴɢ ᴛʜᴜᴍʙɴᴀɪʟ ᴏɴ/ᴏғғ ✧"),
             BotCommand("repo",   "✧ sᴏᴜʀᴄᴇ ᴍᴜsɪᴄ ʙᴏᴛ ✧"),
         ])
         LOGGER.info("Bot commands set")
     except Exception as e:
         LOGGER.warning(f"Could not set bot commands: {e}")
 
-    # 7. Assistant
+    # 6. Assistant — started
     try:
         if not assistant.is_connected:
             assistant.start()
@@ -176,7 +201,11 @@ if __name__ == "__main__":
         LOGGER.error(f"Assistant start failed: {e}")
         sys.exit(1)
 
-    # 8. Block middleware — MUST run before plugins load
+    # 7. PyTgCalls
+    call_py.start()
+    LOGGER.info("PyTgCalls started")
+
+    # 8. Block middleware
     try:
         from ShizuMusic.utils.decorators import register_block_middleware
         register_block_middleware()
@@ -223,4 +252,3 @@ if __name__ == "__main__":
         pass
 
     LOGGER.info("✧ ShizuMusic stopped ✧")
-            

@@ -1,0 +1,587 @@
+# --------------------------------------------------------------------------------
+#  ShizuMusic © 2026 — English (base language)
+#
+#  This file is the SOURCE OF TRUTH for every key the bot uses. Every other
+#  language file borrows from this one for any key it hasn't translated yet,
+#  so keep this one complete.
+# --------------------------------------------------------------------------------
+
+name: "🇺🇸 English"
+
+# ── /autoplay ──────────────────────────────────────────────────────────────────
+autoplay_title:        "🔁 ᴀᴜᴛᴏᴘʟᴀʏ"
+autoplay_usage_title:  "🔁 ᴀᴜᴛᴏᴘʟᴀʏ ᴜsᴀɢᴇ"
+autoplay_usage_note: |-
+  <code>/autoplay on</code> · <code>/autoplay off</code>
+  <code>/autoplay lang hindi</code> (ᴏʀ <code>auto</code>)
+  <code>/autoplay mood sad</code> (ᴏʀ <code>any</code>)
+
+autoplay_status_note: |-
+  <code>/autoplay on</code> · <code>/autoplay off</code>
+  <code>/autoplay lang hindi</code> (ᴏʀ <code>auto</code>)
+  <code>/autoplay mood sad</code> (ᴏʀ <code>any</code>)
+
+  ʟᴀɴɢs: {0}
+  ᴍᴏᴏᴅs: {1}
+
+autoplay_status_on:    "ᴏɴ ✅"
+autoplay_status_off:   "ᴏғғ ❌"
+autoplay_kv_status:    "sᴛᴀᴛᴜs"
+autoplay_kv_lang:      "ʟᴀɴɢᴜᴀɢᴇ"
+autoplay_kv_mood:      "ᴍᴏᴏᴅ"
+
+autoplay_admin_only_title: "⛔ ᴀᴅᴍɪɴ ᴏɴʟʏ"
+autoplay_admin_only_note:  "ᴏɴʟʏ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs ᴄᴀɴ ᴜsᴇ /autoplay"
+
+autoplay_enabled_title:    "🔁 ᴀᴜᴛᴏᴘʟᴀʏ ᴇɴᴀʙʟᴇᴅ"
+autoplay_enabled_note:     "ʙʏ » {0}\nᴡʜᴇɴ ᴛʜᴇ ǫᴜᴇᴜᴇ ᴇɴᴅs, ʀᴇʟᴀᴛᴇᴅ sᴏɴɢs ᴡɪʟʟ ᴋᴇᴇᴘ ᴘʟᴀʏɪɴɢ."
+
+autoplay_disabled_title:   "❍ ᴀᴜᴛᴏᴘʟᴀʏ ᴅɪsᴀʙʟᴇᴅ"
+autoplay_disabled_note:    "ʙʏ » {0}"
+
+autoplay_unknown_lang_title: "❍ ᴜɴᴋɴᴏᴡɴ ʟᴀɴɢᴜᴀɢᴇ"
+autoplay_unknown_lang_note:  "ᴀᴠᴀɪʟᴀʙʟᴇ: {0}"
+autoplay_lang_set_title:     "🔁 ᴀᴜᴛᴏᴘʟᴀʏ ʟᴀɴɢᴜᴀɢᴇ"
+autoplay_lang_set_note:      "sᴇᴛ ᴛᴏ » <code>{0}</code>"
+
+autoplay_unknown_mood_title: "❍ ᴜɴᴋɴᴏᴡɴ ᴍᴏᴏᴅ"
+autoplay_unknown_mood_note:  "ᴀᴠᴀɪʟᴀʙʟᴇ: {0}"
+autoplay_mood_set_title:     "🔁 ᴀᴜᴛᴏᴘʟᴀʏ ᴍᴏᴏᴅ"
+autoplay_mood_set_note:      "sᴇᴛ ᴛᴏ » <code>{0}</code>"
+
+autoplay_someone: "sᴏᴍᴇᴏɴᴇ"
+
+# ── /language ──────────────────────────────────────────────────────────────────
+lang_1: "» ᴄʜᴏᴏsᴇ ᴀ ʟᴀɴɢᴜᴀɢᴇ ғᴏʀ ᴛʜɪs ᴄʜᴀᴛ:"
+lang_2: "» ʟᴀɴɢᴜᴀɢᴇ ᴜᴘᴅᴀᴛᴇᴅ."
+lang_3: "» sᴏᴍᴇᴛʜɪɴɢ ᴡᴇɴᴛ ᴡʀᴏɴɢ sᴇᴛᴛɪɴɢ ᴛʜᴀᴛ ʟᴀɴɢᴜᴀɢᴇ, ᴋᴇᴘᴛ ᴛʜᴇ ᴏʟᴅ ᴏɴᴇ."
+lang_4: "» ᴛʜɪs ɪs ᴀʟʀᴇᴀᴅʏ ᴛʜᴇ ᴄᴜʀʀᴇɴᴛ ʟᴀɴɢᴜᴀɢᴇ."
+lang_5: "⛔ ᴏɴʟʏ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs ᴄᴀɴ ᴄʜᴀɴɢᴇ ᴛʜᴇ ʟᴀɴɢᴜᴀɢᴇ."
+
+# ── shared / generic (reused across modules) ────────────────────────────────────
+admin_only_title: "⛔ ᴀᴅᴍɪɴ ᴏɴʟʏ"
+admin_only_note:  "ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ɪs ғᴏʀ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴs."
+queue_empty_title: "❍ ǫᴜᴇᴜᴇ ɪs ᴇᴍᴘᴛʏ"
+download_failed_title: "❍ ᴅᴏᴡɴʟᴏᴀᴅ ғᴀɪʟᴇᴅ"
+next_track_title: "❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ"
+generic_processing_note: "ᴘʀᴏᴄᴇssɪɴɢ..."
+generic_error_title: "❍ ᴇʀʀᴏʀ"
+vc_ended_title: "❍ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ ᴇɴᴅᴇᴅ"
+vc_ended_note:  "ǫᴜᴇᴜᴇ ᴄʟᴇᴀʀᴇᴅ — /play ᴛᴏ sᴛᴀʀᴛ ᴀɢᴀɪɴ."
+queue_finished_title: "❍ ǫᴜᴇᴜᴇ ғɪɴɪsʜᴇᴅ"
+queue_finished_note:  "ʟᴇғᴛ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ."
+
+kv_title:   "ᴛɪᴛʟᴇ"
+kv_dur:     "ᴅᴜʀ"
+kv_by:      "ʙʏ"
+kv_pos:     "ᴘᴏs"
+kv_max:     "ᴍᴀx"
+kv_songs:   "sᴏɴɢs"
+kv_first:   "ғɪʀsᴛ"
+kv_next:    "ɴᴇxᴛ"
+kv_play:    "ᴘʟᴀʏ"
+kv_or:      "ᴏʀ"
+kv_video:   "ᴠɪᴅᴇᴏ"
+kv_channel: "ᴄʜᴀɴɴᴇʟ"
+kv_skipped: "sᴋɪᴘᴘᴇᴅ"
+kv_now_playing: "ɴᴏᴡ ᴘʟᴀʏɪɴɢ"
+kv_processing_in: "ᴘʀᴏᴄᴇssɪɴɢ ɪɴ"
+
+# ── /play & /vplay ───────────────────────────────────────────────────────────────
+play_processing_media:      "❍ ᴘʀᴏᴄᴇssɪɴɢ ᴍᴇᴅɪᴀ..."
+play_file_too_large_title:  "❍ ғɪʟᴇ ᴛᴏᴏ ʟᴀʀɢᴇ"
+play_downloading_media:     "❍ ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ᴍᴇᴅɪᴀ..."
+play_blocked_title:         "❍ ᴛʜɪs sᴏɴɢ ɪs ʙʟᴏᴄᴋᴇᴅ"
+play_cooldown_title:        "❍ ᴄᴏᴏʟᴅᴏᴡɴ ᴀᴄᴛɪᴠᴇ"
+play_usage_title:           "❍ ᴜsᴀɢᴇ"
+play_usage_play_val:        "<code>/play song name</code>"
+play_usage_or_val:          "<code>/play youtube url</code>"
+play_usage_video_val:       "<code>/vplay song name</code>"
+play_usage_channel_val:    "<code>/cplay song name</code>"
+play_processing_title:      "❍ ᴘʀᴏᴄᴇssɪɴɢ..."
+play_assistant_banned_title:  "❍ ᴀssɪsᴛᴀɴᴛ ʙᴀɴɴᴇᴅ"
+play_assistant_banned_note:   "ᴘʟᴇᴀsᴇ ᴜɴʙᴀɴ ᴀssɪsᴛᴀɴᴛ ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ"
+play_assistant_joining_title: "❍ ᴀssɪsᴛᴀɴᴛ ɪs ᴊᴏɪɴɪɴɢ ᴛʜᴇ ɢʀᴏᴜᴘ..."
+play_assistant_joined_title:  "❍ ᴀssɪsᴛᴀɴᴛ ʜᴀs ᴊᴏɪɴᴇᴅ ✓"
+play_search_failed_title:   "❍ sᴇᴀʀᴄʜ ғᴀɪʟᴇᴅ"
+play_playlist_empty_title:  "❍ ᴘʟᴀʏʟɪsᴛ ᴇᴍᴘᴛʏ"
+play_playlist_added_title:  "❍ ᴘʟᴀʏʟɪsᴛ ᴀᴅᴅᴇᴅ"
+play_song_not_found_title:  "❍ sᴏɴɢ ɴᴏᴛ ғᴏᴜɴᴅ"
+play_song_too_long_title:   "❍ sᴏɴɢ ᴛᴏᴏ ʟᴏɴɢ"
+play_added_queue_title:     "❍ ᴀᴅᴅᴇᴅ ᴛᴏ ǫᴜᴇᴜᴇ"
+
+# ── /skip ─────────────────────────────────────────────────────────────────────
+skip_empty_note:      "ɴᴏ sᴏɴɢs ᴛᴏ sᴋɪᴘ."
+skip_skipping_title:  "⏭ sᴋɪᴘᴘɪɴɢ ᴄᴜʀʀᴇɴᴛ ᴛʀᴀᴄᴋ..."
+skip_skipped_title:   "⏭ ᴛʀᴀᴄᴋ sᴋɪᴘᴘᴇᴅ"
+skip_queue_empty_note: "ǫᴜᴇᴜᴇ ɪs ɴᴏᴡ ᴇᴍᴘᴛʏ"
+
+# ── /stop, /end, /clear, /reboot ──────────────────────────────────────────────
+stop_stopped_title: "⏹ ᴘʟᴀʏʙᴀᴄᴋ sᴛᴏᴘᴘᴇᴅ"
+stop_stopped_note:  "ǫᴜᴇᴜᴇ ᴄʟᴇᴀʀᴇᴅ · ʟᴇғᴛ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ"
+clear_cleared_title: "🧹 ǫᴜᴇᴜᴇ ᴄʟᴇᴀʀᴇᴅ"
+clear_cleared_note:  "ᴀʟʟ sᴏɴɢs ʀᴇᴍᴏᴠᴇᴅ"
+reboot_title: "🔄 ᴄʜᴀᴛ ʀᴇʙᴏᴏᴛᴇᴅ"
+reboot_note:  "ᴀʟʟ sᴛᴀᴛᴇs ʀᴇsᴇᴛ"
+
+# ── /pause & /resume ───────────────────────────────────────────────────────────
+pause_title:  "⏸ sᴛʀᴇᴀᴍ ᴘᴀᴜsᴇᴅ"
+pause_note:   "ᴍᴜsɪᴄ ᴘʟᴀʏʙᴀᴄᴋ ᴛᴇᴍᴘᴏʀᴀʀɪʟʏ sᴛᴏᴘᴘᴇᴅ."
+pause_failed_title: "❍ ᴘᴀᴜsᴇ ғᴀɪʟᴇᴅ"
+resume_title: "▶ sᴛʀᴇᴀᴍ ʀᴇsᴜᴍᴇᴅ"
+resume_note:  "ᴍᴜsɪᴄ ᴘʟᴀʏʙᴀᴄᴋ ᴄᴏɴᴛɪɴᴜᴇᴅ."
+resume_failed_title: "❍ ʀᴇsᴜᴍᴇ ғᴀɪʟᴇᴅ"
+
+# ── /repo ──────────────────────────────────────────────────────────────────────
+repo_title: "🍡 sʜɪᴢᴜᴍᴜsɪᴄ sᴏᴜʀᴄᴇ"
+repo_note:  "❍ ɢɪᴛʜᴜʙ ʀᴇᴘᴏ — ғᴇᴇʟ ғʀᴇᴇ ᴛᴏ ʜɪᴛ ⭐ ᴏɴ ɢɪᴛʜᴜʙ!"
+
+# ── button labels (utils/buttons.py) ───────────────────────────────────────────
+btn_skip:      "⌯ sᴋɪᴘ ⌯"
+btn_clear:     "⌯ ᴄʟᴇᴀʀ ⌯"
+btn_support:   "🍬 sᴜᴘᴘᴏʀᴛ 🍬"
+btn_updates:   "🍹 ᴜᴘᴅᴀᴛᴇs 🍹"
+btn_source:    "🍡 sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ 🍡"
+btn_fork:      "🔱 ғᴏʀᴋ 🔱"
+btn_close:     "⌯ ᴄʟᴏsᴇ ⌯"
+btn_back:      "⌯ ʙᴀᴄᴋ ⌯"
+btn_home:      "⌯ ʜᴏᴍᴇ ⌯"
+btn_make_admin: "⚡ ᴍᴀᴋᴇ ᴍᴇ ᴀᴅᴍɪɴ ⚡"
+btn_add_me:    "⛩️ ᴧᴅᴅ мᴇ ʙᴧʙʏ ⛩️"
+btn_help:      "🏩 ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅs 🏩"
+btn_owner:     "🫧 ᴏᴡɴᴇʀ 🫧"
+
+# ── /ping ──────────────────────────────────────────────────────────────────────
+ping_pinging: "❍ {0} ɪs ᴘɪɴɢɪɴɢ..."
+ping_title:   "🏓 ᴘᴏɴɢ : {0}ms"
+ping_footer_by: "<p>❍ ʙʏ » <a href=\"{0}\">sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></p>"
+kv_uptime: "ᴜᴘᴛɪᴍᴇ"
+kv_ram:    "ʀᴀᴍ"
+kv_cpu:    "ᴄᴘᴜ"
+kv_disk:   "ᴅɪsᴋ"
+kv_pytgc:  "ᴘʏᴛɢᴄ"
+
+# ── /speedtest (owner-only diagnostic; only headline text localized) ───────────
+speedtest_starting: "❍ sᴛᴀʀᴛɪɴɢ sᴘᴇᴇᴅ ᴛᴇsᴛ, ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ..."
+speedtest_failed:   "❍ sᴘᴇᴇᴅᴛᴇsᴛ ғᴀɪʟᴇᴅ, ᴘʟᴇᴀsᴇ ᴛʀʏ ᴀɢᴀɪɴ"
+speedtest_title:    "⚡ sᴘᴇᴇᴅᴛᴇsᴛ ʀᴇsᴜʟᴛs"
+
+# ── /stats (owner-only diagnostic; only headline text localized) ───────────────
+stats_fetching: "❍ ғᴇᴛᴄʜɪɴɢ sᴛᴀᴛs, ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ..."
+stats_system_error_title: "❍ sʏsᴛᴇᴍ sᴛᴀᴛs ᴇʀʀᴏʀ"
+stats_title: "❍ sʜɪᴢᴜᴍᴜsɪᴄ sᴛᴀᴛs"
+
+# ── /broadcast, /gcast (owner-only) ────────────────────────────────────────────
+bc_already_running_title: "❍ ᴀ ʙʀᴏᴀᴅᴄᴀsᴛ ɪs ᴀʟʀᴇᴀᴅʏ ʀᴜɴɴɪɴɢ"
+bc_already_running_note:  "ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ғᴏʀ ɪᴛ ᴛᴏ ғɪɴɪsʜ."
+bc_usage_title: "❍ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴍᴇssᴀɢᴇ ᴏʀ ᴘʀᴏᴠɪᴅᴇ ᴛᴇxᴛ"
+bc_usage_rows:
+  - ["-pin", "ᴘɪɴ sɪʟᴇɴᴛʟʏ ɪɴ ɢʀᴏᴜᴘs"]
+  - ["-pinloud", "ᴘɪɴ ᴡɪᴛʜ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ"]
+  - ["-nogroup", "sᴋɪᴘ ɢʀᴏᴜᴘs"]
+  - ["-user", "ᴀʟsᴏ sᴇɴᴅ ᴛᴏ ᴘʀɪᴠᴀᴛᴇ ᴜsᴇʀs"]
+bc_headers_flag_effect: ["ғʟᴀɢ", "ᴇғғᴇᴄᴛ"]
+bc_no_targets_title: "❍ ɴᴏ ᴛᴀʀɢᴇᴛs ғᴏᴜɴᴅ ɪɴ ʙʀᴏᴀᴅᴄᴀsᴛ ʟɪsᴛ"
+bc_started_title: "❍ ʙʀᴏᴀᴅᴄᴀsᴛ sᴛᴀʀᴛᴇᴅ"
+bc_completed_title: "❍ ʙʀᴏᴀᴅᴄᴀsᴛ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ✅"
+kv_total: "ᴛᴏᴛᴀʟ"
+kv_groups: "ɢʀᴏᴜᴘs"
+kv_users: "ᴜsᴇʀs"
+kv_targets: "ᴛᴀʀɢᴇᴛs"
+kv_flags: "ғʟᴀɢs"
+kv_pinned: "ᴘɪɴɴᴇᴅ"
+kv_failed: "ғᴀɪʟᴇᴅ"
+
+# ── /speed, /bass, /effect* ─────────────────────────────────────────────────────
+effects_no_song_title: "❍ ɴᴏ sᴏɴɢ ɪs ᴄᴜʀʀᴇɴᴛʟʏ ᴘʟᴀʏɪɴɢ"
+effects_applying_title: "❍ ᴀᴘᴘʟʏɪɴɢ ᴇғғᴇᴄᴛs, ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ..."
+effects_resolve_failed_title: "❍ sᴛʀᴇᴀᴍ ʀᴇsᴏʟᴠᴇ ғᴀɪʟᴇᴅ"
+effects_ffmpeg_error_title: "❍ ғғᴍᴘᴇɢ ᴇʀʀᴏʀ"
+effects_playback_failed_title: "❍ ᴘʟᴀʏʙᴀᴄᴋ ғᴀɪʟᴇᴅ"
+effects_applied_title: "❍ ᴇғғᴇᴄᴛs ᴀᴘᴘʟɪᴇᴅ ✓"
+effects_speed_normal_label: "ɴᴏʀᴍᴀʟ (1.0x)"
+effects_bass_off_label: "ᴏғғ"
+effects_bass_boost_label: "{0} dB ʙᴏᴏsᴛ"
+effects_invalid_value_title: "❍ ɪɴᴠᴀʟɪᴅ ᴠᴀʟᴜᴇ"
+effects_speed_range_title: "❍ sᴘᴇᴇᴅ ᴍᴜsᴛ ʙᴇ ʙᴇᴛᴡᴇᴇɴ 0.25 ᴀɴᴅ 4.0"
+effects_bass_range_title: "❍ ʙᴀss ᴍᴜsᴛ ʙᴇ ʙᴇᴛᴡᴇᴇɴ 1 ᴀɴᴅ 20"
+effects_enabled_title: "❍ ᴇғғᴇᴄᴛs ᴇɴᴀʙʟᴇᴅ ✓"
+effects_enabled_note: "ᴀʟʟ sᴏɴɢs ɪɴ ᴛʜɪs ɢʀᴏᴜᴘ ᴡɪʟʟ ɴᴏᴡ ᴘʟᴀʏ ᴡɪᴛʜ ᴇғғᴇᴄᴛs. ᴜsᴇ /effectoff ᴛᴏ ᴅɪsᴀʙʟᴇ."
+effects_disabled_title: "❍ ᴇғғᴇᴄᴛs ᴅɪsᴀʙʟᴇᴅ ✓"
+effects_disabled_note: "sᴏɴɢs ᴡɪʟʟ ɴᴏᴡ ᴘʟᴀʏ ɴᴏʀᴍᴀʟʟʏ ɪɴ ᴛʜɪs ɢʀᴏᴜᴘ. sᴘᴇᴇᴅ + ʙᴀss sᴇᴛᴛɪɴɢs ᴀʀᴇ ᴋᴇᴘᴛ — ᴜsᴇ /effecton ᴛᴏ ʀᴇ-ᴇɴᴀʙʟᴇ."
+effects_status_title: "❍ ᴇғғᴇᴄᴛs sᴛᴀᴛᴜs — {0}"
+effects_mode_on_label:  "ᴏɴ — ᴀʟʟ sᴏɴɢs ᴀғғᴇᴄᴛᴇᴅ 🟢"
+effects_mode_off_label: "ᴏғғ — ᴍᴀɴᴜᴀʟ ᴘᴇʀ sᴏɴɢ 🔴"
+effects_nothing_playing: "ɴᴏᴛʜɪɴɢ ᴘʟᴀʏɪɴɢ"
+effects_help_rows:
+  - ["/speed 1.5", "sᴇᴛ sᴘᴇᴇᴅ (0.25–4.0)"]
+  - ["/speedreset", "ʙᴀᴄᴋ ᴛᴏ ɴᴏʀᴍᴀʟ sᴘᴇᴇᴅ"]
+  - ["/bass 10", "ʙᴀss ʙᴏᴏsᴛ (1–20 ᴅʙ)"]
+  - ["/bassoff", "ʀᴇᴍᴏᴠᴇ ʙᴀss ʙᴏᴏsᴛ"]
+  - ["/effecton", "ᴀʟʟ sᴏɴɢs ɢᴇᴛ ᴇғғᴇᴄᴛs"]
+  - ["/effectoff", "ᴍᴀɴᴜᴀʟ ᴍᴏᴅᴇ ᴏɴʟʏ"]
+kv_position: "ᴘᴏsɪᴛɪᴏɴ"
+kv_speed: "sᴘᴇᴇᴅ"
+kv_bass: "ʙᴀss"
+kv_bass_boost: "ʙᴀss ʙᴏᴏsᴛ"
+kv_mode: "ᴍᴏᴅᴇ"
+kv_song: "sᴏɴɢ"
+kv_usage: "ᴜsᴀɢᴇ"
+kv_command: "ᴄᴏᴍᴍᴀɴᴅ"
+kv_description: "ᴅᴇsᴄʀɪᴘᴛɪᴏɴ"
+
+# ── /seek & /seekback ────────────────────────────────────────────────────────
+seek_no_song_title: "❍ ɴᴏ sᴏɴɢ ɪs ᴄᴜʀʀᴇɴᴛʟʏ ᴘʟᴀʏɪɴɢ"
+seek_seeking_title: "⏩ sᴇᴇᴋɪɴɢ..."
+seek_failed_resolve_title: "❍ sᴇᴇᴋ ғᴀɪʟᴇᴅ — ᴄᴏᴜʟᴅ ɴᴏᴛ ʀᴇsᴏʟᴠᴇ sᴛʀᴇᴀᴍ"
+seek_failed_title: "❍ sᴇᴇᴋ ғᴀɪʟᴇᴅ"
+seek_invalid_seconds_title: "❍ ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ɴᴜᴍʙᴇʀ ᴏғ sᴇᴄᴏɴᴅs ɢʀᴇᴀᴛᴇʀ ᴛʜᴀɴ 0"
+seek_almost_finished_title: "❍ sᴏɴɢ ɪs ᴀʟᴍᴏsᴛ ғɪɴɪsʜᴇᴅ, ᴄᴀɴɴᴏᴛ sᴇᴇᴋ ғᴏʀᴡᴀʀᴅ"
+seek_too_far_title: "❍ ᴄᴀɴɴᴏᴛ sᴇᴇᴋ ᴛʜᴀᴛ ғᴀʀ ғᴏʀᴡᴀʀᴅ"
+seek_usage_title: "❍ sᴇᴇᴋ ᴜsᴀɢᴇ"
+seek_usage_rows:
+  - ["/seek 30", "ғᴏʀᴡᴀʀᴅ 30 sᴇᴄᴏɴᴅs"]
+  - ["/seekback 30", "ʙᴀᴄᴋᴡᴀʀᴅ 30 sᴇᴄᴏɴᴅs"]
+kv_to: "ᴛᴏ"
+kv_current_position: "ᴄᴜʀʀᴇɴᴛ ᴘᴏsɪᴛɪᴏɴ"
+kv_song_duration: "sᴏɴɢ ᴅᴜʀᴀᴛɪᴏɴ"
+now_playing_title: "🎧 sʜɪᴢᴜ ᴍᴜsɪᴄ — ɴᴏᴡ ᴘʟᴀʏɪɴɢ"
+kv_duration: "ᴅᴜʀᴀᴛɪᴏɴ"
+kv_seeked_to: "sᴇᴇᴋᴇᴅ ᴛᴏ"
+
+# ── core/player.py ──────────────────────────────────────────────────────────
+loading_title: "❍ ʟᴏᴀᴅɪɴɢ..."
+vc_start_failed_server_title: "❍ ᴠᴄ sᴛᴀʀᴛ ғᴀɪʟᴇᴅ (Telegram Server)"
+vc_perm_missing_title: "❍ ᴠᴄ sᴛᴀʀᴛ ᴘᴇʀᴍɪssɪᴏɴ ᴍɪssɪɴɢ"
+vc_perm_missing_note: "ɢɪᴠᴇ ᴀssɪsᴛᴀɴᴛ » ᴍᴀɴᴀɢᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs, ᴀᴅᴍɪɴ ʀɪɢʜᴛs"
+vc_start_failed_title: "❍ ᴠᴄ sᴛᴀʀᴛ ғᴀɪʟᴇᴅ"
+playback_failed_server_title: "❍ ᴘʟᴀʏʙᴀᴄᴋ ғᴀɪʟᴇᴅ (Telegram Server)"
+playback_perm_missing_note: "ᴘʟᴇᴀsᴇ ɢɪᴠᴇ » ᴍᴀɴᴀɢᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs, ᴀᴅᴍɪɴ ʀɪɢʜᴛs · ᴀssɪsᴛᴀɴᴛ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ"
+
+# ── /gblock, /gunblock, /ublock, /uunblock, /blocklist (owner only) ──────────
+block_invalid_chat_id_title: "❍ ɪɴᴠᴀʟɪᴅ ᴄʜᴀᴛ ɪᴅ"
+block_use_group_or_id_title: "❍ ᴜsᴇ ɪɴ ᴀ ɢʀᴏᴜᴘ ᴏʀ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴄʜᴀᴛ ɪᴅ"
+block_already_title: "❍ ᴀʟʀᴇᴀᴅʏ ʙʟᴏᴄᴋᴇᴅ"
+block_not_blocked_title: "❍ ɴᴏᴛ ʙʟᴏᴄᴋᴇᴅ"
+block_group_blocked_title: "❍ ɢʀᴏᴜᴘ ʙʟᴏᴄᴋᴇᴅ ✅"
+block_group_blocked_note: "ɴᴏ ᴄᴏᴍᴍᴀɴᴅs ᴡɪʟʟ ᴡᴏʀᴋ ɪɴ ᴛʜɪs ɢʀᴏᴜᴘ ɴᴏᴡ."
+block_group_unblocked_title: "❍ ɢʀᴏᴜᴘ ᴜɴʙʟᴏᴄᴋᴇᴅ ✅"
+block_group_unblocked_note: "ᴄᴏᴍᴍᴀɴᴅs ᴀʀᴇ ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ ɪɴ ᴛʜɪs ɢʀᴏᴜᴘ."
+block_invalid_user_id_title: "❍ ɪɴᴠᴀʟɪᴅ ᴜsᴇʀ ɪᴅ"
+block_ublock_usage_note: "ᴜsᴇ » <code>/ublock 123456789</code> ᴏʀ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ."
+block_uunblock_usage_note: "ᴜsᴇ » <code>/uunblock 123456789</code> ᴏʀ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ."
+block_reply_or_id_title: "❍ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ's ᴍᴇssᴀɢᴇ ᴏʀ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴜsᴇʀ ɪᴅ"
+block_cannot_block_owner_title: "❍ ʏᴏᴜ ᴄᴀɴɴᴏᴛ ʙʟᴏᴄᴋ ʏᴏᴜʀsᴇʟғ (ᴏᴡɴᴇʀ)"
+block_user_blocked_title: "❍ ᴜsᴇʀ ʙʟᴏᴄᴋᴇᴅ ✅"
+block_user_blocked_note: "ᴛʜɪs ᴜsᴇʀ ᴄᴀɴɴᴏᴛ ᴜsᴇ ᴀɴʏ ʙᴏᴛ ᴄᴏᴍᴍᴀɴᴅs ɴᴏᴡ."
+block_user_unblocked_title: "❍ ᴜsᴇʀ ᴜɴʙʟᴏᴄᴋᴇᴅ ✅"
+block_user_unblocked_note: "ᴛʜɪs ᴜsᴇʀ ᴄᴀɴ ɴᴏᴡ ᴜsᴇ ʙᴏᴛ ᴄᴏᴍᴍᴀɴᴅs ᴀɢᴀɪɴ."
+block_list_title: "❍ ʙʟᴏᴄᴋ ʟɪsᴛ — {0} ɢʀᴏᴜᴘs, {1} ᴜsᴇʀs"
+block_list_empty_note: "ɴᴏᴛʜɪɴɢ ɪs ʙʟᴏᴄᴋᴇᴅ."
+kv_group: "ɢʀᴏᴜᴘ"
+kv_user: "ᴜsᴇʀ"
+kv_chat_id: "ᴄʜᴀᴛ ɪᴅ"
+kv_name: "ɴᴀᴍᴇ"
+kv_user_id: "ᴜsᴇʀ ɪᴅ"
+kv_type: "ᴛʏᴘᴇ"
+kv_id: "ɪᴅ"
+
+# ── onboarding (private /start & help "go back") ───────────────────────────────
+onboarding_greeting: "<p>❍ ʜᴇʏ <a href='tg://user?id={0}'>{1}</a>, ᴡᴇʟᴄᴏᴍᴇ ᴀʙᴏᴀʀᴅ! 🎶</p>"
+onboarding_intro: "<p>ɪ ᴀᴍ <b>{0}</b> — ᴀ ғᴀsᴛ &amp; ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ᴘʟᴀʏᴇʀ ʙᴏᴛ ᴡɪᴛʜ sᴏᴍᴇ ᴀᴡᴇsᴏᴍᴇ ғᴇᴀᴛᴜʀᴇs.</p>"
+onboarding_features_heading: "✦ ᴋᴇʏ ғᴇᴀᴛᴜʀᴇs ✦"
+onboarding_features_rows:
+  - ["🎵 sᴛʀᴇᴀᴍɪɴɢ", "ᴘʟᴀʏ ᴀᴜᴅɪᴏ &amp; ᴠɪᴅᴇᴏ ɪɴ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs"]
+  - ["🔁 ᴀᴜᴛᴏᴘʟᴀʏ", "ᴋᴇᴇᴘs ᴛʜᴇ ǫᴜᴇᴜᴇ ɢᴏɪɴɢ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ"]
+  - ["🎚️ ᴇғғᴇᴄᴛs", "sᴘᴇᴇᴅ ᴄᴏɴᴛʀᴏʟ &amp; ʙᴀss ʙᴏᴏsᴛ"]
+  - ["🛡️ ᴍᴏᴅᴇʀᴀᴛɪᴏɴ", "ʙʟᴏᴄᴋ/ᴜɴʙʟᴏᴄᴋ ᴄʜᴀᴛs &amp; ᴜsᴇʀs"]
+onboarding_features_headers: ["ғᴇᴀᴛᴜʀᴇ", "ᴅᴇᴛᴀɪʟs"]
+onboarding_why_heading: "✧ ᴡʜʏ ᴄʜᴏᴏsᴇ ɪᴛ? ✧"
+onboarding_why_body: "<p>⭐ sɪᴍᴘʟᴇ sʟᴀsʜ ᴄᴏᴍᴍᴀɴᴅs, ɴᴏ sᴇᴛᴜᴘ ɴᴇᴇᴅᴇᴅ.</p><p>🎧 ᴄʟᴇᴀɴ, ʟᴏᴡ-ʟᴀɢ sᴛʀᴇᴀᴍɪɴɢ.</p><p>❍ ᴄʟɪᴄᴋ ʜᴇʟᴘ ʙᴇʟᴏᴡ ғᴏʀ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs.</p>"
+onboarding_powered_by: "ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>"
+
+# ── /start in a group ───────────────────────────────────────────────────────────
+group_thanks_title: "❍ ʜᴇʏ {0}, ᴛʜɪs ɪs {1}"
+group_thanks_note: "ᴛʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ ɪɴ {0}. {1} ᴄᴀɴ ɴᴏᴡ ᴘʟᴀʏ sᴏɴɢs ʜᴇʀᴇ."
+group_admin_request_title: "ᴛʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ! 🥀"
+group_admin_request_note1: "<p>ᴘʟᴇᴀsᴇ ᴍᴀᴋᴇ ᴍᴇ ᴀɴ ᴀᴅᴍɪɴ ᴡɪᴛʜ ᴛʜᴇsᴇ ᴘᴇʀᴍɪssɪᴏɴs:</p><p>❍ ᴅᴇʟᴇᴛᴇ ᴍᴇssᴀɢᴇs<br>❍ ᴍᴀɴᴀɢᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs<br>❍ ɪɴᴠɪᴛᴇ ᴜsᴇʀs</p>"
+group_admin_request_note2: "ᴡɪᴛʜᴏᴜᴛ ᴀᴅᴍɪɴ ᴘᴇʀᴍs sᴏᴍᴇ ғᴇᴀᴛᴜʀᴇs ᴡᴏɴ'ᴛ ᴡᴏʀᴋ! 🚫"
+
+# ── /help ──────────────────────────────────────────────────────────────────────
+help_pick_category_title: "📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ"
+help_pick_category_note: "<p>❍ ʜᴇʏ <a href=\"tg://user?id={0}\">{1}</a>, ᴘɪᴄᴋ ᴀ ᴄᴀᴛᴇɢᴏʀʏ ʙᴇʟᴏᴡ ᴛᴏ sᴇᴇ ɪᴛs ᴄᴏᴍᴍᴀɴᴅs.</p>"
+help_features_heading: "✦ ʜᴇʟᴘ ғᴇᴀᴛᴜʀᴇs ✦"
+help_features_rows:
+  - ["✉️ ʜᴇʟᴘ ᴍᴇɴᴜ", "ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴡɪᴛʜ : /"]
+
+# ── playback callback confirmations (modules/callbacks.py) ─────────────────────
+cb_admins_only: "❍ ᴀᴅᴍɪɴs ᴏɴʟʏ"
+cb_paused_toast: "ᴘᴀᴜsᴇᴅ"
+cb_pause_failed_toast: "ғᴀɪʟᴇᴅ ᴛᴏ ᴘᴀᴜsᴇ"
+cb_resumed_toast: "ʀᴇsᴜᴍᴇᴅ"
+cb_resume_failed_toast: "ғᴀɪʟᴇᴅ ᴛᴏ ʀᴇsᴜᴍᴇ"
+cb_queue_empty_toast: "ǫᴜᴇᴜᴇ ɪs ᴇᴍᴘᴛʏ"
+cb_playing_next_toast: "ᴘʟᴀʏɪɴɢ ɴᴇxᴛ"
+cb_stopped_toast: "sᴛᴏᴘᴘᴇᴅ"
+cb_queue_cleared_toast: "ǫᴜᴇᴜᴇ ᴄʟᴇᴀʀᴇᴅ"
+cb_by_footer: "❍ ʙʏ » {0}"
+
+# ── help category panels (modules/callbacks.py) ─────────────────────────────────
+help_categories:
+  help_admin:
+    title: "⚙️ ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs"
+    desc:  "ᴄᴏʀᴇ ᴘʟᴀʏʙᴀᴄᴋ ᴄᴏɴᴛʀᴏʟs ғᴏʀ ᴄʜᴀᴛ ᴀᴅᴍɪɴs."
+    rows:
+      - ["/pause", "ᴘᴀᴜsᴇ ᴄᴜʀʀᴇɴᴛ ᴘʟᴀʏʙᴀᴄᴋ"]
+      - ["/resume", "ʀᴇsᴜᴍᴇ ᴘᴀᴜsᴇᴅ ᴘʟᴀʏʙᴀᴄᴋ"]
+      - ["/skip", "sᴋɪᴘ ᴛᴏ ɴᴇxᴛ sᴏɴɢ"]
+      - ["/stop, /end", "sᴛᴏᴘ ᴘʟᴀʏʙᴀᴄᴋ &amp; ʟᴇᴀᴠᴇ ᴠᴄ"]
+      - ["/clear", "ᴄʟᴇᴀʀ ᴀʟʟ sᴏɴɢs ɪɴ ǫᴜᴇᴜᴇ"]
+      - ["/seek &lt;seconds&gt;", "sᴇᴇᴋ ғᴏʀᴡᴀʀᴅ ʙʏ ɴ sᴇᴄᴏɴᴅs"]
+      - ["/seekback &lt;seconds&gt;", "sᴇᴇᴋ ʙᴀᴄᴋᴡᴀʀᴅ ʙʏ ɴ sᴇᴄᴏɴᴅs"]
+      - ["/reboot", "ʀᴇsᴇᴛ ᴄʜᴀᴛ sᴛᴀᴛᴇ &amp; ʟᴇᴀᴠᴇ ᴠᴄ"]
+  help_autoplay:
+    title: "🔁 ᴀᴜᴛᴏᴘʟᴀʏ ᴄᴏᴍᴍᴀɴᴅs"
+    desc:  "ᴡʜᴇɴ ᴛʜᴇ ǫᴜᴇᴜᴇ ᴇɴᴅs, ᴋᴇᴇᴘ ᴘʟᴀʏɪɴɢ ʀᴇʟᴀᴛᴇᴅ sᴏɴɢs ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ."
+    rows:
+      - ["/autoplay", "sʜᴏᴡ ᴄᴜʀʀᴇɴᴛ sᴛᴀᴛᴜs"]
+      - ["/autoplay on, /autoplay off", "ᴛᴏɢɢʟᴇ ᴀᴜᴛᴏᴘʟᴀʏ"]
+      - ["/autoplay lang &lt;name&gt;", "ᴏɴʟʏ sᴜɢɢᴇsᴛ ᴀ ʟᴀɴɢᴜᴀɢᴇ (ᴏʀ <code>auto</code>)"]
+      - ["/autoplay mood &lt;name&gt;", "ᴏɴʟʏ sᴜɢɢᴇsᴛ ᴀ ᴍᴏᴏᴅ (ᴏʀ <code>any</code>)"]
+  help_playlist:
+    title: "🎼 ᴘʟᴀʏʟɪsᴛ ᴄᴏᴍᴍᴀɴᴅs"
+    desc:  "sᴀᴠᴇ ʏᴏᴜʀ ғᴀᴠᴏᴜʀɪᴛᴇ sᴏɴɢs ᴀɴᴅ ᴘʟᴀʏ ᴛʜᴇᴍ ᴀɴʏᴛɪᴍᴇ."
+    rows:
+      - ["/pcreate &lt;name&gt;", "ᴄʀᴇᴀᴛᴇ ᴀ ᴘʟᴀʏʟɪsᴛ"]
+      - ["/padd &lt;name&gt; &lt;song or URL&gt;", "ᴀᴅᴅ ᴀ sᴏɴɢ ᴏʀ ʏᴏᴜᴛᴜʙᴇ ᴘʟᴀʏʟɪsᴛ"]
+      - ["/padd &lt;name&gt;", "ᴀᴅᴅ ᴛʜᴇ sᴏɴɢ ᴘʟᴀʏɪɴɢ ɴᴏᴡ"]
+      - ["/premove &lt;name&gt; &lt;number&gt;", "ʀᴇᴍᴏᴠᴇ ᴀ sᴏɴɢ (ɴᴜᴍʙᴇʀ ғʀᴏᴍ /pview)"]
+      - ["/pview, /pview &lt;name&gt;", "ʟɪsᴛ ᴘʟᴀʏʟɪsᴛs / sʜᴏᴡ ɪᴛs sᴏɴɢs"]
+      - ["/pplay &lt;name&gt;", "ǫᴜᴇᴜᴇ ᴛʜᴇ ᴡʜᴏʟᴇ ᴘʟᴀʏʟɪsᴛ"]
+      - ["/pdelete &lt;name&gt;", "ᴅᴇʟᴇᴛᴇ ᴀ ᴘʟᴀʏʟɪsᴛ"]
+  help_channel:
+    title: "📡 ᴄʜᴀɴɴᴇʟ ᴘʟᴀʏ"
+    desc:  "ᴘʟᴀʏ ᴍᴜsɪᴄ ɪɴ ᴀ ᴄʜᴀɴɴᴇʟ's ᴠᴏɪᴄᴇ ᴄʜᴀᴛ — sᴀᴍᴇ ᴄᴏᴍᴍᴀɴᴅs ᴡɪᴛʜ ᴀ ᴄ ɪɴ ғʀᴏɴᴛ."
+    rows:
+      - ["/addchannel &lt;@username or -100id&gt;", "ʟɪɴᴋ ᴀ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴛʜɪs ɢʀᴏᴜᴘ (ᴀᴅᴍɪɴs)"]
+      - ["/delchannel", "sᴛᴏᴘ ᴄʜᴀɴɴᴇʟ ᴘʟᴀʏ ᴀɴᴅ ᴜɴʟɪɴᴋ"]
+      - ["/cplay, /cvplay &lt;song or URL&gt;", "ᴘʟᴀʏ ɪɴ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ's ᴠᴏɪᴄᴇ ᴄʜᴀᴛ"]
+      - ["/cplayforce &lt;song or URL&gt;", "ᴘʟᴀʏ ɴᴏᴡ ɪɴ ᴄʜᴀɴɴᴇʟ, ǫᴜᴇᴜᴇ ᴄᴏɴᴛɪɴᴜᴇs"]
+      - ["/cpplay &lt;name&gt;", "ᴘʟᴀʏ ᴀ ᴘʟᴀʏʟɪsᴛ ɪɴ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ"]
+      - ["/cpause, /cresume, /cskip", "ᴄᴏɴᴛʀᴏʟ ᴄʜᴀɴɴᴇʟ ᴘʟᴀʏʙᴀᴄᴋ"]
+      - ["/cstop, /cend, /cclear", "sᴛᴏᴘ ᴏʀ ᴄʟᴇᴀʀ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ ǫᴜᴇᴜᴇ"]
+      - ["/cseek, /cseekback &lt;seconds&gt;", "sᴇᴇᴋ ɪɴ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ sᴏɴɢ"]
+      - ["/cspeed, /cbass, /ceffects", "ᴄʜᴀɴɴᴇʟ sᴘᴇᴇᴅ / ʙᴀss / ᴇғғᴇᴄᴛs"]
+      - ["/cautoplay, /cthumbnail", "ᴀᴜᴛᴏᴘʟᴀʏ ᴀɴᴅ ᴛʜᴜᴍʙɴᴀɪʟ ғᴏʀ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ"]
+  help_gcast:
+    title: "📢 ɢ-ᴄᴀsᴛ ᴄᴏᴍᴍᴀɴᴅs"
+    desc:  "ʙʀᴏᴀᴅᴄᴀsᴛ ᴛᴏ ᴇᴠᴇʀʏ sᴇʀᴠᴇᴅ ᴄʜᴀᴛ (ᴏᴡɴᴇʀ ᴏɴʟʏ)."
+    rows:
+      - ["/broadcast, /gcast", "ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴍsɢ ᴏʀ ᴛʏᴘᴇ ᴛᴇxᴛ"]
+      - ["-pin", "ᴘɪɴ sɪʟᴇɴᴛʟʏ ɪɴ ɢʀᴏᴜᴘs"]
+      - ["-pinloud", "ᴘɪɴ ᴡɪᴛʜ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ"]
+      - ["-nogroup", "sᴋɪᴘ ɢʀᴏᴜᴘs"]
+      - ["-user", "ᴀʟsᴏ sᴇɴᴅ ᴛᴏ ᴜsᴇʀs"]
+  help_blchat:
+    title: "🚫 ʙʟ-ᴄʜᴀᴛ ᴄᴏᴍᴍᴀɴᴅs"
+    desc:  "ʙʟᴏᴄᴋ ᴏʀ ᴜɴʙʟᴏᴄᴋ ᴡʜᴏʟᴇ ɢʀᴏᴜᴘs (ᴏᴡɴᴇʀ ᴏɴʟʏ)."
+    rows:
+      - ["/gblock", "ʙʟᴏᴄᴋ ᴄᴜʀʀᴇɴᴛ ɢʀᴏᴜᴘ — ɴᴏ ᴄᴏᴍᴍᴀɴᴅs ᴡɪʟʟ ᴡᴏʀᴋ"]
+      - ["/gblock &lt;-100xxxxxxx&gt;", "ʙʟᴏᴄᴋ ʙʏ ᴄʜᴀᴛ ɪᴅ"]
+      - ["/gunblock", "ᴜɴʙʟᴏᴄᴋ ɢʀᴏᴜᴘ"]
+      - ["/gunblock &lt;-100xxxxxxx&gt;", "ᴜɴʙʟᴏᴄᴋ ʙʏ ᴄʜᴀᴛ ɪᴅ"]
+      - ["/blocklist", "sʜᴏᴡ ᴀʟʟ ʙʟᴏᴄᴋᴇᴅ ɢʀᴏᴜᴘs &amp; ᴜsᴇʀs"]
+  help_blusers:
+    title: "🚫 ʙʟ-ᴜsᴇʀs ᴄᴏᴍᴍᴀɴᴅs"
+    desc:  "ʙʟᴏᴄᴋ ᴏʀ ᴜɴʙʟᴏᴄᴋ ɪɴᴅɪᴠɪᴅᴜᴀʟ ᴜsᴇʀs (ᴏᴡɴᴇʀ ᴏɴʟʏ)."
+    rows:
+      - ["/ublock", "ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ's ᴍsɢ ᴛᴏ ʙʟᴏᴄᴋ — ᴛʜᴇʏ ᴄᴀɴ't ᴜsᴇ ᴀɴʏ ᴄᴏᴍᴍᴀɴᴅ"]
+      - ["/ublock &lt;user id&gt;", "ʙʟᴏᴄᴋ ʙʏ ᴜsᴇʀ ɪᴅ"]
+      - ["/uunblock", "ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜsᴇʀ's ᴍsɢ ᴛᴏ ᴜɴʙʟᴏᴄᴋ"]
+      - ["/uunblock &lt;user id&gt;", "ᴜɴʙʟᴏᴄᴋ ʙʏ ᴜsᴇʀ ɪᴅ"]
+      - ["/blocklist", "sʜᴏᴡ ᴀʟʟ ʙʟᴏᴄᴋᴇᴅ ᴜsᴇʀs &amp; ᴄʜᴀᴛs"]
+  help_ping:
+    title: "🏓 ᴘɪɴɢ ᴄᴏᴍᴍᴀɴᴅs"
+    desc:  "ʟᴀᴛᴇɴᴄʏ ᴀɴᴅ sʏsᴛᴇᴍ ᴅɪᴀɢɴᴏsᴛɪᴄs."
+    rows:
+      - ["/ping", "ʙᴏᴛ ʟᴀᴛᴇɴᴄʏ, ʀᴀᴍ, ᴄᴘᴜ, ᴅɪsᴋ &amp; ᴜᴘᴛɪᴍᴇ sᴛᴀᴛs"]
+      - ["/speedtest, /spt", "ɴᴇᴛᴡᴏʀᴋ sᴘᴇᴇᴅ ᴛᴇsᴛ (ᴏᴡɴᴇʀ ᴏɴʟʏ)"]
+      - ["/stats", "ғᴜʟʟ sʏsᴛᴇᴍ + ᴍᴏɴɢᴏᴅʙ sᴛᴀᴛs (ᴏᴡɴᴇʀ ᴏɴʟʏ)"]
+  help_play:
+    title: "🎵 ᴘʟᴀʏ ᴄᴏᴍᴍᴀɴᴅs"
+    desc:  "sᴛᴀʀᴛ ᴀᴜᴅɪᴏ ᴏʀ ᴠɪᴅᴇᴏ ᴘʟᴀʏʙᴀᴄᴋ ɪɴ ᴀ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ."
+    rows:
+      - ["/play &lt;song name or URL&gt;", "ᴘʟᴀʏ ᴀᴜᴅɪᴏ ɪɴ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ"]
+      - ["/vplay &lt;song name or URL&gt;", "ᴘʟᴀʏ ᴠɪᴅᴇᴏ ɪɴ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ"]
+      - ["/playforce &lt;song or URL&gt;", "ᴘʟᴀʏ ɴᴏᴡ, ǫᴜᴇᴜᴇ ᴄᴏɴᴛɪɴᴜᴇs ᴀғᴛᴇʀ (ᴀᴅᴍɪɴs)"]
+      - ["ʀᴇᴘʟʏ ᴛᴏ ᴀᴜᴅɪᴏ/ᴠɪᴅᴇᴏ + /play", "ᴘʟᴀʏ ᴛʜᴀᴛ ᴍᴇᴅɪᴀ ᴅɪʀᴇᴄᴛʟʏ"]
+      - ["ʏᴏᴜᴛᴜʙᴇ ᴜʀʟs", "sᴜᴘᴘᴏʀᴛᴇᴅ"]
+  help_speed:
+    title: "🎚️ sᴘᴇᴇᴅ &amp; ᴇғғᴇᴄᴛs"
+    desc:  "ᴀᴅᴊᴜsᴛ ᴘʟᴀʏʙᴀᴄᴋ sᴘᴇᴇᴅ ᴀɴᴅ ᴀᴜᴅɪᴏ ᴇғғᴇᴄᴛs."
+    rows:
+      - ["/speed &lt;0.25–4.0&gt;", "ᴄʜᴀɴɢᴇ ᴘʟᴀʏʙᴀᴄᴋ sᴘᴇᴇᴅ — ᴇ.ɢ. /speed 1.5"]
+      - ["/speedreset", "ʀᴇsᴇᴛ sᴘᴇᴇᴅ ᴛᴏ ɴᴏʀᴍᴀʟ (1.0x)"]
+      - ["/bass &lt;1–20&gt;", "ʙᴏᴏsᴛ ʙᴀss ʙʏ ɴ ᴅʙ — ᴇ.ɢ. /bass 10"]
+      - ["/bassoff", "ᴛᴜʀɴ ᴏғғ ʙᴀss ʙᴏᴏsᴛ"]
+      - ["/effecton", "ᴀᴘᴘʟʏ ᴇғғᴇᴄᴛs ᴛᴏ ᴀʟʟ sᴏɴɢs"]
+      - ["/effectoff", "ᴅɪsᴀʙʟᴇ ᴀᴜᴛᴏ ᴇғғᴇᴄᴛs"]
+      - ["/effects", "sʜᴏᴡ ᴄᴜʀʀᴇɴᴛ ᴇғғᴇᴄᴛ sᴛᴀᴛᴜs"]
+  help_info:
+    title: "ℹ️ ɪɴғᴏ ᴄᴏᴍᴍᴀɴᴅs"
+    desc:  "ʙᴏᴛ, ᴄʜᴀᴛ, ᴀɴᴅ ᴜsᴇʀ ɪɴғᴏʀᴍᴀᴛɪᴏɴ."
+    rows:
+      - ["/id", "ɢᴇᴛ ɪᴅs ᴏғ ᴜsᴇʀ / ᴄʜᴀᴛ / ᴍsɢ — ᴀʟsᴏ ᴡᴏʀᴋs ᴡɪᴛʜ ʀᴇᴘʟʏ"]
+      - ["/id @username", "ɢᴇᴛ ᴀɴʏ ᴜsᴇʀ's ɪᴅ"]
+      - ["/repo", "sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ ʟɪɴᴋ"]
+      - ["/logger on, /logger off", "ʟᴏɢɢᴇʀ ɢʀᴏᴜᴘ ʟᴏɢs ᴏɴ/off (ᴏᴡɴᴇʀ ᴏɴʟʏ)"]
+      - ["/stats", "ғᴜʟʟ sᴛᴀᴛs — sʏsᴛᴇᴍ + ᴍᴏɴɢᴏᴅʙ ɪɴғᴏ (ᴏᴡɴᴇʀ ᴏɴʟʏ)"]
+
+# ── /language (picker title) ─────────────────────────────────────────────────
+lang_title: "🌐 ʟᴀɴɢᴜᴀɢᴇ"
+
+# ── more button labels ───────────────────────────────────────────────────────
+btn_source_short: "🍡 sᴏᴜʀᴄᴇ 🍡"
+btn_language:     "🌐 ʟᴀɴɢᴜᴀɢᴇ"
+btn_thumb_on:     "🖼 ᴛʜᴜᴍʙ | ᴏɴ"
+btn_thumb_off:    "🖼 ᴛʜᴜᴍʙ | ᴏғғ"
+pill_support:     "🍬 sᴜᴘᴘᴏʀᴛ"
+pill_updates:     "🍹 ᴜᴘᴅᴀᴛᴇs"
+
+# ── help menu grid labels ────────────────────────────────────────────────────
+help_btn_admin:    "ᴧᴅᴍɪɴ"
+help_btn_autoplay: "ᴧ-ᴘʟᴀʏ"
+help_btn_gcast:    "ɢ-ᴄᴧsᴛ"
+help_btn_blchat:   "ʙʟ-ᴄʜᴧᴛ"
+help_btn_blusers:  "ʙʟ-ᴜsᴇʀs"
+help_btn_ping:     "ᴘɪɴɢ"
+help_btn_play:     "ᴘʟᴀʏ"
+help_btn_speed:    "sᴘᴇᴇᴅ"
+help_btn_info:     "ɪɴғᴏ"
+
+# ── help "play" panel: config-driven rows + thumbnail ───────────────────────
+help_play_max_duration:     "ᴍᴀx ᴅᴜʀᴀᴛɪᴏɴ"
+help_play_max_duration_val: "{0} ᴍɪɴᴜᴛᴇs"
+help_play_queue_limit:      "ǫᴜᴇᴜᴇ ʟɪᴍɪᴛ"
+help_play_queue_limit_val:  "{0} sᴏɴɢs"
+help_thumbnail_row: ["/thumbnail on, /thumbnail off", "sʜᴏᴡ ᴏʀ ʜɪᴅᴇ ᴛʜᴇ sᴏɴɢ ᴛʜᴜᴍʙɴᴀɪʟ"]
+
+# ── /thumbnail ───────────────────────────────────────────────────────────────
+thumb_title: "🖼 ᴛʜᴜᴍʙɴᴀɪʟ"
+thumb_status_note: |-
+  <code>/thumbnail on</code> · <code>/thumbnail off</code>
+  ᴀᴘᴘʟɪᴇs ғʀᴏᴍ ᴛʜᴇ ɴᴇxᴛ sᴏɴɢ.
+thumb_enabled_title:  "🖼 ᴛʜᴜᴍʙɴᴀɪʟ ᴇɴᴀʙʟᴇᴅ"
+thumb_enabled_note:   "ʙʏ » {0}\nɴᴇxᴛ sᴏɴɢs ᴡɪʟʟ sʜᴏᴡ ᴛʜᴇɪʀ ᴛʜᴜᴍʙɴᴀɪʟ."
+thumb_disabled_title: "🖼 ᴛʜᴜᴍʙɴᴀɪʟ ᴅɪsᴀʙʟᴇᴅ"
+thumb_disabled_note:  "ʙʏ » {0}\nɴᴇxᴛ sᴏɴɢs ᴡɪʟʟ ʙᴇ sʜᴏᴡɴ ᴡɪᴛʜᴏᴜᴛ ᴀ ᴛʜᴜᴍʙɴᴀɪʟ."
+thumb_enabled_toast:  "🖼 ᴛʜᴜᴍʙɴᴀɪʟ ᴇɴᴀʙʟᴇᴅ ғᴏʀ ɴᴇxᴛ sᴏɴɢs"
+thumb_disabled_toast: "🖼 ᴛʜᴜᴍʙɴᴀɪʟ ᴅɪsᴀʙʟᴇᴅ ғᴏʀ ɴᴇxᴛ sᴏɴɢs"
+
+# ── owner's log channel (LOGGER_ID) — always shown in English ───────────────
+logger_nowplaying_title:  "🎧 #ɴᴏᴡᴘʟᴀʏɪɴɢ"
+logger_newuser_title:     "#ɴᴇᴡᴜsᴇʀ sᴛᴀʀᴛᴇᴅ"
+logger_newgroup_title:    "📝 #ɴᴇᴡɢʀᴏᴜᴘ — ʙᴏᴛ ᴀᴅᴅᴇᴅ!"
+logger_leftgroup_title:   "✫ #ʟᴇғᴛɢʀᴏᴜᴘ ✫"
+logger_unknown_user:      "ᴜɴᴋɴᴏᴡɴ"
+logger_unknown_removed_by: "ᴜɴᴋɴᴏᴡɴ ᴜsᴇʀ"
+logger_get_link:          "ɢᴇᴛ ʟɪɴᴋ"
+logger_no_link:           "ɴᴏ ʟɪɴᴋ"
+logger_private_group:     "ᴘʀɪᴠᴀᴛᴇ ɢʀᴏᴜᴘ"
+logger_private_chat:      "ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ"
+kv_chat_name:  "ᴄʜᴀᴛ ɴᴀᴍᴇ"
+kv_chat_title: "ᴄʜᴀᴛ ᴛɪᴛʟᴇ"
+kv_username:   "ᴜsᴇʀɴᴀᴍᴇ"
+kv_group_link: "ɢʀᴏᴜᴘ ʟɪɴᴋ"
+kv_members:    "ᴍᴇᴍʙᴇʀs"
+kv_added_by:   "ᴀᴅᴅᴇᴅ ʙʏ"
+kv_removed_by: "ʀᴇᴍᴏᴠᴇᴅ ʙʏ"
+kv_bot:        "ʙᴏᴛ"
+
+# ── player panel: Autoplay toggle + Close ────────────────────────────────────
+btn_autoplay_on:  "🔁 ᴀᴜᴛᴏᴘʟᴀʏ | ᴏɴ"
+btn_autoplay_off: "🔁 ᴀᴜᴛᴏᴘʟᴀʏ | ᴏғғ"
+autoplay_toggle_on_toast:  "♬ ᴀᴜᴛᴏᴘʟᴀʏ ᴏɴ — ʀᴇʟᴀᴛᴇᴅ sᴏɴɢs ᴡɪʟʟ ᴋᴇᴇᴘ ᴘʟᴀʏɪɴɢ"
+autoplay_toggle_off_toast: "♬ ᴀᴜᴛᴏᴘʟᴀʏ ᴏғғ"
+player_closed_by: "ᴄʟᴏsᴇᴅ ʙʏ : {0}"
+
+# ── logger / playlist / playforce (new) ───────────────────────────────────────
+logger_title: "📡 ʟᴏɢɢᴇʀ"
+logger_kv_target: "ʟᴏɢɢᴇʀ ɪᴅ"
+logger_not_set: "ɴᴏᴛ sᴇᴛ (ᴀᴅᴅ LOGGER_ID ɪɴ ᴄᴏɴғɪɢ)"
+logger_usage_note: "/logger ᴏɴ — sᴇɴᴅ ʟᴏɢs ᴛᴏ ᴛʜᴇ ʟᴏɢɢᴇʀ ɢʀᴏᴜᴘ\n/logger ᴏғғ — sᴇɴᴅ ɴᴏᴛʜɪɴɢ ᴛᴏ ᴛʜᴇ ʟᴏɢɢᴇʀ ɢʀᴏᴜᴘ"
+logger_enabled_title: "📡 ʟᴏɢɢᴇʀ ᴇɴᴀʙʟᴇᴅ"
+logger_enabled_note: "sᴏɴɢ ᴘʟᴀʏᴇᴅ, ʙᴏᴛ sᴛᴀʀᴛᴇᴅ, ʙᴏᴛ ᴀᴅᴅᴇᴅ ᴀɴᴅ ʙᴏᴛ ᴋɪᴄᴋᴇᴅ ʟᴏɢs ᴡɪʟʟ ɴᴏᴡ ɢᴏ ᴛᴏ ᴛʜᴇ ʟᴏɢɢᴇʀ ɢʀᴏᴜᴘ."
+logger_no_id_note: "ʙᴜᴛ LOGGER_ID ɪs ɴᴏᴛ sᴇᴛ, sᴏ ɴᴏᴛʜɪɴɢ ᴄᴀɴ ʙᴇ sᴇɴᴛ ʏᴇᴛ."
+logger_disabled_title: "📡 ʟᴏɢɢᴇʀ ᴅɪsᴀʙʟᴇᴅ"
+logger_disabled_note: "ɴᴏᴛʜɪɴɢ ᴡɪʟʟ ʙᴇ sᴇɴᴛ ᴛᴏ ᴛʜᴇ ʟᴏɢɢᴇʀ ɢʀᴏᴜᴘ ᴜɴᴛɪʟ ʏᴏᴜ ᴛᴜʀɴ ɪᴛ ᴏɴ ᴀɢᴀɪɴ."
+pl_nodb_title: "❍ ᴅᴀᴛᴀʙᴀsᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ"
+pl_nodb_note: "ᴘʟᴀʏʟɪsᴛs ɴᴇᴇᴅ MᴏɴɢᴏDB, ᴡʜɪᴄʜ ɪs ɴᴏᴛ ᴄᴏɴɴᴇᴄᴛᴇᴅ ʀɪɢʜᴛ ɴᴏᴡ."
+pl_bad_name_title: "❍ ɪɴᴠᴀʟɪᴅ ᴘʟᴀʏʟɪsᴛ ɴᴀᴍᴇ"
+pl_bad_name_note: "ᴜsᴇ ᴏɴᴇ ᴡᴏʀᴅ: 1-20 ʟᴇᴛᴛᴇʀs, ɴᴜᴍʙᴇʀs, _ ᴏʀ -"
+pl_create_usage_title: "🎼 ᴄʀᴇᴀᴛᴇ ᴘʟᴀʏʟɪsᴛ"
+pl_create_usage_note: "/pcreate &lt;name&gt; — ᴇxᴀᴍᴘʟᴇ: /pcreate ɢʏᴍ"
+pl_created_title: "🎼 ᴘʟᴀʏʟɪsᴛ ᴄʀᴇᴀᴛᴇᴅ"
+pl_created_note: "ᴘʟᴀʏʟɪsᴛ <b>{0}</b> ɪs ʀᴇᴀᴅʏ.\nᴀᴅᴅ sᴏɴɢs: /padd {0} &lt;song name or url&gt;"
+pl_exists_title: "❍ ᴘʟᴀʏʟɪsᴛ ᴀʟʀᴇᴀᴅʏ ᴇxɪsᴛs"
+pl_exists_note: "ʏᴏᴜ ᴀʟʀᴇᴀᴅʏ ʜᴀᴠᴇ ᴀ ᴘʟᴀʏʟɪsᴛ ɴᴀᴍᴇᴅ <b>{0}</b>."
+pl_limit_title: "❍ ᴘʟᴀʏʟɪsᴛ ʟɪᴍɪᴛ ʀᴇᴀᴄʜᴇᴅ"
+pl_limit_note: "ʏᴏᴜ ᴄᴀɴ ʜᴀᴠᴇ ᴜᴘ ᴛᴏ {0} ᴘʟᴀʏʟɪsᴛs. ᴅᴇʟᴇᴛᴇ ᴏɴᴇ ᴡɪᴛʜ /pdelete &lt;name&gt;."
+pl_not_found_title: "❍ ᴘʟᴀʏʟɪsᴛ ɴᴏᴛ ғᴏᴜɴᴅ"
+pl_not_found_note: "ʏᴏᴜ ʜᴀᴠᴇ ɴᴏ ᴘʟᴀʏʟɪsᴛ ɴᴀᴍᴇᴅ <b>{0}</b>.\nᴄʀᴇᴀᴛᴇ ɪᴛ: /pcreate {0}  |  sᴇᴇ ʏᴏᴜʀs: /pview"
+pl_add_usage_title: "🎼 ᴀᴅᴅ ᴛᴏ ᴘʟᴀʏʟɪsᴛ"
+pl_add_usage_note: "/padd &lt;name&gt; &lt;song name or url&gt;\n/padd &lt;name&gt; — ᴀᴅᴅs ᴛʜᴇ sᴏɴɢ ᴛʜᴀᴛ ɪs ᴘʟᴀʏɪɴɢ ɴᴏᴡ"
+pl_searching_title: "❍ sᴇᴀʀᴄʜɪɴɢ..."
+pl_added_title: "🎼 ᴀᴅᴅᴇᴅ ᴛᴏ ᴘʟᴀʏʟɪsᴛ"
+pl_full_title: "❍ ᴘʟᴀʏʟɪsᴛ ɪs ғᴜʟʟ"
+pl_full_note: "ᴀ ᴘʟᴀʏʟɪsᴛ ᴄᴀɴ ʜᴏʟᴅ ᴜᴘ ᴛᴏ {0} sᴏɴɢs."
+pl_dupe_title: "❍ ɴᴏᴛʜɪɴɢ ɴᴇᴡ ᴛᴏ ᴀᴅᴅ"
+pl_dupe_note: "ᴛʜᴀᴛ sᴏɴɢ ɪs ᴀʟʀᴇᴀᴅʏ ɪɴ <b>{0}</b>."
+pl_kv_playlist: "ᴘʟᴀʏʟɪsᴛ"
+pl_kv_added: "ᴀᴅᴅᴇᴅ"
+pl_kv_skipped: "sᴋɪᴘᴘᴇᴅ"
+pl_kv_total: "ᴛᴏᴛᴀʟ"
+pl_remove_usage_title: "🎼 ʀᴇᴍᴏᴠᴇ ғʀᴏᴍ ᴘʟᴀʏʟɪsᴛ"
+pl_remove_usage_note: "/premove &lt;name&gt; &lt;number&gt; — ɢᴇᴛ ᴛʜᴇ ɴᴜᴍʙᴇʀ ғʀᴏᴍ /pview &lt;name&gt;"
+pl_bad_index_title: "❍ ᴡʀᴏɴɢ sᴏɴɢ ɴᴜᴍʙᴇʀ"
+pl_bad_index_note: "ᴘɪᴄᴋ ᴀ ɴᴜᴍʙᴇʀ ʙᴇᴛᴡᴇᴇɴ 1 ᴀɴᴅ {0}."
+pl_removed_title: "🎼 ʀᴇᴍᴏᴠᴇᴅ ғʀᴏᴍ ᴘʟᴀʏʟɪsᴛ"
+pl_empty_title: "❍ ᴘʟᴀʏʟɪsᴛ ɪs ᴇᴍᴘᴛʏ"
+pl_empty_note: "<b>{0}</b> ʜᴀs ɴᴏ sᴏɴɢs ʏᴇᴛ. ᴀᴅᴅ sᴏᴍᴇ: /padd {0} &lt;song&gt;"
+pl_view_title: "🎼 ʏᴏᴜʀ ᴘʟᴀʏʟɪsᴛs"
+pl_view_empty_title: "❍ ɴᴏ ᴘʟᴀʏʟɪsᴛs ʏᴇᴛ"
+pl_view_empty_note: "ᴄʀᴇᴀᴛᴇ ᴏɴᴇ ᴡɪᴛʜ /pcreate &lt;name&gt;"
+pl_view_note: "/pview &lt;name&gt; — sᴇᴇ sᴏɴɢs  |  /pplay &lt;name&gt; — ᴘʟᴀʏ ɪᴛ"
+pl_songs_title: "🎼 ᴘʟᴀʏʟɪsᴛ"
+pl_page_note: "ᴘᴀɢᴇ {0}/{1} • {2} sᴏɴɢs\n/pview {3} &lt;page&gt; — ᴏᴛʜᴇʀ ᴘᴀɢᴇs  |  /pplay {3} — ᴘʟᴀʏ ɪᴛ"
+pl_play_usage_title: "🎼 ᴘʟᴀʏ ᴘʟᴀʏʟɪsᴛ"
+pl_play_usage_note: "/pplay &lt;name&gt; — ǫᴜᴇᴜᴇ ʏᴏᴜʀ ᴡʜᴏʟᴇ ᴘʟᴀʏʟɪsᴛ ɪɴ ᴛʜɪs ɢʀᴏᴜᴘ"
+pl_delete_usage_title: "🎼 ᴅᴇʟᴇᴛᴇ ᴘʟᴀʏʟɪsᴛ"
+pl_delete_usage_note: "/pdelete &lt;name&gt;"
+pl_deleted_title: "🎼 ᴘʟᴀʏʟɪsᴛ ᴅᴇʟᴇᴛᴇᴅ"
+pl_deleted_note: "<b>{0}</b> ({1} sᴏɴɢs) ᴡᴀs ᴅᴇʟᴇᴛᴇᴅ."
+pf_usage_title: "⚡ ᴘʟᴀʏғᴏʀᴄᴇ"
+pf_usage_note: "/playforce &lt;song name or url&gt; — ᴘʟᴀʏs ɪᴛ ʀɪɢʜᴛ ɴᴏᴡ.\nᴛʜᴇ ᴄᴜʀʀᴇɴᴛ sᴏɴɢ ᴀɴᴅ ʏᴏᴜʀ ǫᴜᴇᴜᴇ ᴀʀᴇ ᴋᴇᴘᴛ: ᴛʜᴇʏ ᴄᴏɴᴛɪɴᴜᴇ ᴀғᴛᴇʀ ᴛʜɪs sᴏɴɢ ᴇɴᴅs."
+help_btn_playlist: "ᴘʟᴀʏʟɪsᴛ"
+
+# ── channel play (new) ────────────────────────────────────────────────────────
+ch_not_linked_title: "❍ ɴᴏ ᴄʜᴀɴɴᴇʟ ʟɪɴᴋᴇᴅ"
+ch_not_linked_note: "ʟɪɴᴋ ᴏɴᴇ ғɪʀsᴛ: /addchannel &lt;@ᴜsᴇʀɴᴀᴍᴇ ᴏʀ -100ɪᴅ&gt;\nᴛʜᴇ ʙᴏᴛ ᴍᴜsᴛ ʙᴇ ᴀɴ ᴀᴅᴍɪɴ ɪɴ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ."
+ch_status_title: "📡 ᴄʜᴀɴɴᴇʟ ᴘʟᴀʏ"
+ch_status_none_note: "ɴᴏ ᴄʜᴀɴɴᴇʟ ɪs ʟɪɴᴋᴇᴅ ᴛᴏ ᴛʜɪs ɢʀᴏᴜᴘ.\n/addchannel &lt;@ᴜsᴇʀɴᴀᴍᴇ ᴏʀ -100ɪᴅ&gt;"
+ch_status_usage_note: "ᴜsᴇ /cplay /cvplay /cskip /cpause /cresume /cstop ... ғᴏʀ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ.\n/delchannel — ᴜɴʟɪɴᴋ ɪᴛ."
+ch_not_found_title: "❍ ᴄʜᴀɴɴᴇʟ ɴᴏᴛ ғᴏᴜɴᴅ"
+ch_not_found_note: "ᴄʜᴇᴄᴋ ᴛʜᴇ ᴜsᴇʀɴᴀᴍᴇ / ɪᴅ.\nᴘʀɪᴠᴀᴛᴇ ᴄʜᴀɴɴᴇʟ? ᴀᴅᴅ ᴛʜᴇ ʙᴏᴛ ᴛʜᴇʀᴇ ғɪʀsᴛ ᴀɴᴅ ᴜsᴇ ᴛʜᴇ -100 ɪᴅ."
+ch_not_channel_title: "❍ ᴛʜᴀᴛ ɪs ɴᴏᴛ ᴀ ᴄʜᴀɴɴᴇʟ"
+ch_not_channel_note: "ᴏɴʟʏ ᴄʜᴀɴɴᴇʟs ᴄᴀɴ ʙᴇ ʟɪɴᴋᴇᴅ. ɢʀᴏᴜᴘs ᴀʟʀᴇᴀᴅʏ ᴡᴏʀᴋ ᴡɪᴛʜ /play."
+ch_bot_missing_title: "❍ ʙᴏᴛ ɪs ɴᴏᴛ ᴀɴ ᴀᴅᴍɪɴ ᴛʜᴇʀᴇ"
+ch_bot_missing_note: "ᴀᴅᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ ᴀs ᴀɴ ᴀᴅᴍɪɴ (ᴡɪᴛʜ ɪɴᴠɪᴛᴇ ᴜsᴇʀs + ᴍᴀɴᴀɢᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs), ᴛʜᴇɴ ʀᴜɴ /addchannel ᴀɢᴀɪɴ."
+ch_user_not_admin_title: "❍ ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀɴ ᴀᴅᴍɪɴ ᴏғ ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ"
+ch_user_not_admin_note: "ᴏɴʟʏ ᴀᴅᴍɪɴs ᴏғ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ ᴄᴀɴ ʟɪɴᴋ ɪᴛ."
+ch_taken_title: "❍ ᴄʜᴀɴɴᴇʟ ᴀʟʀᴇᴀᴅʏ ʟɪɴᴋᴇᴅ"
+ch_taken_note: "ᴛʜᴀᴛ ᴄʜᴀɴɴᴇʟ ɪs ʟɪɴᴋᴇᴅ ᴛᴏ ᴀɴᴏᴛʜᴇʀ ɢʀᴏᴜᴘ. ᴜɴʟɪɴᴋ ɪᴛ ᴛʜᴇʀᴇ ғɪʀsᴛ ᴡɪᴛʜ /delchannel."
+ch_linked_title: "📡 ᴄʜᴀɴɴᴇʟ ʟɪɴᴋᴇᴅ"
+ch_linked_note: "ɴᴏᴡ ᴜsᴇ /cplay /cvplay /cplayforce /cskip /cpause /cresume /cstop — sᴀᴍᴇ ᴀs ᴛʜᴇ ɴᴏʀᴍᴀʟ ᴄᴏᴍᴍᴀɴᴅs, ʙᴜᴛ ғᴏʀ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ's ᴠᴏɪᴄᴇ ᴄʜᴀᴛ.\nᴛʜᴇ ᴀssɪsᴛᴀɴᴛ ᴊᴏɪɴs ᴛʜᴇ ᴄʜᴀɴɴᴇʟ ʙʏ ɪᴛsᴇʟғ. ɪғ ɪᴛ ғᴀɪʟs, sᴛᴀʀᴛ ᴀ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ ɪɴ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ ᴏɴᴄᴇ ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ."
+ch_unlinked_title: "📡 ᴄʜᴀɴɴᴇʟ ᴜɴʟɪɴᴋᴇᴅ"
+ch_unlinked_note: "ᴄʜᴀɴɴᴇʟ ᴘʟᴀʏʙᴀᴄᴋ ᴡᴀs sᴛᴏᴘᴘᴇᴅ ᴀɴᴅ ᴛʜᴇ ʟɪɴᴋ ʀᴇᴍᴏᴠᴇᴅ."
+help_btn_channel: "ᴄʜᴀɴɴᴇʟ"

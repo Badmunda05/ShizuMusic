@@ -1,15 +1,16 @@
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
 #
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+#                   © 2026 BAD MUNDA
 #
-#  This file is a compatibility shim.
-#  All database logic lives in ShizuMusic/utils/db.py
-#  Import from there directly, or use this file — both work.
-# --------------------------------------------------------------------------------
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
 
 from ShizuMusic.utils.db import (
     start_mongo,
@@ -47,6 +48,16 @@ from ShizuMusic.utils.db import (
     save_chat_effects,
     load_chat_effects,
     delete_chat_effects,
+    is_autoplay_enabled,
+    set_autoplay_enabled,
+    get_autoplay_lang,
+    set_autoplay_lang,
+    get_autoplay_mood,
+    set_autoplay_mood,
+    get_chat_lang,
+    set_chat_lang,
+    is_thumbnail_enabled,
+    set_thumbnail_enabled,
 )
 
 __all__ = [
@@ -60,4 +71,9 @@ __all__ = [
     "is_group_blocked", "block_group", "unblock_group", "get_blocked_groups",
     "is_user_blocked_db", "block_user", "unblock_user", "get_blocked_users",
     "save_chat_effects", "load_chat_effects", "delete_chat_effects",
+    "is_autoplay_enabled", "set_autoplay_enabled",
+    "get_autoplay_lang", "set_autoplay_lang",
+    "get_autoplay_mood", "set_autoplay_mood",
+    "get_chat_lang", "set_chat_lang",
+    "is_thumbnail_enabled", "set_thumbnail_enabled",
 ]

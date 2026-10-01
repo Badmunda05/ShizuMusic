@@ -1,10 +1,16 @@
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
 #
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+#                   © 2026 BAD MUNDA
+#
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
 
 import asyncio
 
@@ -19,18 +25,20 @@ from pytgcalls.types import (
 from ShizuMusic import LOGGER, bot, call_py
 from ShizuMusic.core.queue import clear_queue, peek_current, pop_current, queue_size
 from ShizuMusic.utils.helpers import delete_file
-from ShizuMusic.utils.rich_ui import rich_esc, rich_heading, rich_kv_table, rich_note, rich_send
+from ShizuMusic.utils.language import chat_strings
+from richgram import rich_esc, rich_heading, rich_kv_table, rich_note, rich_send
 
 
 async def leave_vc(chat_id: int) -> None:
     """
-    Leave voice chat and clean queue + autoplay state.
+    Leave voice chat and clean the queue (AutoPlay's ON/OFF setting is kept).
     """
 
-    # Stop autoplay when leaving VC
+    # Drop pending autoplay suggestions, but keep the ON/OFF setting: once
+    # an admin turns AutoPlay on it stays on until they turn it off.
     try:
-        from ShizuMusic.core.autoplay import stop_autoplay
-        stop_autoplay(chat_id)
+        from ShizuMusic.core.autoplay import reset_autoplay_state
+        reset_autoplay_state(chat_id)
     except Exception:
         pass
 
@@ -54,14 +62,56 @@ async def leave_vc(chat_id: int) -> None:
         LOGGER.error(f"Leave VC Error: {e}")
 
 
+@call_py.on_update(fl.chat_update(ChatUpdate.Status.LEFT_CALL))
+async def on_call_left(_: object, update: ChatUpdate) -> None:
+    """
+    The voice chat ended from OUTSIDE our own leave_vc() flow — someone
+    ended it from Telegram's UI, the assistant got kicked, Telegram
+    dropped the call, etc. (KICKED / LEFT_GROUP / CLOSED_VOICE_CHAT /
+    DISCARDED_CALL / BUSY_CALL — see pytgcalls' ChatUpdate.Status).
+
+    No stream is left to ever fire `stream_end` for, so without this the
+    queue keeps thinking a song is still "playing": /play just appends
+    behind that ghost entry and nothing plays again until the bot is
+    restarted. Clearing state here means the next /play starts clean.
+    """
+
+    chat_id = update.chat_id
+    LOGGER.warning(f"[VC] Call ended externally in {chat_id} ({update.status}) — clearing state")
+
+    for song in clear_queue(chat_id):
+        try:
+            delete_file(song.get("file_path", ""))
+        except Exception:
+            pass
+
+    try:
+        from ShizuMusic.core.autoplay import reset_autoplay_state
+        reset_autoplay_state(chat_id)
+    except Exception:
+        pass
+
+    try:
+        lang = chat_strings(chat_id)
+        await rich_send(
+            bot, chat_id,
+            rich_heading(lang["vc_ended_title"], level=3)
+            + rich_note(lang["vc_ended_note"]),
+        )
+    except Exception:
+        pass
+
+
 @call_py.on_update(fl.stream_end())
 async def on_stream_end(_: object, update: StreamEnded) -> None:
     """
     Automatically play the next song when the current stream ends.
-    AutoPlay mode also refetches songs when queue becomes low.
+    If the queue is empty, AutoPlay (when ON) adds one related song
+    before we give up and leave the voice chat.
     """
 
     chat_id = update.chat_id
+    lang = chat_strings(chat_id)
 
     # Remove finished song
     done = pop_current(chat_id)
@@ -75,36 +125,36 @@ async def on_stream_end(_: object, update: StreamEnded) -> None:
         except Exception:
             pass
 
-    # ── AutoPlay Refetch Check ────────────────────────────────────────────────
-    try:
-        from ShizuMusic.core.autoplay import is_autoplay, maybe_refetch
-
-        if is_autoplay(chat_id):
-
-            # Fetch more songs in background if queue is getting low
-            asyncio.create_task(
-                maybe_refetch(chat_id, "🔁 AutoPlay", 0)
-            )
-
-    except Exception as ap_err:
-        LOGGER.warning(f"[AutoPlay] Refetch Check Error: {ap_err}")
-
-    # ── Next Song ─────────────────────────────────────────────────────────────
-    # Wait a little so autoplay fetch can complete
-    await asyncio.sleep(2)
-
     nxt = peek_current(chat_id)
 
-    # Play next song
+    # ── Queue is empty: let AutoPlay try to add ONE related song ────────────────
+    if not nxt:
+        try:
+            from ShizuMusic.core.autoplay import autoplay_next
+
+            if await autoplay_next(chat_id, done):
+                nxt = peek_current(chat_id)
+
+        except Exception as ap_err:
+            LOGGER.warning(f"[AutoPlay] autoplay_next error: {ap_err}")
+
+    # ── Play next song ───────────────────────────────────────────────────────
     if nxt:
 
         from ShizuMusic.core.player import play_song
 
+        # start getting the *next* suggestion ready while this song plays
+        try:
+            from ShizuMusic.core.autoplay import schedule_prefetch
+            schedule_prefetch(chat_id, nxt)
+        except Exception:
+            pass
+
         try:
             msg = await rich_send(
                 bot, chat_id,
-                rich_heading("❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ", level=3)
-                + rich_kv_table([("ᴛɪᴛʟᴇ", f"<code>{rich_esc(nxt['title'])}</code>")]),
+                rich_heading(lang["next_track_title"], level=3)
+                + rich_kv_table([(lang["kv_title"], f"<code>{rich_esc(nxt['title'])}</code>")]),
             )
 
             await play_song(chat_id, msg, nxt)
@@ -117,72 +167,18 @@ async def on_stream_end(_: object, update: StreamEnded) -> None:
 
             await rich_send(
                 bot, chat_id,
-                rich_heading("❍ ᴇʀʀᴏʀ", level=3)
+                rich_heading(lang["generic_error_title"], level=3)
                 + rich_note(f"<code>{rich_esc(e)}</code>"),
             )
 
-    else:
+        return
 
-        # Queue finished but autoplay may still fetch songs
-        try:
-            from ShizuMusic.core.autoplay import (
-                is_autoplay,
-                _autoplay_fetching,
-            )
+    # ── Queue completely finished (AutoPlay OFF or nothing usable found) ───────
+    await leave_vc(chat_id)
 
-            if is_autoplay(chat_id):
+    await rich_send(
+        bot, chat_id,
+        rich_heading(lang["queue_finished_title"], level=3)
+        + rich_note(lang["queue_finished_note"]),
+    )
 
-                # Wait if background fetching is running (up to 20 seconds)
-                for _ in range(20):
-                    if _autoplay_fetching.get(chat_id):
-                        await asyncio.sleep(1)
-                    else:
-                        break
-
-                # Give one more second after fetching finishes
-                await asyncio.sleep(1)
-
-                nxt2 = peek_current(chat_id)
-
-                # Play fetched song
-                if nxt2:
-
-                    from ShizuMusic.core.player import play_song
-
-                    msg2 = await rich_send(
-                        bot, chat_id,
-                        rich_heading("❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ", level=3)
-                        + rich_kv_table([("ᴛɪᴛʟᴇ", f"<code>{rich_esc(nxt2['title'])}</code>")]),
-                    )
-
-                    await play_song(chat_id, msg2, nxt2)
-                    return
-
-                # If still nothing after waiting, try one more fetch
-                from ShizuMusic.core.autoplay import maybe_refetch
-                await maybe_refetch(chat_id, "🔁 AutoPlay", 0)
-                await asyncio.sleep(5)
-
-                nxt3 = peek_current(chat_id)
-                if nxt3:
-                    from ShizuMusic.core.player import play_song
-                    msg3 = await rich_send(
-                        bot, chat_id,
-                        rich_heading("❍ ɴᴇxᴛ ᴛʀᴀᴄᴋ", level=3)
-                        + rich_kv_table([("ᴛɪᴛʟᴇ", f"<code>{rich_esc(nxt3['title'])}</code>")]),
-                    )
-                    await play_song(chat_id, msg3, nxt3)
-                    return
-
-        except Exception:
-            pass
-
-        # Queue completely finished
-        await leave_vc(chat_id)
-
-        await rich_send(
-            bot, chat_id,
-            rich_heading("❍ ǫᴜᴇᴜᴇ ғɪɴɪsʜᴇᴅ", level=3)
-            + rich_note("ʟᴇғᴛ ᴠᴏɪᴄᴇ ᴄʜᴀᴛ."),
-        )
-        

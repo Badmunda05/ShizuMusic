@@ -1,10 +1,16 @@
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
 #
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+#                   © 2026 BAD MUNDA
+#
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
 
 """
 Assistant utility functions.
@@ -18,18 +24,10 @@ from pyrogram.errors import RPCError, UserAlreadyParticipant
 from pyrogram.types import Message
 
 from ShizuMusic import assistant, bot
-from ShizuMusic.utils.rich_ui import rich_edit, rich_esc, rich_heading, rich_note
+from richgram import rich_edit, rich_esc, rich_heading, rich_note
 
 
 async def is_assistant_in(chat_id: int):
-    """
-    Check whether the assistant is a member of the given group.
-
-    Returns:
-        True     — assistant is present
-        False    — assistant is not present
-        "banned" — assistant was banned from the group
-    """
     try:
         me     = await assistant.get_me()
         member = await assistant.get_chat_member(chat_id, me.id)
@@ -43,16 +41,6 @@ async def is_assistant_in(chat_id: int):
 
 
 async def try_join_assistant(chat_id: int, pm: Message) -> bool:
-    """
-    Attempt to make the assistant join the group via invite link.
-
-    Args:
-        chat_id: Target group chat ID.
-        pm:      Status message to edit with progress / error text.
-
-    Returns:
-        True on success, False on failure.
-    """
     try:
         invite_link = await bot.export_chat_invite_link(chat_id)
 

@@ -1,25 +1,41 @@
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
 #
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+#                   © 2026 BAD MUNDA
+#
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
 
 import asyncio
 import random
 
-from pyrogram import enums, filters
+from pyrogram import filters
 from pyrogram.enums import ChatType, ParseMode
 from pyrogram.errors import FloodWait
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from pyrogram.types import Message
 
 import config
 from ShizuMusic import bot
 from config import START_PHOTOS
 from ShizuMusic.modules.block import user_allowed
+from ShizuMusic.strings import DEFAULT_LANG, get_string
+from ShizuMusic.utils.buttons import (
+    help_menu_kb,
+    make_admin_kb,
+    start_group_kb,
+    start_private_kb,
+    support_updates_pills,
+)
 from ShizuMusic.utils.db import add_broadcast_chat, add_served_chat, add_served_user
-from ShizuMusic.utils.rich_ui import (
+from ShizuMusic.utils.language import chat_strings
+from ShizuMusic.utils.logs import logger_active
+from richgram import (
     rich_details,
     rich_esc,
     rich_heading,
@@ -31,14 +47,25 @@ from ShizuMusic.utils.rich_ui import (
     sanitize_display_name,
 )
 
-def _support_updates_pills() -> str:
+def _onboarding_body(lang: dict, uid: int, name: str) -> str:
+    """Shared by /start (private) and the help panel's 'go back' button."""
     return (
-        "<p>"
-        f'<tg-button type="url" style="primary" url="{config.SUPPORT_GROUP}">'
-        "🍬 sᴜᴘᴘᴏʀᴛ</tg-button> "
-        f'<tg-button type="url" style="success" url="{config.UPDATES_CHANNEL}">'
-        "🍹 ᴜᴘᴅᴀᴛᴇs</tg-button>"
-        "</p>"
+        rich_note(
+            lang["onboarding_greeting"].format(uid, rich_esc(name))
+            + lang["onboarding_intro"].format(rich_esc(config.BOT_NAME))
+        )
+        + rich_details(
+            lang["onboarding_features_heading"],
+            rich_table(lang["onboarding_features_headers"], lang["onboarding_features_rows"]),
+            open=True,
+        )
+        + rich_details(
+            lang["onboarding_why_heading"],
+            lang["onboarding_why_body"],
+            open=True,
+        )
+        + rich_note(lang["onboarding_powered_by"])
+        + support_updates_pills(lang)
     )
 
 
@@ -52,6 +79,7 @@ async def start_handler(_, message: Message) -> None:
     chat_id   = message.chat.id
     chat_type = message.chat.type
     photo     = random.choice(config.START_PHOTOS)
+    lang      = chat_strings(chat_id)
 
     # ── Delete the user's /start command message ──────────────────────────────
     try:
@@ -68,64 +96,14 @@ async def start_handler(_, message: Message) -> None:
     # ── Private ───────────────────────────────────────────────────────────────
     if chat_type == ChatType.PRIVATE:
 
-        caption = (
-            rich_img(photo)
-            + rich_note(f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
-            "ᴡᴇʟᴄᴏᴍᴇ ᴀʙᴏᴀʀᴅ! 🎶</p>"
-            + f"<p>ɪ ᴀᴍ <b>{rich_esc(config.BOT_NAME)}</b> — ᴀ ғᴀsᴛ &amp; "
-              "ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ᴘʟᴀʏᴇʀ ʙᴏᴛ ᴡɪᴛʜ sᴏᴍᴇ ᴀᴡᴇsᴏᴍᴇ "
-              "ғᴇᴀᴛᴜʀᴇs.</p>")
-            + rich_details(
-                "✦ ᴋᴇʏ ғᴇᴀᴛᴜʀᴇs ✦",
-                rich_table(
-                    ["ғᴇᴀᴛᴜʀᴇ", "ᴅᴇᴛᴀɪʟs"],
-                    [
-                        ("🎵 sᴛʀᴇᴀᴍɪɴɢ", "ᴘʟᴀʏ ᴀᴜᴅɪᴏ &amp; ᴠɪᴅᴇᴏ ɪɴ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs"),
-                        ("🔁 ᴀᴜᴛᴏᴘʟᴀʏ", "ᴋᴇᴇᴘs ᴛʜᴇ ǫᴜᴇᴜᴇ ɢᴏɪɴɢ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ"),
-                        ("🎚️ ᴇғғᴇᴄᴛs", "sᴘᴇᴇᴅ ᴄᴏɴᴛʀᴏʟ &amp; ʙᴀss ʙᴏᴏsᴛ"),
-                        ("🛡️ ᴍᴏᴅᴇʀᴀᴛɪᴏɴ", "ʙʟᴏᴄᴋ/ᴜɴʙʟᴏᴄᴋ ᴄʜᴀᴛs &amp; ᴜsᴇʀs"),
-                    ],
-                ),
-                open=True,
-            )
-            + rich_details(
-                "✧ ᴡʜʏ ᴄʜᴏᴏsᴇ ɪᴛ? ✧",
-                "<p>⭐ sɪᴍᴘʟᴇ sʟᴀsʜ ᴄᴏᴍᴍᴀɴᴅs, ɴᴏ sᴇᴛᴜᴘ ɴᴇᴇᴅᴇᴅ.</p>"
-                "<p>🎧 ᴄʟᴇᴀɴ, ʟᴏᴡ-ʟᴀɢ sᴛʀᴇᴀᴍɪɴɢ.</p>"
-                "<p>❍ ᴄʟɪᴄᴋ ʜᴇʟᴘ ʙᴇʟᴏᴡ ғᴏʀ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs.</p>",
-                open=True,
-            )
-            + rich_note(f"ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
-            + _support_updates_pills()
-        )
-        kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton("⛩️ ᴧᴅᴅ мᴇ ʙᴧʙʏ ⛩️",
-                                  url=f"{config.BOT_LINK}?startgroup=true",
-                                  style=enums.ButtonStyle.PRIMARY)],
-            [
-                InlineKeyboardButton("🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP,
-                                     style=enums.ButtonStyle.SUCCESS),
-                InlineKeyboardButton("🍹 ᴜᴘᴅᴀᴛᴇs 🍹",  url=config.UPDATES_CHANNEL,
-                                     style=enums.ButtonStyle.SUCCESS),
-            ],
-            [InlineKeyboardButton("🏩 ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅs 🏩",
-                                  callback_data="show_help",
-                                  style=enums.ButtonStyle.PRIMARY)],
-            [
-                InlineKeyboardButton("🫧 ᴏᴡɴᴇʀ 🫧",
-                                     url=f"tg://user?id={config.OWNER_ID}",
-                                     style=enums.ButtonStyle.DEFAULT),
-                InlineKeyboardButton("🍡 sᴏᴜʀᴄᴇ 🍡",
-                                     url="https://github.com/Badmunda05/ShizuMusic/fork",
-                                     style=enums.ButtonStyle.DEFAULT),
-            ],
-        ])
+        caption = rich_img(photo) + _onboarding_body(lang, uid, name)
+        kb = start_private_kb(lang)
 
         try:
-            sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
+            sent = await rich_send(bot, chat_id, caption + kb)
         except FloodWait as fw:
             await asyncio.sleep(fw.value + 1)
-            sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
+            sent = await rich_send(bot, chat_id, caption + kb)
 
         try:
             add_broadcast_chat(chat_id, "private")
@@ -133,17 +111,18 @@ async def start_handler(_, message: Message) -> None:
             pass
 
         # ── Log new user to LOGGER_ID ────────────────────────────────────────
-        if config.LOGGER_ID:
+        if logger_active():
             try:
                 username = message.from_user.username
                 username_display = f"@{rich_esc(username)}" if username else "N/A"
 
+                en = get_string(DEFAULT_LANG)   # log channel is the owner's: always English
                 logger_caption = (
-                    rich_heading("#ɴᴇᴡᴜsᴇʀ sᴛᴀʀᴛᴇᴅ", level=2)
+                    rich_heading(en["logger_newuser_title"], level=2)
                     + rich_kv_table([
-                        ("ɴᴀᴍᴇ", f'<a href="tg://user?id={uid}">{rich_esc(name)}</a>'),
-                        ("ɪᴅ", f"<code>{uid}</code>"),
-                        ("ᴜsᴇʀɴᴀᴍᴇ", username_display),
+                        (en["kv_name"], f'<a href="tg://user?id={uid}">{rich_esc(name)}</a>'),
+                        (en["kv_id"], f"<code>{uid}</code>"),
+                        (en["kv_username"], username_display),
                     ])
                 )
                 await rich_send(bot, config.LOGGER_ID, logger_caption)
@@ -153,58 +132,32 @@ async def start_handler(_, message: Message) -> None:
     # ── Group ────────────────────────────────────────────────────────────────
     else:
         chat_title = message.chat.title or "this chat"
+        mention = f'<a href="tg://user?id={uid}">{rich_esc(name)}</a>'
 
         caption = (
             rich_img(photo)
-            + f"<p>❍ ʜᴇʏ <a href='tg://user?id={uid}'>{rich_esc(name)}</a>, "
-            f"ᴛʜɪs ɪs <b>{rich_esc(config.BOT_NAME)}</b></p>"
-            + rich_note(
-                f"ᴛʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ ɪɴ {rich_esc(chat_title)}. "
-                f"{rich_esc(name)} ᴄᴀɴ ɴᴏᴡ ᴘʟᴀʏ sᴏɴɢs ʜᴇʀᴇ."
-            )
-            + _support_updates_pills()
+            + f"<p>{lang['group_thanks_title'].format(mention, rich_esc(config.BOT_NAME))}</p>"
+            + rich_note(lang["group_thanks_note"].format(rich_esc(chat_title), rich_esc(name)))
+            + support_updates_pills(lang)
         )
-        kb = InlineKeyboardMarkup([
-            [
-                InlineKeyboardButton("⛩️ ᴧᴅᴅ мᴇ ʙᴧʙʏ ⛩️",
-                                     url=f"{config.BOT_LINK}?startgroup=true",
-                                     style=enums.ButtonStyle.PRIMARY),
-                InlineKeyboardButton("🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP,
-                                     style=enums.ButtonStyle.SUCCESS),
-            ],
-            [InlineKeyboardButton("🏩 ʜᴇʟᴘ & ᴄᴏᴍᴍᴀɴᴅs 🏩",
-                                  callback_data="show_help",
-                                  style=enums.ButtonStyle.PRIMARY)],
-        ])
+        kb = start_group_kb(lang)
 
         try:
-            sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
+            sent = await rich_send(bot, chat_id, caption + kb)
         except FloodWait as fw:
             await asyncio.sleep(fw.value + 1)
-            sent = await rich_send(bot, chat_id, caption, reply_markup=kb)
+            sent = await rich_send(bot, chat_id, caption + kb)
 
         admin_msg = (
-            rich_heading("ᴛʜᴀɴᴋs ғᴏʀ ᴀᴅᴅɪɴɢ ᴍᴇ! 🥀", level=2)
-            + rich_note(
-                "<p>ᴘʟᴇᴀsᴇ ᴍᴀᴋᴇ ᴍᴇ ᴀɴ ᴀᴅᴍɪɴ ᴡɪᴛʜ ᴛʜᴇsᴇ ᴘᴇʀᴍɪssɪᴏɴs:</p>"
-                "<p>❍ ᴅᴇʟᴇᴛᴇ ᴍᴇssᴀɢᴇs<br>"
-                "❍ ᴍᴀɴᴀɢᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs<br>"
-                "❍ ɪɴᴠɪᴛᴇ ᴜsᴇʀs</p>"
-            )
-            + rich_note("ᴡɪᴛʜᴏᴜᴛ ᴀᴅᴍɪɴ ᴘᴇʀᴍs sᴏᴍᴇ ғᴇᴀᴛᴜʀᴇs ᴡᴏɴ'ᴛ ᴡᴏʀᴋ! 🚫")
+            rich_heading(lang["group_admin_request_title"], level=2)
+            + rich_note(lang["group_admin_request_note1"])
+            + rich_note(lang["group_admin_request_note2"])
         )
-        admin_kb = InlineKeyboardMarkup([[
-            InlineKeyboardButton(
-                "⚡ ᴍᴀᴋᴇ ᴍᴇ ᴀᴅᴍɪɴ ⚡",
-                url=f"tg://user?id={(await bot.get_me()).id}",
-                style=enums.ButtonStyle.DANGER,
-            )
-        ]])
+        admin_kb = make_admin_kb((await bot.get_me()).id, styled=True, lang=lang)
         try:
             admin_sent = await rich_send(
                 bot, chat_id,
-                admin_msg,
-                reply_markup=admin_kb,
+                admin_msg + admin_kb,
             )
         except Exception:
             pass
@@ -222,6 +175,7 @@ async def help_handler(_, message: Message) -> None:
 
     uid  = message.from_user.id
     name = sanitize_display_name(message.from_user.first_name)
+    lang = chat_strings(message.chat.id)
 
     # ── Delete the user's /help command message ───────────────────────────────
     try:
@@ -229,46 +183,22 @@ async def help_handler(_, message: Message) -> None:
     except Exception:
         pass
 
-    kb = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton("ᴧᴅᴍɪɴ",    callback_data="help_admin", style=enums.ButtonStyle.PRIMARY),
-            InlineKeyboardButton("ᴧ-ᴘʟᴀʏ",   callback_data="help_autoplay", style=enums.ButtonStyle.PRIMARY),
-            InlineKeyboardButton("ɢ-ᴄᴧsᴛ",   callback_data="help_gcast", style=enums.ButtonStyle.PRIMARY),
-        ],
-        [
-            InlineKeyboardButton("ʙʟ-ᴄʜᴧᴛ",  callback_data="help_blchat", style=enums.ButtonStyle.PRIMARY),
-            InlineKeyboardButton("ʙʟ-ᴜsᴇʀs", callback_data="help_blusers", style=enums.ButtonStyle.PRIMARY),
-            InlineKeyboardButton("ᴘɪɴɢ",     callback_data="help_ping", style=enums.ButtonStyle.PRIMARY),
-        ],
-        [
-            InlineKeyboardButton("ᴘʟᴀʏ",     callback_data="help_play", style=enums.ButtonStyle.PRIMARY),
-            InlineKeyboardButton("sᴘᴇᴇᴅ",    callback_data="help_speed", style=enums.ButtonStyle.PRIMARY),
-            InlineKeyboardButton("ɪɴғᴏ",     callback_data="help_info", style=enums.ButtonStyle.PRIMARY),
-        ],
-        [
-            InlineKeyboardButton("⌯ ᴄʟᴏsᴇ ⌯", callback_data="close_help", style=enums.ButtonStyle.DANGER),
-        ],
-    ])
+    kb = help_menu_kb(lang)
 
     photo = random.choice(config.START_PHOTOS)
 
     caption = (
-        rich_heading('📜 ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ', level=3)
+        rich_heading(lang["help_pick_category_title"], level=3)
         + rich_img(photo)
-        + rich_note(f'<p>❍ ʜᴇʏ <a href="tg://user?id={uid}">{rich_esc(name)}</a>, ᴘɪᴄᴋ ᴀ '
-        "ᴄᴀᴛᴇɢᴏʀʏ ʙᴇʟᴏᴡ ᴛᴏ sᴇᴇ ɪᴛs ᴄᴏᴍᴍᴀɴᴅs.</p>")
+        + rich_note(lang["help_pick_category_note"].format(uid, rich_esc(name)))
         + rich_details(
-                "✦ ʜᴇʟᴘ ғᴇᴀᴛᴜʀᴇs ✦",
-                rich_table(
-                    ["ғᴇᴀᴛᴜʀᴇ", "ᴅᴇᴛᴀɪʟs"],
-                    [
-                        ("✉️ ʜᴇʟᴘ ᴍᴇɴᴜ", "ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ᴡɪᴛʜ : /"),
-                    ],
-                ),
+                lang["help_features_heading"],
+                rich_table(lang["onboarding_features_headers"], lang["help_features_rows"]),
                 open=True,
             )
-        + rich_note(f"ᴘᴏᴡᴇʀᴇᴅ ʙʏ » <a href='https://t.me/PBXCHATS'>sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a>")
-        + _support_updates_pills()
+        + rich_note(lang["onboarding_powered_by"])
+        + support_updates_pills(lang)
     )
 
-    await rich_send(bot, message.chat.id, caption, reply_markup=kb)
+    await rich_send(bot, message.chat.id, caption + kb)
+    

@@ -1,10 +1,17 @@
-# --------------------------------------------------------------------------------
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
+#
+#                   © 2026 BAD MUNDA
+#
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
+
 
 
 # chat_id -> queue list
@@ -18,6 +25,12 @@ def get_queue(chat_id: int) -> list:
 def add_to_queue(chat_id: int, song: dict) -> int:
     queue = chat_queues.setdefault(chat_id, [])
     queue.append(song)
+    return len(queue)
+
+
+def push_front(chat_id: int, song: dict) -> int:
+    queue = chat_queues.setdefault(chat_id, [])
+    queue.insert(0, song)
     return len(queue)
 
 

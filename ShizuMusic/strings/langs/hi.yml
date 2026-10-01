@@ -1,0 +1,489 @@
+# --------------------------------------------------------------------------------
+#  ShizuMusic © 2026 — हिन्दी (Hindi)
+#
+#  Demo language file: this is exactly what you drop in to add a language —
+#  a "name:" key + as many translated keys as you have time for. Anything
+#  left out here is filled in from en.yml automatically, so a half-finished
+#  translation still works, it just shows English for the untranslated bits.
+# --------------------------------------------------------------------------------
+
+name: "🇮🇳 हिन्दी"
+
+# ── /autoplay ──────────────────────────────────────────────────────────────────
+autoplay_title:        "🔁 ऑटोप्ले"
+autoplay_usage_title:  "🔁 ऑटोप्ले उपयोग"
+autoplay_usage_note: |-
+  <code>/autoplay on</code> · <code>/autoplay off</code>
+  <code>/autoplay lang hindi</code> (या <code>auto</code>)
+  <code>/autoplay mood sad</code> (या <code>any</code>)
+
+autoplay_status_note: |-
+  <code>/autoplay on</code> · <code>/autoplay off</code>
+  <code>/autoplay lang hindi</code> (या <code>auto</code>)
+  <code>/autoplay mood sad</code> (या <code>any</code>)
+
+  भाषाएं: {0}
+  मूड: {1}
+
+autoplay_status_on:   "ऑन ✅"
+autoplay_status_off:  "ऑफ़ ❌"
+autoplay_kv_status:   "स्थिति"
+autoplay_kv_lang:     "भाषा"
+autoplay_kv_mood:     "मूड"
+
+autoplay_admin_only_title: "⛔ सिर्फ़ एडमिन"
+autoplay_admin_only_note:  "/autoplay सिर्फ़ ग्रुप एडमिन इस्तेमाल कर सकते हैं"
+
+autoplay_enabled_title: "🔁 ऑटोप्ले चालू"
+autoplay_enabled_note:  "द्वारा » {0}\nक्यू खत्म होने पर मिलते-जुलते गाने अपने आप चलते रहेंगे।"
+
+autoplay_disabled_title: "❍ ऑटोप्ले बंद"
+autoplay_disabled_note:  "द्वारा » {0}"
+
+autoplay_unknown_lang_title: "❍ अज्ञात भाषा"
+autoplay_unknown_lang_note:  "उपलब्ध: {0}"
+autoplay_lang_set_title:     "🔁 ऑटोप्ले भाषा"
+autoplay_lang_set_note:      "सेट की गई » <code>{0}</code>"
+
+autoplay_unknown_mood_title: "❍ अज्ञात मूड"
+autoplay_unknown_mood_note:  "उपलब्ध: {0}"
+autoplay_mood_set_title:     "🔁 ऑटोप्ले मूड"
+autoplay_mood_set_note:      "सेट किया गया » <code>{0}</code>"
+
+autoplay_someone: "कोई"
+
+# ── /language ──────────────────────────────────────────────────────────────────
+lang_1: "» इस चैट के लिए भाषा चुनें:"
+lang_2: "» भाषा बदल दी गई है।"
+lang_3: "» वह भाषा सेट करते समय कुछ गड़बड़ हो गई, पुरानी भाषा रखी गई।"
+lang_4: "» यह पहले से ही मौजूदा भाषा है।"
+lang_5: "⛔ सिर्फ़ ग्रुप एडमिन ही भाषा बदल सकते हैं।"
+
+# ── shared / generic (reused across modules) ────────────────────────────────────
+admin_only_title: "⛔ सिर्फ़ एडमिन"
+admin_only_note:  "यह कमांड सिर्फ़ ग्रुप एडमिन के लिए है।"
+queue_empty_title: "❍ क्यू खाली है"
+download_failed_title: "❍ डाउनलोड विफल"
+next_track_title: "❍ अगला ट्रैक"
+generic_processing_note: "प्रोसेस हो रहा है..."
+generic_error_title: "❍ त्रुटि"
+vc_ended_title: "❍ वॉइस चैट समाप्त"
+vc_ended_note:  "क्यू साफ़ हो गई — शुरू करने के लिए /play करें।"
+queue_finished_title: "❍ क्यू खत्म हुई"
+queue_finished_note:  "वॉइस चैट छोड़ दी।"
+
+kv_title:   "टाइटल"
+kv_dur:     "समय"
+kv_by:      "द्वारा"
+kv_pos:     "स्थान"
+kv_max:     "अधिकतम"
+kv_songs:   "गाने"
+kv_first:   "पहला"
+kv_next:    "अगला"
+kv_play:    "प्ले"
+kv_or:      "या"
+kv_video:   "वीडियो"
+kv_channel: "चैनल"
+kv_skipped: "स्किप किया गया"
+kv_now_playing: "अभी चल रहा है"
+kv_processing_in: "प्रोसेसिंग में"
+
+# ── /play & /vplay ───────────────────────────────────────────────────────────────
+play_processing_media:      "❍ मीडिया प्रोसेस हो रहा है..."
+play_file_too_large_title:  "❍ फ़ाइल बहुत बड़ी है"
+play_downloading_media:     "❍ मीडिया डाउनलोड हो रहा है..."
+play_blocked_title:         "❍ यह गाना ब्लॉक है"
+play_cooldown_title:        "❍ कूलडाउन चालू है"
+play_usage_title:           "❍ उपयोग"
+play_usage_play_val:        "<code>/play गाने का नाम</code>"
+play_usage_or_val:          "<code>/play यूट्यूब लिंक</code>"
+play_usage_video_val:       "<code>/vplay गाने का नाम</code>"
+play_usage_channel_val:    "<code>/cplay गाने का नाम</code>"
+play_processing_title:      "❍ प्रोसेस हो रहा है..."
+play_assistant_banned_title:  "❍ असिस्टेंट बैन है"
+play_assistant_banned_note:   "कृपया असिस्टेंट को अनबैन करें और फिर से कोशिश करें"
+play_assistant_joining_title: "❍ असिस्टेंट ग्रुप में जुड़ रहा है..."
+play_assistant_joined_title:  "❍ असिस्टेंट जुड़ गया ✓"
+play_search_failed_title:   "❍ खोज विफल"
+play_playlist_empty_title:  "❍ प्लेलिस्ट खाली है"
+play_playlist_added_title:  "❍ प्लेलिस्ट जोड़ी गई"
+play_song_not_found_title:  "❍ गाना नहीं मिला"
+play_song_too_long_title:   "❍ गाना बहुत लंबा है"
+play_added_queue_title:     "❍ क्यू में जोड़ा गया"
+
+# ── /skip ─────────────────────────────────────────────────────────────────────
+skip_empty_note:      "स्किप करने के लिए कोई गाना नहीं है।"
+skip_skipping_title:  "⏭ मौजूदा ट्रैक स्किप हो रहा है..."
+skip_skipped_title:   "⏭ ट्रैक स्किप किया गया"
+skip_queue_empty_note: "क्यू अब खाली है"
+
+# ── /stop, /end, /clear, /reboot ──────────────────────────────────────────────
+stop_stopped_title: "⏹ प्लेबैक बंद"
+stop_stopped_note:  "क्यू साफ़ हो गई · वॉइस चैट छोड़ दी"
+clear_cleared_title: "🧹 क्यू साफ़ हो गई"
+clear_cleared_note:  "सभी गाने हटा दिए गए"
+reboot_title: "🔄 चैट रीबूट हो गई"
+reboot_note:  "सभी स्थितियां रीसेट हो गईं"
+
+# ── /pause & /resume ───────────────────────────────────────────────────────────
+pause_title:  "⏸ स्ट्रीम रोकी गई"
+pause_note:   "म्यूज़िक प्लेबैक अस्थायी रूप से रुका।"
+pause_failed_title: "❍ पॉज़ विफल"
+resume_title: "▶ स्ट्रीम फिर से शुरू"
+resume_note:  "म्यूज़िक प्लेबैक जारी है।"
+resume_failed_title: "❍ रिज़्यूम विफल"
+
+# ── /repo ──────────────────────────────────────────────────────────────────────
+repo_title: "🍡 शिज़ुम्यूज़िक सोर्स"
+repo_note:  "❍ गिटहब रेपो — गिटहब पर ⭐ देना न भूलें!"
+
+# ── button labels (utils/buttons.py) ───────────────────────────────────────────
+btn_skip:      "⌯ स्किप ⌯"
+btn_clear:     "⌯ क्लियर ⌯"
+btn_support:   "🍬 सपोर्ट 🍬"
+btn_updates:   "🍹 अपडेट्स 🍹"
+btn_source:    "🍡 सोर्स कोड 🍡"
+btn_fork:      "🔱 फ़ोर्क 🔱"
+btn_close:     "⌯ बंद करें ⌯"
+btn_back:      "⌯ वापस ⌯"
+btn_home:      "⌯ होम ⌯"
+btn_make_admin: "⚡ मुझे एडमिन बनाएं ⚡"
+btn_add_me:    "⛩️ मुझे जोड़ो ⛩️"
+btn_help:      "🏩 मदद और कमांड्स 🏩"
+btn_owner:     "🫧 ओनर 🫧"
+
+# ── /ping ──────────────────────────────────────────────────────────────────────
+ping_pinging: "❍ {0} पिंग कर रहा है..."
+ping_title:   "🏓 पोंग : {0}ms"
+ping_footer_by: "<p>❍ द्वारा » <a href=\"{0}\">शिज़ु-म्यूज़िक™</a></p>"
+kv_uptime: "अपटाइम"
+kv_ram:    "रैम"
+kv_cpu:    "सीपीयू"
+kv_disk:   "डिस्क"
+kv_pytgc:  "पीवाईटीजीसी"
+
+# ── /speedtest (owner-only diagnostic; only headline text localized) ───────────
+speedtest_starting: "❍ स्पीड टेस्ट शुरू हो रहा है, कृपया प्रतीक्षा करें..."
+speedtest_failed:   "❍ स्पीडटेस्ट विफल, कृपया फिर से कोशिश करें"
+speedtest_title:    "⚡ स्पीडटेस्ट परिणाम"
+
+# ── /stats (owner-only diagnostic; only headline text localized) ───────────────
+stats_fetching: "❍ आंकड़े लाए जा रहे हैं, कृपया प्रतीक्षा करें..."
+stats_system_error_title: "❍ सिस्टम आंकड़ों में त्रुटि"
+stats_title: "❍ शिज़ुम्यूज़िक आंकड़े"
+
+# ── /broadcast, /gcast (owner-only) ────────────────────────────────────────────
+bc_already_running_title: "❍ एक ब्रॉडकास्ट पहले से चल रहा है"
+bc_already_running_note:  "कृपया इसके खत्म होने का इंतज़ार करें।"
+bc_usage_title: "❍ किसी संदेश को रिप्लाई करें या टेक्स्ट दें"
+bc_usage_rows:
+  - ["-pin", "ग्रुप्स में चुपचाप पिन करें"]
+  - ["-pinloud", "नोटिफ़िकेशन के साथ पिन करें"]
+  - ["-nogroup", "ग्रुप्स छोड़ें"]
+  - ["-user", "प्राइवेट यूज़र्स को भी भेजें"]
+bc_headers_flag_effect: ["फ़्लैग", "असर"]
+bc_no_targets_title: "❍ ब्रॉडकास्ट लिस्ट में कोई टारगेट नहीं मिला"
+bc_started_title: "❍ ब्रॉडकास्ट शुरू हुआ"
+bc_completed_title: "❍ ब्रॉडकास्ट पूरा हुआ ✅"
+kv_total: "कुल"
+kv_groups: "ग्रुप्स"
+kv_users: "यूज़र्स"
+kv_targets: "टारगेट्स"
+kv_flags: "फ़्लैग्स"
+kv_pinned: "पिन किए गए"
+kv_failed: "विफल"
+
+# ── /speed, /bass, /effect* ─────────────────────────────────────────────────────
+effects_no_song_title: "❍ फ़िलहाल कोई गाना नहीं चल रहा"
+effects_applying_title: "❍ इफ़ेक्ट्स लागू हो रहे हैं, कृपया प्रतीक्षा करें..."
+effects_resolve_failed_title: "❍ स्ट्रीम रिज़ॉल्व विफल"
+effects_ffmpeg_error_title: "❍ एफएफएमपेग त्रुटि"
+effects_playback_failed_title: "❍ प्लेबैक विफल"
+effects_applied_title: "❍ इफ़ेक्ट्स लागू हो गए ✓"
+effects_speed_normal_label: "सामान्य (1.0x)"
+effects_bass_off_label: "बंद"
+effects_bass_boost_label: "{0} dB बूस्ट"
+effects_invalid_value_title: "❍ अमान्य मान"
+effects_speed_range_title: "❍ स्पीड 0.25 और 4.0 के बीच होनी चाहिए"
+effects_bass_range_title: "❍ बास 1 और 20 के बीच होना चाहिए"
+effects_enabled_title: "❍ इफ़ेक्ट्स चालू हो गए ✓"
+effects_enabled_note: "इस ग्रुप के सभी गाने अब इफ़ेक्ट्स के साथ चलेंगे। बंद करने के लिए /effectoff इस्तेमाल करें।"
+effects_disabled_title: "❍ इफ़ेक्ट्स बंद हो गए ✓"
+effects_disabled_note: "इस ग्रुप में गाने अब सामान्य रूप से चलेंगे। स्पीड + बास सेटिंग्स सुरक्षित हैं — फिर से चालू करने के लिए /effecton इस्तेमाल करें।"
+effects_status_title: "❍ इफ़ेक्ट्स स्थिति — {0}"
+effects_mode_on_label:  "चालू — सभी गाने प्रभावित 🟢"
+effects_mode_off_label: "बंद — हर गाने के लिए मैन्युअल 🔴"
+effects_nothing_playing: "कुछ भी नहीं चल रहा"
+effects_help_rows:
+  - ["/speed 1.5", "स्पीड सेट करें (0.25–4.0)"]
+  - ["/speedreset", "सामान्य स्पीड पर वापस जाएं"]
+  - ["/bass 10", "बास बूस्ट करें (1–20 dB)"]
+  - ["/bassoff", "बास बूस्ट हटाएं"]
+  - ["/effecton", "सभी गानों पर इफ़ेक्ट्स लागू करें"]
+  - ["/effectoff", "सिर्फ़ मैन्युअल मोड"]
+kv_position: "स्थिति"
+kv_speed: "स्पीड"
+kv_bass: "बास"
+kv_bass_boost: "बास बूस्ट"
+kv_mode: "मोड"
+kv_song: "गाना"
+kv_usage: "उपयोग"
+kv_command: "कमांड"
+kv_description: "विवरण"
+
+# ── /seek & /seekback ────────────────────────────────────────────────────────
+seek_no_song_title: "❍ फ़िलहाल कोई गाना नहीं चल रहा"
+seek_seeking_title: "⏩ सीक हो रहा है..."
+seek_failed_resolve_title: "❍ सीक विफल — स्ट्रीम रिज़ॉल्व नहीं हो सकी"
+seek_failed_title: "❍ सीक विफल"
+seek_invalid_seconds_title: "❍ कृपया 0 से बड़ी सेकंड की संख्या दें"
+seek_almost_finished_title: "❍ गाना लगभग खत्म हो चुका है, आगे सीक नहीं कर सकते"
+seek_too_far_title: "❍ इतना आगे सीक नहीं कर सकते"
+seek_usage_title: "❍ सीक का उपयोग"
+seek_usage_rows:
+  - ["/seek 30", "30 सेकंड आगे"]
+  - ["/seekback 30", "30 सेकंड पीछे"]
+kv_to: "तक"
+kv_current_position: "मौजूदा स्थिति"
+kv_song_duration: "गाने की अवधि"
+now_playing_title: "🎧 शिज़ु म्यूज़िक — अभी चल रहा है"
+kv_duration: "अवधि"
+kv_seeked_to: "सीक किया गया"
+
+# ── core/player.py ──────────────────────────────────────────────────────────
+loading_title: "❍ लोड हो रहा है..."
+vc_start_failed_server_title: "❍ वीसी शुरू करना विफल (Telegram Server)"
+vc_perm_missing_title: "❍ वीसी शुरू करने की अनुमति नहीं है"
+vc_perm_missing_note: "असिस्टेंट को दें » वीडियो चैट मैनेज करें, एडमिन अधिकार"
+vc_start_failed_title: "❍ वीसी शुरू करना विफल"
+playback_failed_server_title: "❍ प्लेबैक विफल (Telegram Server)"
+playback_perm_missing_note: "कृपया दें » वीडियो चैट मैनेज करें, एडमिन अधिकार · असिस्टेंट को एडमिन होना चाहिए"
+
+# ── /gblock, /gunblock, /ublock, /uunblock, /blocklist (owner only) ──────────
+block_invalid_chat_id_title: "❍ अमान्य चैट आईडी"
+block_use_group_or_id_title: "❍ ग्रुप में इस्तेमाल करें या चैट आईडी दें"
+block_already_title: "❍ पहले से ब्लॉक है"
+block_not_blocked_title: "❍ ब्लॉक नहीं है"
+block_group_blocked_title: "❍ ग्रुप ब्लॉक हो गया ✅"
+block_group_blocked_note: "अब इस ग्रुप में कोई कमांड काम नहीं करेगा।"
+block_group_unblocked_title: "❍ ग्रुप अनब्लॉक हो गया ✅"
+block_group_unblocked_note: "अब इस ग्रुप में कमांड्स चालू हैं।"
+block_invalid_user_id_title: "❍ अमान्य यूज़र आईडी"
+block_ublock_usage_note: "इस्तेमाल करें » <code>/ublock 123456789</code> या किसी यूज़र को रिप्लाई करें।"
+block_uunblock_usage_note: "इस्तेमाल करें » <code>/uunblock 123456789</code> या किसी यूज़र को रिप्लाई करें।"
+block_reply_or_id_title: "❍ किसी यूज़र के संदेश को रिप्लाई करें या यूज़र आईडी दें"
+block_cannot_block_owner_title: "❍ आप खुद को (ओनर को) ब्लॉक नहीं कर सकते"
+block_user_blocked_title: "❍ यूज़र ब्लॉक हो गया ✅"
+block_user_blocked_note: "यह यूज़र अब कोई भी बॉट कमांड इस्तेमाल नहीं कर सकता।"
+block_user_unblocked_title: "❍ यूज़र अनब्लॉक हो गया ✅"
+block_user_unblocked_note: "यह यूज़र अब फिर से बॉट कमांड्स इस्तेमाल कर सकता है।"
+block_list_title: "❍ ब्लॉक लिस्ट — {0} ग्रुप्स, {1} यूज़र्स"
+block_list_empty_note: "कुछ भी ब्लॉक नहीं है।"
+kv_group: "ग्रुप"
+kv_user: "यूज़र"
+kv_chat_id: "चैट आईडी"
+kv_name: "नाम"
+kv_user_id: "यूज़र आईडी"
+kv_type: "प्रकार"
+kv_id: "आईडी"
+
+# ── onboarding (private /start & help "go back") ───────────────────────────────
+onboarding_greeting: "<p>❍ नमस्ते <a href='tg://user?id={0}'>{1}</a>, स्वागत है! 🎶</p>"
+onboarding_intro: "<p>मैं <b>{0}</b> हूं — कुछ शानदार फ़ीचर्स वाला एक तेज़ और दमदार टेलीग्राम म्यूज़िक प्लेयर बॉट।</p>"
+onboarding_features_heading: "✦ मुख्य फ़ीचर्स ✦"
+onboarding_features_rows:
+  - ["🎵 स्ट्रीमिंग", "वॉइस चैट में ऑडियो और वीडियो चलाएं"]
+  - ["🔁 ऑटोप्ले", "क्यू को अपने आप चालू रखता है"]
+  - ["🎚️ इफ़ेक्ट्स", "स्पीड कंट्रोल और बास बूस्ट"]
+  - ["🛡️ मॉडरेशन", "चैट्स और यूज़र्स को ब्लॉक/अनब्लॉक करें"]
+onboarding_features_headers: ["फ़ीचर", "विवरण"]
+onboarding_why_heading: "✧ इसे क्यों चुनें? ✧"
+onboarding_why_body: "<p>⭐ आसान स्लैश कमांड्स, कोई सेटअप नहीं चाहिए।</p><p>🎧 साफ़, कम-लैग स्ट्रीमिंग।</p><p>❍ सभी कमांड्स के लिए नीचे हेल्प पर क्लिक करें।</p>"
+onboarding_powered_by: "पावर्ड बाय » <a href='https://t.me/PBXCHATS'>शिज़ु-म्यूज़िक™</a>"
+
+# ── /start in a group ───────────────────────────────────────────────────────────
+group_thanks_title: "❍ नमस्ते {0}, यह है {1}"
+group_thanks_note: "{0} में मुझे जोड़ने के लिए धन्यवाद। {1} अब यहां गाने चला सकता है।"
+group_admin_request_title: "मुझे जोड़ने के लिए धन्यवाद! 🥀"
+group_admin_request_note1: "<p>कृपया मुझे इन अनुमतियों के साथ एडमिन बनाएं:</p><p>❍ संदेश हटाएं<br>❍ वीडियो चैट मैनेज करें<br>❍ यूज़र्स को आमंत्रित करें</p>"
+group_admin_request_note2: "एडमिन अनुमतियों के बिना कुछ फ़ीचर्स काम नहीं करेंगे! 🚫"
+
+# ── /help ──────────────────────────────────────────────────────────────────────
+help_pick_category_title: "📜 एक कैटेगरी चुनें"
+help_pick_category_note: "<p>❍ नमस्ते <a href=\"tg://user?id={0}\">{1}</a>, इसके कमांड्स देखने के लिए नीचे कैटेगरी चुनें।</p>"
+help_features_heading: "✦ हेल्प फ़ीचर्स ✦"
+help_features_rows:
+  - ["✉️ हेल्प मेन्यू", "सभी कमांड्स का इस्तेमाल : / से किया जा सकता है"]
+
+# ── playback callback confirmations (modules/callbacks.py) ─────────────────────
+cb_admins_only: "❍ सिर्फ़ एडमिन"
+cb_paused_toast: "पॉज़ किया गया"
+cb_pause_failed_toast: "पॉज़ करना विफल"
+cb_resumed_toast: "रिज़्यूम किया गया"
+cb_resume_failed_toast: "रिज़्यूम करना विफल"
+cb_queue_empty_toast: "क्यू खाली है"
+cb_playing_next_toast: "अगला चल रहा है"
+cb_stopped_toast: "रोका गया"
+cb_queue_cleared_toast: "क्यू साफ़ हो गई"
+cb_by_footer: "❍ द्वारा » {0}"
+
+# ── help category panels (modules/callbacks.py) ─────────────────────────────────
+help_categories:
+  help_admin:
+    title: "⚙️ एडमिन कमांड्स"
+    desc:  "चैट एडमिन के लिए मुख्य प्लेबैक कंट्रोल्स।"
+    rows:
+      - ["/pause", "मौजूदा प्लेबैक रोकें"]
+      - ["/resume", "रुकी हुई प्लेबैक फिर से शुरू करें"]
+      - ["/skip", "अगले गाने पर जाएं"]
+      - ["/stop, /end", "प्लेबैक रोकें और वीसी छोड़ें"]
+      - ["/clear", "क्यू के सभी गाने साफ़ करें"]
+      - ["/seek &lt;seconds&gt;", "n सेकंड आगे सीक करें"]
+      - ["/seekback &lt;seconds&gt;", "n सेकंड पीछे सीक करें"]
+      - ["/reboot", "चैट स्टेट रीसेट करें और वीसी छोड़ें"]
+  help_autoplay:
+    title: "🔁 ऑटोप्ले कमांड्स"
+    desc:  "क्यू खत्म होने पर मिलते-जुलते गाने अपने आप चलाते रहें।"
+    rows:
+      - ["/autoplay", "मौजूदा स्थिति दिखाएं"]
+      - ["/autoplay on, /autoplay off", "ऑटोप्ले टॉगल करें"]
+      - ["/autoplay lang &lt;name&gt;", "सिर्फ़ एक भाषा सुझाएं (या <code>auto</code>)"]
+      - ["/autoplay mood &lt;name&gt;", "सिर्फ़ एक मूड सुझाएं (या <code>any</code>)"]
+  help_playlist:
+    title: "🎼 प्लेलिस्ट कमांड"
+    desc:  "अपने पसंदीदा गाने सेव करें और कभी भी चलाएं।"
+    rows:
+      - ["/pcreate &lt;name&gt;", "ᴄʀᴇᴀᴛᴇ ᴀ ᴘʟᴀʏʟɪsᴛ"]
+      - ["/padd &lt;name&gt; &lt;song or URL&gt;", "ᴀᴅᴅ ᴀ sᴏɴɢ ᴏʀ ʏᴏᴜᴛᴜʙᴇ ᴘʟᴀʏʟɪsᴛ"]
+      - ["/padd &lt;name&gt;", "ᴀᴅᴅ ᴛʜᴇ sᴏɴɢ ᴘʟᴀʏɪɴɢ ɴᴏᴡ"]
+      - ["/premove &lt;name&gt; &lt;number&gt;", "ʀᴇᴍᴏᴠᴇ ᴀ sᴏɴɢ (ɴᴜᴍʙᴇʀ ғʀᴏᴍ /pview)"]
+      - ["/pview, /pview &lt;name&gt;", "ʟɪsᴛ ᴘʟᴀʏʟɪsᴛs / sʜᴏᴡ ɪᴛs sᴏɴɢs"]
+      - ["/pplay &lt;name&gt;", "ǫᴜᴇᴜᴇ ᴛʜᴇ ᴡʜᴏʟᴇ ᴘʟᴀʏʟɪsᴛ"]
+      - ["/pdelete &lt;name&gt;", "ᴅᴇʟᴇᴛᴇ ᴀ ᴘʟᴀʏʟɪsᴛ"]
+  help_channel:
+    title: "📡 चैनल प्ले"
+    desc:  "चैनल की वॉइस चैट में गाने चलाएं — वही कमांड, आगे c लगाकर।"
+    rows:
+      - ["/addchannel &lt;@username or -100id&gt;", "ʟɪɴᴋ ᴀ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴛʜɪs ɢʀᴏᴜᴘ (ᴀᴅᴍɪɴs)"]
+      - ["/delchannel", "sᴛᴏᴘ ᴄʜᴀɴɴᴇʟ ᴘʟᴀʏ ᴀɴᴅ ᴜɴʟɪɴᴋ"]
+      - ["/cplay, /cvplay &lt;song or URL&gt;", "ᴘʟᴀʏ ɪɴ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ's ᴠᴏɪᴄᴇ ᴄʜᴀᴛ"]
+      - ["/cplayforce &lt;song or URL&gt;", "ᴘʟᴀʏ ɴᴏᴡ ɪɴ ᴄʜᴀɴɴᴇʟ, ǫᴜᴇᴜᴇ ᴄᴏɴᴛɪɴᴜᴇs"]
+      - ["/cpplay &lt;name&gt;", "ᴘʟᴀʏ ᴀ ᴘʟᴀʏʟɪsᴛ ɪɴ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ"]
+      - ["/cpause, /cresume, /cskip", "ᴄᴏɴᴛʀᴏʟ ᴄʜᴀɴɴᴇʟ ᴘʟᴀʏʙᴀᴄᴋ"]
+      - ["/cstop, /cend, /cclear", "sᴛᴏᴘ ᴏʀ ᴄʟᴇᴀʀ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ ǫᴜᴇᴜᴇ"]
+      - ["/cseek, /cseekback &lt;seconds&gt;", "sᴇᴇᴋ ɪɴ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ sᴏɴɢ"]
+      - ["/cspeed, /cbass, /ceffects", "ᴄʜᴀɴɴᴇʟ sᴘᴇᴇᴅ / ʙᴀss / ᴇғғᴇᴄᴛs"]
+      - ["/cautoplay, /cthumbnail", "ᴀᴜᴛᴏᴘʟᴀʏ ᴀɴᴅ ᴛʜᴜᴍʙɴᴀɪʟ ғᴏʀ ᴛʜᴇ ᴄʜᴀɴɴᴇʟ"]
+  help_gcast:
+    title: "📢 जी-कास्ट कमांड्स"
+    desc:  "हर सर्व की गई चैट को ब्रॉडकास्ट करें (सिर्फ़ ओनर)।"
+    rows:
+      - ["/broadcast, /gcast", "किसी संदेश को रिप्लाई करें या टेक्स्ट लिखें"]
+      - ["-pin", "ग्रुप्स में चुपचाप पिन करें"]
+      - ["-pinloud", "नोटिफ़िकेशन के साथ पिन करें"]
+      - ["-nogroup", "ग्रुप्स छोड़ें"]
+      - ["-user", "यूज़र्स को भी भेजें"]
+  help_blchat:
+    title: "🚫 बीएल-चैट कमांड्स"
+    desc:  "पूरे ग्रुप्स को ब्लॉक या अनब्लॉक करें (सिर्फ़ ओनर)।"
+    rows:
+      - ["/gblock", "मौजूदा ग्रुप ब्लॉक करें — कोई कमांड काम नहीं करेगा"]
+      - ["/gblock &lt;-100xxxxxxx&gt;", "चैट आईडी से ब्लॉक करें"]
+      - ["/gunblock", "ग्रुप अनब्लॉक करें"]
+      - ["/gunblock &lt;-100xxxxxxx&gt;", "चैट आईडी से अनब्लॉक करें"]
+      - ["/blocklist", "सभी ब्लॉक किए गए ग्रुप्स और यूज़र्स दिखाएं"]
+  help_blusers:
+    title: "🚫 बीएल-यूज़र्स कमांड्स"
+    desc:  "अलग-अलग यूज़र्स को ब्लॉक या अनब्लॉक करें (सिर्फ़ ओनर)।"
+    rows:
+      - ["/ublock", "ब्लॉक करने के लिए किसी यूज़र के संदेश को रिप्लाई करें — वे कोई कमांड इस्तेमाल नहीं कर पाएंगे"]
+      - ["/ublock &lt;user id&gt;", "यूज़र आईडी से ब्लॉक करें"]
+      - ["/uunblock", "अनब्लॉक करने के लिए किसी यूज़र के संदेश को रिप्लाई करें"]
+      - ["/uunblock &lt;user id&gt;", "यूज़र आईडी से अनब्लॉक करें"]
+      - ["/blocklist", "सभी ब्लॉक किए गए यूज़र्स और चैट्स दिखाएं"]
+  help_ping:
+    title: "🏓 पिंग कमांड्स"
+    desc:  "लेटेंसी और सिस्टम डायग्नोस्टिक्स।"
+    rows:
+      - ["/ping", "बॉट लेटेंसी, रैम, सीपीयू, डिस्क और अपटाइम आंकड़े"]
+      - ["/speedtest, /spt", "नेटवर्क स्पीड टेस्ट (सिर्फ़ ओनर)"]
+      - ["/stats", "पूरे सिस्टम + मोंगोडीबी आंकड़े (सिर्फ़ ओनर)"]
+  help_play:
+    title: "🎵 प्ले कमांड्स"
+    desc:  "वॉइस चैट में ऑडियो या वीडियो प्लेबैक शुरू करें।"
+    rows:
+      - ["/play &lt;song name or URL&gt;", "वॉइस चैट में ऑडियो चलाएं"]
+      - ["/vplay &lt;song name or URL&gt;", "वॉइस चैट में वीडियो चलाएं"]
+      - ["/playforce &lt;song or URL&gt;", "ᴘʟᴀʏ ɴᴏᴡ, ǫᴜᴇᴜᴇ ᴄᴏɴᴛɪɴᴜᴇs ᴀғᴛᴇʀ (ᴀᴅᴍɪɴs)"]
+      - ["ऑडियो/वीडियो को रिप्लाई करें + /play", "उस मीडिया को सीधे चलाएं"]
+      - ["यूट्यूब लिंक", "सपोर्टेड"]
+  help_speed:
+    title: "🎚️ स्पीड और इफ़ेक्ट्स"
+    desc:  "प्लेबैक स्पीड और ऑडियो इफ़ेक्ट्स एडजस्ट करें।"
+    rows:
+      - ["/speed &lt;0.25–4.0&gt;", "प्लेबैक स्पीड बदलें — जैसे /speed 1.5"]
+      - ["/speedreset", "स्पीड को सामान्य (1.0x) पर रीसेट करें"]
+      - ["/bass &lt;1–20&gt;", "n dB से बास बूस्ट करें — जैसे /bass 10"]
+      - ["/bassoff", "बास बूस्ट बंद करें"]
+      - ["/effecton", "सभी गानों पर इफ़ेक्ट्स लागू करें"]
+      - ["/effectoff", "ऑटो इफ़ेक्ट्स बंद करें"]
+      - ["/effects", "मौजूदा इफ़ेक्ट स्थिति दिखाएं"]
+  help_info:
+    title: "ℹ️ जानकारी कमांड्स"
+    desc:  "बॉट, चैट, और यूज़र की जानकारी।"
+    rows:
+      - ["/id", "यूज़र / चैट / मैसेज की आईडी पाएं — रिप्लाई के साथ भी काम करता है"]
+      - ["/id @username", "किसी भी यूज़र की आईडी पाएं"]
+      - ["/repo", "सोर्स कोड लिंक"]
+      - ["/logger on, /logger off", "ʟᴏɢɢᴇʀ ɢʀᴏᴜᴘ ʟᴏɢs ᴏɴ/off (ᴏᴡɴᴇʀ ᴏɴʟʏ)"]
+      - ["/stats", "पूरे आंकड़े — सिस्टम + मोंगोडीबी जानकारी (सिर्फ़ ओनर)"]
+
+# ── /language (picker title) ─────────────────────────────────────────────────
+lang_title: "🌐 भाषा"
+
+# ── more button labels ───────────────────────────────────────────────────────
+btn_source_short: "🍡 सोर्स 🍡"
+btn_language:     "🌐 भाषा"
+btn_thumb_on:     "🖼 थंब | ऑन"
+btn_thumb_off:    "🖼 थंब | ऑफ़"
+pill_support:     "🍬 सपोर्ट"
+pill_updates:     "🍹 अपडेट्स"
+
+# ── help menu grid labels ────────────────────────────────────────────────────
+help_btn_admin:    "एडमिन"
+help_btn_autoplay: "ऑटो-प्ले"
+help_btn_gcast:    "जी-कास्ट"
+help_btn_blchat:   "ब्लॉक-चैट"
+help_btn_blusers:  "ब्लॉक-यूज़र"
+help_btn_ping:     "पिंग"
+help_btn_play:     "प्ले"
+help_btn_speed:    "स्पीड"
+help_btn_info:     "जानकारी"
+help_btn_playlist: "प्लेलिस्ट"
+help_btn_channel: "चैनल"
+
+# ── help "play" panel: config-driven rows + thumbnail ───────────────────────
+help_play_max_duration:     "अधिकतम अवधि"
+help_play_max_duration_val: "{0} मिनट"
+help_play_queue_limit:      "क्यू सीमा"
+help_play_queue_limit_val:  "{0} गाने"
+help_thumbnail_row: ["/thumbnail on, /thumbnail off", "गाने का थंबनेल दिखाएं या छिपाएं"]
+
+# ── /thumbnail ───────────────────────────────────────────────────────────────
+thumb_title: "🖼 थंबनेल"
+thumb_status_note: |-
+  <code>/thumbnail on</code> · <code>/thumbnail off</code>
+  अगले गाने से लागू होगा।
+thumb_enabled_title:  "🖼 थंबनेल चालू"
+thumb_enabled_note:   "द्वारा » {0}\nअगले गाने अपने थंबनेल के साथ दिखेंगे।"
+thumb_disabled_title: "🖼 थंबनेल बंद"
+thumb_disabled_note:  "द्वारा » {0}\nअगले गाने बिना थंबनेल के दिखेंगे।"
+thumb_enabled_toast:  "🖼 अगले गानों के लिए थंबनेल चालू"
+thumb_disabled_toast: "🖼 अगले गानों के लिए थंबनेल बंद"
+
+# ── player panel: Autoplay toggle + Close ────────────────────────────────────
+btn_autoplay_on:  "🔁 ऑटोप्ले | ऑन"
+btn_autoplay_off: "🔁 ऑटोप्ले | ऑफ़"
+autoplay_toggle_on_toast:  "♬ ऑटोप्ले चालू — मिलते-जुलते गाने चलते रहेंगे"
+autoplay_toggle_off_toast: "♬ ऑटोप्ले बंद"
+player_closed_by: "बंद किया : {0}"

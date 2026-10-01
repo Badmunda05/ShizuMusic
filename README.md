@@ -1,54 +1,17 @@
-<div align="center">
-<h3 align="center">
-<img src="https://readme-typing-svg.herokuapp.com?color=00BFFF&center=true&vCenter=true&width=500&lines=🎵+SHIZUMUSIC+BOT+💕;⚡+FAST+•+SMOOTH+•+POWERFUL+⚡;🎧+TELEGRAM+VC+MUSIC+BOT+🎶">
-</h3>
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
-  
-<p align="center">
-<a href="https://t.me/PBXCHATS">
-<img src="https://i.ibb.co/qYbmh3w1/x.jpg" width="600">
-</a>
-</p>
-
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
-
-<img src="https://readme-typing-svg.herokuapp.com?font=Orbitron&weight=900&size=36&duration=3000&pause=1000&color=00BFFF&center=true&vCenter=true&width=700&lines=🎵+ShizuMusic+Bot;First+Open-Source+VC+Music+Bot;Fast+•+Smooth+•+Powerful" alt="ShizuMusic" />
-
-<br>
-
-<p>
-  <b>First Open-Source Telegram VC Music Bot 🎵</b><br>
-  Works Fully Free on Render, Koyeb & More &nbsp;•&nbsp; Zero VPS Cost<br>
-  Fast • Smooth • Powerful<br>
-  Powered by <b>Pyrogram</b> & <b>Py-TgCalls</b><br>
-  Developed by — <b>PBX</b>
-</p>
-
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
-
-</div>
-
----
-
+# 🎵 ShizuMusic
 <div align="center">
 
-## 👤 Developer
+<img src="https://files.catbox.moe/f084wg.png" alt="ShizuMusic" width="100%">
 
-<img src="https://avatars.githubusercontent.com/Badmunda05" width="110" style="border-radius:50%;" /><br>
-**PBX** — Developer of ShizuMusic<br>
+**First open-source Telegram VC music bot.**
+Fast • Smooth • Powerful — runs free on Render, Koyeb, Railway & Heroku.
 
-[![Telegram](https://img.shields.io/badge/Telegram-PBX-%2326A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/PBX_BOT)
-[![GitHub](https://img.shields.io/badge/GitHub-Badmunda05-%23181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Badmunda05)
+Powered by [Pyrogram](https://github.com/pyrogram/pyrogram), [Py-TgCalls](https://github.com/pytgcalls/pytgcalls) & [Richgram](https://github.com/Badmunda05/richgram)
 
-</div>
-
----
-
-<div align="center">
-
-## 📊 Visitors
-
-<img src="https://profile-counter.glitch.me/Badmunda05/count.svg" />
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)
+![Pyrogram](https://img.shields.io/badge/Pyrogram-2.x-00BFFF?style=flat-square)
+![PyTgCalls](https://img.shields.io/badge/Py--TgCalls-VC-6A5ACD?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
 </div>
 
@@ -56,152 +19,192 @@
 
 ## ✨ Features
 
-- 🎵 High Quality VC Music Streaming
-- 🔁 Queue System with Auto-Play
-- ⏸ Pause / Resume / Skip / Stop Controls
-- 📊 Live Progress Bar in Chat
-- 🌐 Works on Render, Koyeb, Heroku & VPS — Free!
-- ⚡ Fast & Lightweight — Pyrogram + Py-TgCalls
-- 🎧 Audio Quality Control
-- 🔒 Admin-Only Controls
+- 🎵 High quality VC audio & video streaming
+- 🔁 Queue system with auto-play
+- ⏯ Pause, resume, skip, stop & seek controls
+- 🎚 Speed and bass boost effects
+- 📂 Personal playlists
+- 📡 Channel play
+- 🌐 Multi-language (English, Hindi, Punjabi)
+- 🔒 Admin-only controls, owner block lists & broadcast
 
 ---
 
-## 🚀 Deploy Now
+## 🚀 Deploy
 
 <div align="center">
 
-### ☁️ Heroku
-
-[![Deploy on Heroku](https://img.shields.io/badge/Deploy%20On%20Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white)](https://dashboard.heroku.com/new?template=https://github.com/Badmunda05/ShizuMusic)
-
----
-
-### 🟢 Koyeb
-
-[![Deploy on Koyeb](https://img.shields.io/badge/Deploy%20On%20Koyeb-121212?style=for-the-badge&logo=koyeb&logoColor=white)](https://app.koyeb.com/deploy?type=git&repository=github.com/Badmunda05/ShizuMusic&branch=main&name=shizumusic)
-
----
-
-### 🟣 Render
-
-[![Deploy on Render](https://img.shields.io/badge/Deploy%20On%20Render-46E3B7?style=for-the-badge&logo=render&logoColor=black)](https://render.com/deploy?repo=https://github.com/Badmunda05/ShizuMusic)
-
----
-
-### 🔵 Railway
-
-[![Deploy on Railway](https://img.shields.io/badge/Deploy%20On%20Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)](https://railway.app/new/template?template=https://github.com/Badmunda05/ShizuMusic)
+[![Heroku](https://img.shields.io/badge/Deploy-Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white)](https://dashboard.heroku.com/new?template=https://github.com/Badmunda05/ShizuMusic)
+[![Koyeb](https://img.shields.io/badge/Deploy-Koyeb-121212?style=for-the-badge&logo=koyeb&logoColor=white)](https://app.koyeb.com/deploy?type=git&repository=github.com/Badmunda05/ShizuMusic&branch=main&name=shizumusic)
+[![Render](https://img.shields.io/badge/Deploy-Render-46E3B7?style=for-the-badge&logo=render&logoColor=black)](https://render.com/deploy?repo=https://github.com/Badmunda05/ShizuMusic)
+[![Railway](https://img.shields.io/badge/Deploy-Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)](https://railway.app/new/template?template=https://github.com/Badmunda05/ShizuMusic)
 
 </div>
 
----
-
-## 🖥️ VPS Deployment (Self-Host)
-
-> Recommended: Ubuntu 20.04+ / Debian 11+
+### 🖥️ VPS (Ubuntu 20.04+ / Debian 11+)
 
 ```bash
-# 1. Update system
 sudo apt update && sudo apt upgrade -y
+sudo apt install -y python3 python3-pip git ffmpeg screen
 
-# 2. Install dependencies
-sudo apt install -y python3 python3-pip git ffmpeg
-
-# 3. Clone the repo
 git clone https://github.com/Badmunda05/ShizuMusic
 cd ShizuMusic
-
-# 4. Install Python requirements
 pip3 install -r requirements.txt
 
-# 5. Copy and edit config
-cp sample.env .env
-nano .env
-
-# 6. Run the bot
-python3 -m ShizuMusic
-```
-
-> To keep running after closing terminal:
-```bash
-# Install screen
-sudo apt install screen -y
-
-# Start a screen session
-screen -S shizu
-
-# Run the bot
-python3 -m ShizuMusic
-
-# Detach: Press Ctrl + A then D
-# Reattach later:
-screen -r shizu
+nano .env                      # fill in the variables below
+screen -S shizu                # keep it running after closing terminal
+python3 -m ShizuMusic          # detach: Ctrl+A then D
 ```
 
 ---
 
-## ⚙️ Config Variables
+## 🔑 Environment Variables
 
-### 🔴 Required — Bot won't start without these
+Create a `.env` file in the project root.
 
-| Variable | Description |
+### Required
+
+```env
+API_ID=             # my.telegram.org
+API_HASH=           # my.telegram.org
+BOT_TOKEN=          # @BotFather
+OWNER_ID=           # your Telegram user ID
+STRING_SESSION=     # Pyrogram session of the assistant account
+MONGO_DB_URL=       # MongoDB connection string
+YT_API_URL=         # external API url for downloads
+YT_API_KEY=         # external API key
+```
+
+### Optional
+
+```env
+LOGGER_ID=          # log group/channel ID
+BOT_NAME=           # default: Shizu Music
+BOT_LINK=           # your bot's t.me link
+SUPPORT_GROUP=      # support group link
+UPDATES_CHANNEL=    # updates channel link
+PING_IMG_URL=       # image shown in /ping
+SESSION_NAME=       # default: ShizuMusic
+PORT=               # default: 10000 (Render / Koyeb)
+```
+
+> ⚙️ Limits like `MAX_DURATION_SECONDS` (30 min), `QUEUE_LIMIT` (20), `COOLDOWN` (10s) and playlist limits are set directly in `config.py`.
+
+| Get this | From |
 |---|---|
-| `API_ID` | Get from [my.telegram.org](https://my.telegram.org) |
-| `API_HASH` | Get from [my.telegram.org](https://my.telegram.org) |
-| `BOT_TOKEN` | Get from [@BotFather](https://t.me/BotFather) |
-| `STRING_SESSION` | Pyrogram assistant session — Generate at [telegram.tools](https://telegram.tools/session-string-generator#pyrogram) |
-| `MONGO_DB_URL` | MongoDB URI — Get free cluster at [mongodb.com](https://www.mongodb.com/cloud/atlas/register) |
-| `OWNER_ID` | Your Telegram user ID (integer) |
+| `API_ID` / `API_HASH` | [my.telegram.org](https://my.telegram.org) |
+| `BOT_TOKEN` | [@BotFather](https://t.me/BotFather) |
+| `STRING_SESSION` | [telegram.tools](https://telegram.tools/session-string-generator#pyrogram) |
+| `MONGO_DB_URL` | [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register) (free) |
 
-### 🟡 Optional — Default values set, can be changed
+---
+### 🎧 Playback
 
-| Variable | Default | Description |
-|---|---|---|
-| `BOT_NAME` | `Shizu Music` | Name shown in bot messages |
-| `BOT_LINK` | `https://t.me/ShizuMusicBot` | Bot's Telegram link |
-| `UPDATES_CHANNEL` | `https://t.me/PBX_UPDATE` | Updates channel link |
-| `SUPPORT_GROUP` | `https://t.me/PBXCHATS` | Support group link |
-| `LOGGER_ID` | `-1003544580602` | Log channel/group ID |
-| `START_ANIMATION` | *(catbox video)* | Video/GIF for /start command |
-| `PING_IMG_URL` | *(catbox image)* | Image shown in /ping response |
-| `SESSION_NAME` | `ShizuMusic` | Pyrogram session file name |
-| `PORT` | `10000` | Web server port (for Render/Koyeb) |
+| Command | What it does |
+|---|---|
+| `/play <name or link>` | Play audio in VC (or reply to an audio/video file) |
+| `/vplay <name or link>` | Play video in VC |
+| `/playforce <name or link>` | Play now, keep the queue |
+| `/pause` | Pause the stream |
+| `/resume` | Resume the stream |
+| `/skip` | Skip to next song |
+| `/stop` · `/end` | Stop and clear the queue |
+| `/clear` | Clear the queue |
+| `/autoplay` | Auto-play related songs on/off |
+| `/thumbnail on` · `off` | Show or hide the song thumbnail |
 
-### 🔵 Limits — Fine-tune performance
+### ⏩ Seek & Effects
 
-| Variable | Default | Description |
-|---|---|---|
-| `MAX_DURATION_SECONDS` | `1800` | Max song duration (30 minutes) |
-| `QUEUE_LIMIT` | `20` | Max songs in queue per chat |
-| `COOLDOWN` | `10` | Seconds between /play per chat |
+| Command | What it does |
+|---|---|
+| `/seek 30` | Forward 30 seconds |
+| `/seekback 30` | Backward 30 seconds |
+| `/speed 1.5` | Set speed (0.25 – 4.0) |
+| `/speedreset` | Back to normal speed |
+| `/bass 10` | Bass boost (1 – 20 dB) |
+| `/bassoff` | Remove bass boost |
+| `/effecton` · `/effectoff` | Apply effects to all songs / manual mode |
+| `/effects` | Show effect settings |
+
+### 📂 Playlists
+
+| Command | What it does |
+|---|---|
+| `/pcreate` | Create a playlist |
+| `/padd` | Add a song to a playlist |
+| `/premove` | Remove a song from a playlist |
+| `/pview` | View your playlists |
+| `/pplay` | Play a playlist |
+| `/pdelete` | Delete a playlist |
+
+### 📡 Channel
+
+| Command | What it does |
+|---|---|
+| `/addchannel` · `/setchannel` | Link a channel for channel play |
+| `/delchannel` · `/removechannel` | Unlink the channel |
+| `/cplay` · `/cvplay` | Play audio / video in the channel VC |
+| `/cpause` `/cresume` `/cskip` `/cstop` | Control the channel stream |
+
+### ℹ️ General
+
+| Command | What it does |
+|---|---|
+| `/start` | Start the bot |
+| `/help` | Help menu |
+| `/ping` | Bot status, uptime, RAM & CPU |
+| `/id` | Get chat / user ID |
+| `/language` · `/lang` | Change bot language |
+| `/repo` | Source code |
+
+### 👑 Owner Only
+
+| Command | What it does |
+|---|---|
+| `/stats` | Bot & database stats |
+| `/speedtest` · `/spt` | Server speed test |
+| `/broadcast` · `/gcast` | Broadcast a message. Flags: `-pin` `-pinloud` `-nogroup` `-user` |
+| `/logger` | Check or toggle logging |
+| `/gblock` · `/gunblock` | Block / unblock a group |
+| `/ublock` · `/uunblock` | Block / unblock a user |
+| `/blocklist` | View blocked chats & users |
+| `/reboot` | Restart the bot |
 
 ---
 
-## 📦 Requirements
+## 💬 Community & Support
 
-- Python 3.10+
-- MongoDB — Free at [mongodb.com](https://www.mongodb.com/cloud/atlas/register)
-- Telegram API credentials — [my.telegram.org](https://my.telegram.org)
-- Pyrogram Session String — [telegram.tools](https://telegram.tools/session-string-generator#pyrogram)
-- A userbot/assistant account (for VC streaming)
+<p align="center">
+  <a href="https://t.me/PBXCHATS">
+    <img src="https://img.shields.io/badge/Support_Group-Telegram-0088cc?style=for-the-badge&logo=telegram&logoColor=white" />
+  </a>
+  <a href="https://t.me/PBX_UPDATE">
+    <img src="https://img.shields.io/badge/Updates_Channel-Telegram-6A5ACD?style=for-the-badge&logo=telegram&logoColor=white" />
+  </a>
+  <a href="mailto:munda.bad1322@gmail.com">
+    <img src="https://img.shields.io/badge/Contact-Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" />
+  </a>
+</p>
 
 ---
+
+## 🙏 Credits
+
+- [**Richgram**](https://github.com/Badmunda05/richgram) — rich message formatting library used for the bot's styled replies.
+- [Pyrogram](https://github.com/pyrogram/pyrogram) — Telegram MTProto framework.
+- [Py-TgCalls](https://github.com/pytgcalls/pytgcalls) — voice chat streaming.
+
+---
+
 ## 📜 License
 
-This project is licensed under the [MIT License](https://github.com/Badmunda05/ShizuMusic/blob/main/LICENSE) © 2026 ShizuMusic™
+Licensed under the [MIT License](LICENSE) © 2026 ShizuMusic™
 
----
 <div align="center">
-
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 **Made with ❤️ by PBX — ShizuMusic™**
 
-[![Repo](https://img.shields.io/badge/GitHub-ShizuMusic-181717?style=for-the-badge&logo=github)](https://github.com/Badmunda05/ShizuMusic)
 [![Stars](https://img.shields.io/github/stars/Badmunda05/ShizuMusic?style=for-the-badge&color=yellow)](https://github.com/Badmunda05/ShizuMusic/stargazers)
 [![Forks](https://img.shields.io/github/forks/Badmunda05/ShizuMusic?style=for-the-badge&color=blue)](https://github.com/Badmunda05/ShizuMusic/network/members)
-
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 </div>

@@ -26,11 +26,11 @@ SESSION_NAME     = os.getenv("SESSION_NAME", "ShizuMusic")
 PORT             = int(os.getenv("PORT", 10000))
 
 # ── API config ────────────────────────────────────────────────────────────────
-SHRUTI_API_URL        = os.environ.get("SHRUTI_API_URL", "https://api.shrutibots.site")
-SHRUTI_API_KEY        = os.environ.get("SHRUTI_API_KEY", "PASTE YOUR KEY")  # Get from @SHRUTIAPIBOT on Telegram
+YT_API_URL        = os.environ.get("YT_API_URL", "https://api.shrutibots.site")
+YT_API_KEY        = os.environ.get("YT_API_KEY", "ShrutiBotsLaL92ySOXsj4xl4k34Jv")  # Get from @SHRUTIAPIBOT on Telegram
 DOWNLOAD_DIR          = "downloads"
-SHRUTI_TOKEN_TIMEOUT  = 10    # seconds — fetch download token
-SHRUTI_STREAM_TIMEOUT = 900   # 15 min  — stream long songs
+YT_TOKEN_TIMEOUT  = 10    # seconds — fetch download token
+YT_STREAM_TIMEOUT = 900   # 15 min  — stream long songs
 
 # ── NSFW Moderation API ─────────────────────────────────────────────────────
 #NSFW_API_URL = os.getenv("NSFW_API_URL", "https://ai-moderation-api-khyr.onrender.com")
@@ -51,6 +51,10 @@ START_PHOTOS = [
 MAX_DURATION_SECONDS = 1800   # 30 minutes
 QUEUE_LIMIT          = 20
 COOLDOWN             = 10     # seconds between /play per chat
+
+# ── Playlist limits ───────────────────────────────────────────────────────────
+PLAYLIST_LIMIT       = 10     # playlists per user
+PLAYLIST_SONG_LIMIT  = 50     # songs per playlist
 
 
 #BLOCKED_EXTENSIONS = [

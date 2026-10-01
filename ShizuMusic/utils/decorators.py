@@ -1,10 +1,16 @@
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
 #
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+#                   © 2026 BAD MUNDA
+#
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
 
 from pyrogram import filters
 from pyrogram.handlers import MessageHandler
@@ -14,10 +20,6 @@ from ShizuMusic import bot
 
 
 async def _block_middleware(_, message: Message) -> None:
-    """
-    Global middleware — runs at group=-1, before every other handler.
-    Silently stops blocked groups / users from reaching any plugin.
-    """
     try:
         # Import from utils.db directly — no circular dependency
         from ShizuMusic.utils.db import is_group_blocked, is_user_blocked_db
@@ -37,14 +39,6 @@ async def _block_middleware(_, message: Message) -> None:
 
 
 def register_block_middleware() -> None:
-    """
-    Register the global block middleware.
-    Call once in __main__.py BEFORE plugins are loaded.
-
-    Usage:
-        from ShizuMusic.utils.decorators import register_block_middleware
-        register_block_middleware()
-    """
     bot.add_handler(
         MessageHandler(
             _block_middleware,

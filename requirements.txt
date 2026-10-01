@@ -1,14 +1,15 @@
-# ── Youtube Song Search ─────────────────────
+# ── Youtube Song Search ─────────────────
 py-yt-search==0.6.2
 yt-dlp
 
 # ── Voice Chat Streaming ─────────────────
-py-tgcalls==2.2.11
-ntgcalls
+py-tgcalls==2.3.3
+ntgcalls>=2.2.4,<3.0.0
 
 # ── Telegram Client ──────────────────────
 # Bot API 10.3
-https://github.com/KurimuzonAkuma/kurigram/archive/refs/heads/dev.zip
+kurigram
+richgram
 tgcrypto==1.2.5
 httpx[http2]==0.28.1
 
@@ -31,3 +32,4 @@ pymongo==4.17.0
 
 # ── FFmpeg Wrapper ───────────────────────
 ffmpeg-python==0.2.0
+PyYAML

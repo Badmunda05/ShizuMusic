@@ -1,10 +1,16 @@
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
 #
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+#                   © 2026 BAD MUNDA
+#
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
 
 import asyncio
 import logging
@@ -31,7 +37,8 @@ from ShizuMusic.utils.db import (
     get_broadcast_count,
     remove_broadcast_chat,
 )
-from ShizuMusic.utils.rich_ui import (
+from ShizuMusic.utils.language import chat_strings
+from richgram import (
     rich_edit,
     rich_heading,
     rich_kv_table,
@@ -112,23 +119,25 @@ async def _send(target_id: int, bm: Message, broadcast_type: str, text: str) -> 
 async def broadcast_cmd(_, message: Message) -> None:
     global _IS_BROADCASTING
 
+    lang = chat_strings(message.chat.id)
+
     async with _broadcast_lock:
         if _IS_BROADCASTING:
             await rich_send(
                 bot, message.chat.id,
-                rich_heading("❍ ᴀ ʙʀᴏᴀᴅᴄᴀsᴛ ɪs ᴀʟʀᴇᴀᴅʏ ʀᴜɴɴɪɴɢ", level=3)
-                + rich_note("ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ ғᴏʀ ɪᴛ ᴛᴏ ғɪɴɪsʜ."),
+                rich_heading(lang["bc_already_running_title"], level=3)
+                + rich_note(lang["bc_already_running_note"]),
             )
             return
         _IS_BROADCASTING = True
 
     try:
-        await _run_broadcast(message)
+        await _run_broadcast(message, lang)
     finally:
         _IS_BROADCASTING = False
 
 
-async def _run_broadcast(message: Message) -> None:
+async def _run_broadcast(message: Message, lang: dict) -> None:
 
     # ── Parse args ────────────────────────────────────────────────────────────
     raw = message.text or ""
@@ -150,13 +159,13 @@ async def _run_broadcast(message: Message) -> None:
     else:
         await rich_send(
             bot, message.chat.id,
-            rich_heading("❍ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴍᴇssᴀɢᴇ ᴏʀ ᴘʀᴏᴠɪᴅᴇ ᴛᴇxᴛ", level=3)
+            rich_heading(lang["bc_usage_title"], level=3)
             + rich_kv_table([
                 ("-pin", "ᴘɪɴ sɪʟᴇɴᴛʟʏ ɪɴ ɢʀᴏᴜᴘs"),
                 ("-pinloud", "ᴘɪɴ ᴡɪᴛʜ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ"),
                 ("-nogroup", "sᴋɪᴘ ɢʀᴏᴜᴘs"),
                 ("-user", "ᴀʟsᴏ sᴇɴᴅ ᴛᴏ ᴘʀɪᴠᴀᴛᴇ ᴜsᴇʀs"),
-            ], headers=["ғʟᴀɢ", "ᴇғғᴇᴄᴛ"]),
+            ], headers=lang["bc_headers_flag_effect"]),
         )
         return
 
@@ -169,7 +178,7 @@ async def _run_broadcast(message: Message) -> None:
     targets = (0 if flag_nogroup else len(groups)) + (len(private) if flag_user else 0)
 
     if targets == 0:
-        await rich_send(bot, message.chat.id, rich_heading("❍ ɴᴏ ᴛᴀʀɢᴇᴛs ғᴏᴜɴᴅ ɪɴ ʙʀᴏᴀᴅᴄᴀsᴛ ʟɪsᴛ", level=3))
+        await rich_send(bot, message.chat.id, rich_heading(lang["bc_no_targets_title"], level=3))
         return
 
     # Active flags text
@@ -182,13 +191,13 @@ async def _run_broadcast(message: Message) -> None:
 
     pm = await rich_send(
         bot, message.chat.id,
-        rich_heading("❍ ʙʀᴏᴀᴅᴄᴀsᴛ sᴛᴀʀᴛᴇᴅ", level=3)
+        rich_heading(lang["bc_started_title"], level=3)
         + rich_kv_table([
-            ("ᴛᴏᴛᴀʟ", f"<code>{counts['total']}</code>"),
-            ("ɢʀᴏᴜᴘs", f"<code>{len(groups)}</code>"),
-            ("ᴜsᴇʀs", f"<code>{len(private)}</code>"),
-            ("ᴛᴀʀɢᴇᴛs", f"<code>{targets}</code>"),
-            ("ғʟᴀɢs", f"<code>{active_flags}</code>"),
+            (lang["kv_total"], f"<code>{counts['total']}</code>"),
+            (lang["kv_groups"], f"<code>{len(groups)}</code>"),
+            (lang["kv_users"], f"<code>{len(private)}</code>"),
+            (lang["kv_targets"], f"<code>{targets}</code>"),
+            (lang["kv_flags"], f"<code>{active_flags}</code>"),
         ]),
     )
 
@@ -269,12 +278,12 @@ async def _run_broadcast(message: Message) -> None:
     # ── Done ──────────────────────────────────────────────────────────────────
     await rich_edit(
         pm,
-        rich_heading("❍ ʙʀᴏᴀᴅᴄᴀsᴛ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ✅", level=3)
+        rich_heading(lang["bc_completed_title"], level=3)
         + rich_kv_table([
-            ("ɢʀᴏᴜᴘs", f"<code>{success_g}</code>"),
-            ("ᴜsᴇʀs", f"<code>{success_u}</code>"),
-            ("ᴘɪɴɴᴇᴅ", f"<code>{pinned}</code>"),
-            ("ғᴀɪʟᴇᴅ", f"<code>{failed}</code>"),
+            (lang["kv_groups"], f"<code>{success_g}</code>"),
+            (lang["kv_users"], f"<code>{success_u}</code>"),
+            (lang["kv_pinned"], f"<code>{pinned}</code>"),
+            (lang["kv_failed"], f"<code>{failed}</code>"),
         ]),
     )
     

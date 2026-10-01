@@ -1,10 +1,16 @@
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
 #
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+#                   © 2026 BAD MUNDA
+#
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
 
 import asyncio
 import re
@@ -12,21 +18,20 @@ import time
 
 from pyrogram import filters
 from pyrogram.enums import ParseMode
-from pyrogram.types import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    Message,
-)
+from pyrogram.types import Message
 
 import config
 from ShizuMusic import bot
+from ShizuMusic.core.channels import target_chat
 from ShizuMusic.core.player import play_song
 from ShizuMusic.core.queue import add_to_queue, peek_current, queue_size
 from ShizuMusic.modules.block import group_allowed, user_allowed
+from ShizuMusic.utils.buttons import skip_clear_kb
 from ShizuMusic.utils.assistant import is_assistant_in, try_join_assistant
 from ShizuMusic.utils.db import add_served_chat, add_served_user
 from ShizuMusic.utils.formatters import fmt_time, iso_to_human, iso_to_sec, short
-from ShizuMusic.utils.rich_ui import (
+from ShizuMusic.utils.language import chat_strings
+from richgram import (
     rich_edit,
     rich_esc,
     rich_heading,
@@ -76,22 +81,27 @@ async def _run_pending(chat_id: int, delay: int) -> None:
 
 @bot.on_message(
     filters.group
-    & filters.regex(r"^/(?P<cmd>v?play)(?:@\w+)?(?:\s+(?P<q>.+))?$")
+    & filters.regex(r"^/(?P<cmd>c?v?play)(?:@\w+)?(?:\s+(?P<q>.+))?$")
     & group_allowed
     & user_allowed
 )
 async def play_handler(_, message: Message) -> None:
 
-    chat_id = message.chat.id
+    # /play -> this group.  /cplay -> the channel linked with /addchannel
+    # (its voice chat + queue); replies still land in this group.
+    chat_id = await target_chat(message)
+    if chat_id is None:
+        return
     user_id = message.from_user.id if message.from_user else 0
+    lang = chat_strings(chat_id)
 
-    _db_track(chat_id, user_id)
+    _db_track(message.chat.id, user_id)
 
     # ── Replied audio / video ──────────────────────────────────────────────────
     if message.reply_to_message and (
         message.reply_to_message.audio or message.reply_to_message.video
     ):
-        pm = await rich_send(bot, chat_id, rich_heading("❍ ᴘʀᴏᴄᴇssɪɴɢ ᴍᴇᴅɪᴀ...", level=3))
+        pm = await rich_send(bot, chat_id, rich_heading(lang["play_processing_media"], level=3))
 
         orig  = message.reply_to_message
         fresh = await bot.get_messages(orig.chat.id, orig.id)
@@ -100,19 +110,19 @@ async def play_handler(_, message: Message) -> None:
         if fresh.audio and getattr(fresh.audio, "file_size", 0) > 100 * 1024 * 1024:
             await rich_edit(
                 pm,
-                rich_heading("❍ ғɪʟᴇ ᴛᴏᴏ ʟᴀʀɢᴇ", level=3)
-                + rich_kv_table([("ᴍᴀx", "<code>100 MB</code>")]),
+                rich_heading(lang["play_file_too_large_title"], level=3)
+                + rich_kv_table([(lang["kv_max"], "<code>100 MB</code>")]),
             )
             return
 
-        await rich_edit(pm, rich_heading("❍ ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ ᴍᴇᴅɪᴀ...", level=3))
+        await rich_edit(pm, rich_heading(lang["play_downloading_media"], level=3))
 
         try:
             fp = await bot.download_media(media)
         except Exception as e:
             await rich_edit(
                 pm,
-                rich_heading("❍ ᴅᴏᴡɴʟᴏᴀᴅ ғᴀɪʟᴇᴅ", level=3)
+                rich_heading(lang["download_failed_title"], level=3)
                 + rich_note(f"<code>{rich_esc(e)}</code>"),
             )
             return
@@ -151,7 +161,7 @@ async def play_handler(_, message: Message) -> None:
 
     # Blocked words check
     if any(x in query.lower() for x in BLOCKED_WORDS):
-        await rich_send(bot, chat_id, rich_heading("❍ ᴛʜɪs sᴏɴɢ ɪs ʙʟᴏᴄᴋᴇᴅ", level=3))
+        await rich_send(bot, chat_id, rich_heading(lang["play_blocked_title"], level=3))
         return
 
     # Cooldown check
@@ -161,8 +171,8 @@ async def play_handler(_, message: Message) -> None:
         if chat_id not in _pending:
             rep = await rich_send(
                 bot, chat_id,
-                rich_heading("❍ ᴄᴏᴏʟᴅᴏᴡɴ ᴀᴄᴛɪᴠᴇ", level=3)
-                + rich_kv_table([("ᴘʀᴏᴄᴇssɪɴɢ ɪɴ", f"<code>{rem}s</code>")]),
+                rich_heading(lang["play_cooldown_title"], level=3)
+                + rich_kv_table([(lang["kv_processing_in"], f"<code>{rem}s</code>")]),
             )
             _pending[chat_id] = (message, rep)
             asyncio.create_task(_run_pending(chat_id, rem))
@@ -173,24 +183,26 @@ async def play_handler(_, message: Message) -> None:
     if not query:
         await rich_send(
             bot, chat_id,
-            rich_heading("❍ ᴜsᴀɢᴇ", level=3)
+            rich_heading(lang["play_usage_title"], level=3)
             + rich_kv_table([
-                ("ᴘʟᴀʏ", "<code>/play song name</code>"),
-                ("ᴏʀ", "<code>/play youtube url</code>"),
-                ("ᴠɪᴅᴇᴏ", "<code>/vplay song name</code>"),
+                (lang["kv_play"],  lang["play_usage_play_val"]),
+                (lang["kv_or"],    lang["play_usage_or_val"]),
+                (lang["kv_video"], lang["play_usage_video_val"]),
+                (lang["kv_channel"], lang["play_usage_channel_val"]),
             ]),
         )
         return
 
-    await _process_play(message, query, video=(cmd == "vplay"))
+    await _process_play(message, query, video=cmd.endswith("vplay"), chat_id=chat_id)
 
 
 # ── Process play ───────────────────────────────────────────────────────────────
 
-async def _process_play(message: Message, query: str, video: bool = False) -> None:
-    chat_id = message.chat.id
+async def _process_play(message: Message, query: str, video: bool = False, chat_id: int = 0) -> None:
+    chat_id = chat_id or message.chat.id
+    lang = chat_strings(chat_id)
 
-    pm = await rich_send(bot, chat_id, rich_heading("❍ ᴘʀᴏᴄᴇssɪɴɢ...", level=3))
+    pm = await rich_send(bot, chat_id, rich_heading(lang["play_processing_title"], level=3))
 
     # Assistant check — uses utils/assistant.py
     status = await is_assistant_in(chat_id)
@@ -198,20 +210,20 @@ async def _process_play(message: Message, query: str, video: bool = False) -> No
     if status == "banned":
         await rich_edit(
             pm,
-            rich_heading("❍ ᴀssɪsᴛᴀɴᴛ ʙᴀɴɴᴇᴅ", level=3)
-            + rich_note("ᴘʟᴇᴀsᴇ ᴜɴʙᴀɴ ᴀssɪsᴛᴀɴᴛ ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ"),
+            rich_heading(lang["play_assistant_banned_title"], level=3)
+            + rich_note(lang["play_assistant_banned_note"]),
         )
         return
 
     if not status:
-        await rich_edit(pm, rich_heading("❍ ᴀssɪsᴛᴀɴᴛ ɪs ᴊᴏɪɴɪɴɢ ᴛʜᴇ ɢʀᴏᴜᴘ...", level=3))
+        await rich_edit(pm, rich_heading(lang["play_assistant_joining_title"], level=3))
         ok = await try_join_assistant(chat_id, pm)
         if not ok:
             return
         await rich_edit(
             pm,
-            rich_heading("❍ ᴀssɪsᴛᴀɴᴛ ʜᴀs ᴊᴏɪɴᴇᴅ ✓", level=3)
-            + rich_note("ᴘʀᴏᴄᴇssɪɴɢ..."),
+            rich_heading(lang["play_assistant_joined_title"], level=3)
+            + rich_note(lang["generic_processing_note"]),
         )
 
     # Normalise short YouTube URL
@@ -226,7 +238,7 @@ async def _process_play(message: Message, query: str, video: bool = False) -> No
     except Exception as e:
         await rich_edit(
             pm,
-            rich_heading("❍ sᴇᴀʀᴄʜ ғᴀɪʟᴇᴅ", level=3)
+            rich_heading(lang["play_search_failed_title"], level=3)
             + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
         return
@@ -235,7 +247,7 @@ async def _process_play(message: Message, query: str, video: bool = False) -> No
     if isinstance(result, dict) and "playlist" in result:
         items = result["playlist"]
         if not items:
-            await rich_edit(pm, rich_heading("❍ ᴘʟᴀʏʟɪsᴛ ᴇᴍᴘᴛʏ", level=3))
+            await rich_edit(pm, rich_heading(lang["play_playlist_empty_title"], level=3))
             return
 
         req    = message.from_user.first_name if message.from_user else "Unknown"
@@ -255,15 +267,15 @@ async def _process_play(message: Message, query: str, video: bool = False) -> No
             })
 
         rows = [
-            ("sᴏɴɢs", f"<code>{len(items)}</code>"),
-            ("ғɪʀsᴛ", f"<code>{rich_esc(short(items[0]['title']))}</code>"),
+            (lang["kv_songs"], f"<code>{len(items)}</code>"),
+            (lang["kv_first"], f"<code>{rich_esc(short(items[0]['title']))}</code>"),
         ]
         if len(items) > 1:
-            rows.append(("ɴᴇxᴛ", f"<code>{rich_esc(short(items[1]['title']))}</code>"))
+            rows.append((lang["kv_next"], f"<code>{rich_esc(short(items[1]['title']))}</code>"))
 
         await rich_send(
             bot, chat_id,
-            rich_heading("❍ ᴘʟᴀʏʟɪsᴛ ᴀᴅᴅᴇᴅ", level=3) + rich_kv_table(rows),
+            rich_heading(lang["play_playlist_added_title"], level=3) + rich_kv_table(rows),
         )
 
         if first_was_empty:
@@ -278,7 +290,7 @@ async def _process_play(message: Message, query: str, video: bool = False) -> No
     url, title, dur_iso, thumb = result
 
     if not url:
-        await rich_edit(pm, rich_heading("❍ sᴏɴɢ ɴᴏᴛ ғᴏᴜɴᴅ", level=3))
+        await rich_edit(pm, rich_heading(lang["play_song_not_found_title"], level=3))
         return
 
     secs = iso_to_sec(dur_iso)
@@ -286,10 +298,10 @@ async def _process_play(message: Message, query: str, video: bool = False) -> No
     if secs > config.MAX_DURATION_SECONDS:
         await rich_edit(
             pm,
-            rich_heading("❍ sᴏɴɢ ᴛᴏᴏ ʟᴏɴɢ", level=3)
+            rich_heading(lang["play_song_too_long_title"], level=3)
             + rich_kv_table([
-                ("ᴅᴜʀ", f"<code>{iso_to_human(dur_iso)}</code>"),
-                ("ᴍᴀx", f"<code>{config.MAX_DURATION_SECONDS // 60} min</code>"),
+                (lang["kv_dur"], f"<code>{iso_to_human(dur_iso)}</code>"),
+                (lang["kv_max"], f"<code>{config.MAX_DURATION_SECONDS // 60} min</code>"),
             ]),
         )
         return
@@ -313,20 +325,17 @@ async def _process_play(message: Message, query: str, video: bool = False) -> No
     if pos == 1:
         await play_song(chat_id, pm, song)
     else:
-        kb = InlineKeyboardMarkup([[
-            InlineKeyboardButton("⌯ sᴋɪᴘ ⌯",  callback_data="skip"),
-            InlineKeyboardButton("⌯ ᴄʟᴇᴀʀ ⌯", callback_data="clear"),
-        ]])
+        kb = skip_clear_kb(lang)
         await rich_send(
             bot, chat_id,
-            rich_heading("❍ ᴀᴅᴅᴇᴅ ᴛᴏ ǫᴜᴇᴜᴇ", level=3)
+            rich_heading(lang["play_added_queue_title"], level=3)
             + rich_kv_table([
-                ("ᴛɪᴛʟᴇ", f"<code>{rich_esc(short(title))}</code>"),
-                ("ᴅᴜʀ", f"<code>{iso_to_human(dur_iso)}</code>"),
-                ("ʙʏ", f"<code>{rich_esc(req)}</code>"),
-                ("ᴘᴏs", f"<code>#{pos - 1}</code>"),
-            ]),
-            reply_markup=kb,
+                (lang["kv_title"], f"<code>{rich_esc(short(title))}</code>"),
+                (lang["kv_dur"],   f"<code>{iso_to_human(dur_iso)}</code>"),
+                (lang["kv_by"],    f"<code>{rich_esc(req)}</code>"),
+                (lang["kv_pos"],   f"<code>#{pos - 1}</code>"),
+            ])
+            + kb,
         )
         await pm.delete()
 

@@ -1,10 +1,16 @@
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
 #
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+#                   © 2026 BAD MUNDA
+#
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
 
 import platform
 import sys
@@ -24,7 +30,8 @@ from ShizuMusic.utils.db import (
     get_broadcast_count,
     is_connected,
 )
-from ShizuMusic.utils.rich_ui import (
+from ShizuMusic.utils.language import chat_strings
+from richgram import (
     rich_edit,
     rich_esc,
     rich_heading,
@@ -40,7 +47,8 @@ from ShizuMusic.utils.rich_ui import (
 async def stats_cmd(_, message: Message) -> None:
     """Full system + MongoDB stats for the bot owner."""
 
-    processing = await rich_send(bot, message.chat.id, rich_heading("❍ ғᴇᴛᴄʜɪɴɢ sᴛᴀᴛs, ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...", level=3))
+    lang = chat_strings(message.chat.id)
+    processing = await rich_send(bot, message.chat.id, rich_heading(lang["stats_fetching"], level=3))
 
     # ── System stats ──────────────────────────────────────────────────────────
     try:
@@ -69,7 +77,7 @@ async def stats_cmd(_, message: Message) -> None:
     except Exception as e:
         await rich_edit(
             processing,
-            rich_heading("❍ sʏsᴛᴇᴍ sᴛᴀᴛs ᴇʀʀᴏʀ", level=3)
+            rich_heading(lang["stats_system_error_title"], level=3)
             + f"<p><code>{rich_esc(e)}</code></p>",
         )
         return
@@ -102,7 +110,7 @@ async def stats_cmd(_, message: Message) -> None:
 
     # ── Final message ─────────────────────────────────────────────────────────
     content = (
-        rich_heading("❍ sʜɪᴢᴜᴍᴜsɪᴄ sᴛᴀᴛs", level=3)
+        rich_heading(lang["stats_title"], level=3)
         + rich_kv_table([
             ("ᴏs", f"<code>{os_name} {os_release}</code>"),
             ("ᴘʏᴛʜᴏɴ", f"<code>{py_version}</code>"),

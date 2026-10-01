@@ -1,10 +1,16 @@
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
 #
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+#                   © 2026 BAD MUNDA
+#
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
 
 import logging
 from typing import Optional
@@ -441,15 +447,128 @@ def delete_chat_effects(chat_id: int) -> None:
     except Exception as e:
         logger.error(f"[DB] delete_chat_effects: {e}")
                
+_thumb_cache: dict = {}
+
+
+def is_thumbnail_enabled(chat_id: int) -> bool:
+    if chat_id in _thumb_cache:
+        return _thumb_cache[chat_id]
+    value = True
+    col = _col("thumbnail_mode")
+    if col is not None:
+        try:
+            doc = col.find_one({"_id": chat_id})
+            if doc is not None:
+                value = bool(doc.get("enabled", True))
+        except Exception as e:
+            logger.error(f"[DB] is_thumbnail_enabled: {e}")
+    _thumb_cache[chat_id] = value
+    return value
+
+
+def set_thumbnail_enabled(chat_id: int, enabled: bool) -> None:
+    _thumb_cache[chat_id] = bool(enabled)
+    col = _col("thumbnail_mode")
+    if col is None:
+        return
+    try:
+        col.update_one({"_id": chat_id}, {"$set": {"enabled": bool(enabled)}}, upsert=True)
+    except Exception as e:
+        logger.error(f"[DB] set_thumbnail_enabled: {e}")
+
+
+# ── Chat UI Language (strings/langs/*.yml code, e.g. "en", "hi") ─────────────
+def get_chat_lang(chat_id: int) -> str:
+    col = _col("chat_lang")
+    if col is None:
+        return "en"
+    try:
+        doc = col.find_one({"_id": chat_id})
+        return doc.get("lang", "en") if doc else "en"
+    except Exception as e:
+        logger.error(f"[DB] get_chat_lang: {e}")
+        return "en"
+
+
+def set_chat_lang(chat_id: int, lang: str) -> None:
+    col = _col("chat_lang")
+    if col is None:
+        return
+    try:
+        col.update_one({"_id": chat_id}, {"$set": {"lang": lang}}, upsert=True)
+    except Exception as e:
+        logger.error(f"[DB] set_chat_lang: {e}")
+
+
+# ── AutoPlay Settings (on/off + language/mood filters) ───────────────────────
+
+def is_autoplay_enabled(chat_id: int) -> bool:
+    col = _col("autoplay")
+    if col is None:
+        return False
+    try:
+        doc = col.find_one({"_id": chat_id})
+        return bool(doc.get("enabled", False)) if doc else False
+    except Exception as e:
+        logger.error(f"[DB] is_autoplay_enabled: {e}")
+        return False
+
+
+def set_autoplay_enabled(chat_id: int, enabled: bool) -> None:
+    col = _col("autoplay")
+    if col is None:
+        return
+    try:
+        col.update_one({"_id": chat_id}, {"$set": {"enabled": enabled}}, upsert=True)
+    except Exception as e:
+        logger.error(f"[DB] set_autoplay_enabled: {e}")
+
+
+def get_autoplay_lang(chat_id: int) -> str:
+    col = _col("autoplay")
+    if col is None:
+        return "auto"
+    try:
+        doc = col.find_one({"_id": chat_id})
+        return doc.get("lang", "auto") if doc else "auto"
+    except Exception as e:
+        logger.error(f"[DB] get_autoplay_lang: {e}")
+        return "auto"
+
+
+def set_autoplay_lang(chat_id: int, lang: str) -> None:
+    col = _col("autoplay")
+    if col is None:
+        return
+    try:
+        col.update_one({"_id": chat_id}, {"$set": {"lang": lang}}, upsert=True)
+    except Exception as e:
+        logger.error(f"[DB] set_autoplay_lang: {e}")
+
+
+def get_autoplay_mood(chat_id: int) -> str:
+    col = _col("autoplay")
+    if col is None:
+        return "any"
+    try:
+        doc = col.find_one({"_id": chat_id})
+        return doc.get("mood", "any") if doc else "any"
+    except Exception as e:
+        logger.error(f"[DB] get_autoplay_mood: {e}")
+        return "any"
+
+
+def set_autoplay_mood(chat_id: int, mood: str) -> None:
+    col = _col("autoplay")
+    if col is None:
+        return
+    try:
+        col.update_one({"_id": chat_id}, {"$set": {"mood": mood}}, upsert=True)
+    except Exception as e:
+        logger.error(f"[DB] set_autoplay_mood: {e}")
+
+
 # ── Moderation Filter Settings (NSFW / Bad-word / Link / Document) ───────────
-# All four filters live as fields on the same per-chat document so a single
-# read/write covers the whole moderation panel. Each defaults to True (ON)
-# when unset, so a brand-new group is protected from day one.
-#
-#   { "_id": chat_id, "nsfw": bool, "badword": bool, "link": bool, "document": bool }
-#
-# "enabled" is kept in sync with "nsfw" for backward compatibility with any
-# older code/data that still reads the original field name directly.
 
 DEFAULT_MOD_SETTINGS = {
     "nsfw":     True,
@@ -528,9 +647,6 @@ def set_document_filter_enabled(chat_id: int, enabled: bool) -> None:
 
 
 # ── Moderation Approved Users (per-chat whitelist) ───────────────────────────
-# An approved user's media/text bypasses ALL moderation filters above
-# (NSFW, bad words, links, blocked files) — not just NSFW.
-
 def approve_nsfw_user(chat_id: int, user_id: int) -> None:
     col = _col("nsfw_approved")
     if col is None:
@@ -574,3 +690,214 @@ def get_nsfw_approved_users(chat_id: int) -> list:
     except Exception as e:
         logger.error(f"[DB] get_nsfw_approved_users: {e}")
         return []
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# LOGGER SWITCH  (owner: /logger on | off)
+# ═════════════════════════════════════════════════════════════════════════════
+
+_logger_cache: dict = {}
+
+
+def is_logger_enabled() -> bool:
+    if "enabled" in _logger_cache:
+        return _logger_cache["enabled"]
+    value = True
+    col = _col("bot_settings")
+    if col is not None:
+        try:
+            doc = col.find_one({"_id": "logger"})
+            if doc is not None:
+                value = bool(doc.get("enabled", True))
+        except Exception as e:
+            logger.error(f"[DB] is_logger_enabled: {e}")
+    _logger_cache["enabled"] = value
+    return value
+
+
+def set_logger_enabled(enabled: bool) -> None:
+    _logger_cache["enabled"] = bool(enabled)
+    col = _col("bot_settings")
+    if col is None:
+        return
+    try:
+        col.update_one({"_id": "logger"}, {"$set": {"enabled": bool(enabled)}}, upsert=True)
+    except Exception as e:
+        logger.error(f"[DB] set_logger_enabled: {e}")
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# PLAYLISTS  (/pcreate /padd /premove /pview /pplay /pdelete)
+# ═════════════════════════════════════════════════════════════════════════════
+
+def playlist_db_ready() -> bool:
+    return _db is not None
+
+
+def _pl_id(user_id: int, name: str) -> str:
+    return f"{user_id}:{name.lower()}"
+
+
+def get_playlist(user_id: int, name: str) -> Optional[dict]:
+    col = _col("playlists")
+    if col is None:
+        return None
+    try:
+        return col.find_one({"_id": _pl_id(user_id, name)})
+    except Exception as e:
+        logger.error(f"[DB] get_playlist: {e}")
+        return None
+
+
+def get_user_playlists(user_id: int) -> list:
+    col = _col("playlists")
+    if col is None:
+        return []
+    try:
+        return list(col.find({"user_id": user_id}).sort("name", 1))
+    except Exception as e:
+        logger.error(f"[DB] get_user_playlists: {e}")
+        return []
+
+
+def create_playlist(user_id: int, name: str, limit: int) -> str:
+    """Returns 'ok' | 'exists' | 'limit' | 'error'."""
+    col = _col("playlists")
+    if col is None:
+        return "error"
+    try:
+        if col.find_one({"_id": _pl_id(user_id, name)}) is not None:
+            return "exists"
+        if col.count_documents({"user_id": user_id}) >= limit:
+            return "limit"
+        col.insert_one({
+            "_id": _pl_id(user_id, name),
+            "user_id": user_id,
+            "name": name,
+            "songs": [],
+        })
+        return "ok"
+    except Exception as e:
+        logger.error(f"[DB] create_playlist: {e}")
+        return "error"
+
+
+def add_songs_to_playlist(user_id: int, name: str, songs: list, limit: int) -> Optional[dict]:
+    """
+    Append songs (duplicates by URL are skipped, playlist size is capped).
+    Returns {"added": n, "dupes": n, "full": bool, "total": n} or None on error.
+    """
+    col = _col("playlists")
+    if col is None:
+        return None
+    try:
+        doc = col.find_one({"_id": _pl_id(user_id, name)})
+        if doc is None:
+            return None
+        current = doc.get("songs", [])
+        known = {s.get("url") for s in current}
+
+        fresh, dupes, full = [], 0, False
+        for song in songs:
+            if song.get("url") in known:
+                dupes += 1
+                continue
+            if len(current) + len(fresh) >= limit:
+                full = True
+                break
+            known.add(song.get("url"))
+            fresh.append(song)
+
+        if fresh:
+            col.update_one({"_id": doc["_id"]}, {"$push": {"songs": {"$each": fresh}}})
+
+        return {
+            "added": len(fresh),
+            "dupes": dupes,
+            "full":  full,
+            "total": len(current) + len(fresh),
+        }
+    except Exception as e:
+        logger.error(f"[DB] add_songs_to_playlist: {e}")
+        return None
+
+
+def remove_song_from_playlist(user_id: int, name: str, index: int) -> Optional[dict]:
+    """Remove the song at 0-based `index`. Returns the removed song or None."""
+    col = _col("playlists")
+    if col is None:
+        return None
+    try:
+        doc = col.find_one({"_id": _pl_id(user_id, name)})
+        if doc is None:
+            return None
+        songs = doc.get("songs", [])
+        if index < 0 or index >= len(songs):
+            return None
+        removed = songs.pop(index)
+        col.update_one({"_id": doc["_id"]}, {"$set": {"songs": songs}})
+        return removed
+    except Exception as e:
+        logger.error(f"[DB] remove_song_from_playlist: {e}")
+        return None
+
+
+def delete_playlist(user_id: int, name: str) -> bool:
+    col = _col("playlists")
+    if col is None:
+        return False
+    try:
+        return col.delete_one({"_id": _pl_id(user_id, name)}).deleted_count > 0
+    except Exception as e:
+        logger.error(f"[DB] delete_playlist: {e}")
+        return False
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# CHANNEL LINKS  (/addchannel <@username | -100id>  ->  /cplay /cskip ...)
+# ═════════════════════════════════════════════════════════════════════════════
+
+def set_channel_link(group_id: int, channel_id: int) -> None:
+    col = _col("channel_links")
+    if col is None:
+        return
+    try:
+        col.update_one({"_id": group_id}, {"$set": {"channel_id": channel_id}}, upsert=True)
+    except Exception as e:
+        logger.error(f"[DB] set_channel_link: {e}")
+
+
+def remove_channel_link(group_id: int) -> None:
+    col = _col("channel_links")
+    if col is None:
+        return
+    try:
+        col.delete_one({"_id": group_id})
+    except Exception as e:
+        logger.error(f"[DB] remove_channel_link: {e}")
+
+
+def get_all_channel_links() -> dict:
+    """{group_id: channel_id} for every linked group."""
+    col = _col("channel_links")
+    if col is None:
+        return {}
+    try:
+        return {d["_id"]: d["channel_id"] for d in col.find({})}
+    except Exception as e:
+        logger.error(f"[DB] get_all_channel_links: {e}")
+        return {}
+
+
+def get_channel_link_owner(channel_id: int):
+    """Group id this channel is linked to (None if it is free)."""
+    col = _col("channel_links")
+    if col is None:
+        return None
+    try:
+        doc = col.find_one({"channel_id": channel_id})
+        return doc["_id"] if doc else None
+    except Exception as e:
+        logger.error(f"[DB] get_channel_link_owner: {e}")
+        return None
+

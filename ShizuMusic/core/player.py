@@ -1,10 +1,16 @@
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
 #
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+#                   © 2026 BAD MUNDA
+#
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
 
 import asyncio
 import random
@@ -12,11 +18,7 @@ import time
 
 from pyrogram.enums import ParseMode
 from pyrogram.raw.functions.phone import CreateGroupCall
-from pyrogram.types import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    Message,
-)
+from pyrogram.types import Message
 
 from pytgcalls import PyTgCalls
 from pytgcalls import filters as fl
@@ -46,13 +48,22 @@ from ShizuMusic.core.queue import (
     remove_from_queue,
 )
 
+from ShizuMusic.strings import DEFAULT_LANG, get_string
+from ShizuMusic.utils.buttons import player_controls_kb, support_updates_pills
+from ShizuMusic.utils.db import is_thumbnail_enabled
+
 from ShizuMusic.utils.formatters import (
     parse_dur,
     progress_bar,
     short,
 )
 
-from ShizuMusic.utils.rich_ui import (
+from ShizuMusic.utils.language import chat_strings
+from ShizuMusic.utils.logs import logger_active
+from ShizuMusic.utils.routes import notify_chat, register_panel
+from ShizuMusic.utils.thumbnail import thumbnail_html
+
+from richgram import (
     rich_edit,
     rich_esc,
     rich_heading,
@@ -64,61 +75,56 @@ from ShizuMusic.utils.rich_ui import (
 
 from ShizuMusic.utils.youtube import (
     resolve_stream,
+    resolve_video_stream,
 )
-
-def _support_updates_pills() -> str:
-    return (
-        "<p>"
-        f'<tg-button type="url" style="primary" url="{config.SUPPORT_GROUP}">'
-        "🍬 sᴜᴘᴘᴏʀᴛ</tg-button> "
-        f'<tg-button type="url" style="success" url="{config.UPDATES_CHANNEL}">'
-        "🍹 ᴜᴘᴅᴀᴛᴇs</tg-button>"
-        "</p>"
-    )
-
 
 # ─────────────────────────────────────────────
 # NOW PLAYING CONTENT
 # ─────────────────────────────────────────────
 
 
-def _now_playing_content(song: dict) -> str:
-    """Now-playing rich message content."""
-
-    thumb = song.get("thumbnail")
+def _now_playing_content(song: dict, lang: dict, show_thumb: bool = True) -> str:
+    """Now-playing rich message content (thumbnail only if the chat has it ON)."""
 
     return (
         rich_heading(
-            "🎧 sʜɪᴢᴜ ᴍᴜsɪᴄ — ɴᴏᴡ ᴘʟᴀʏɪɴɢ",
+            lang["now_playing_title"],
             level=3
         )
-        + (rich_img(thumb) if thumb else "")
+        + thumbnail_html(song, show_thumb)      # picture comes from utils/thumbnail.py
         + rich_kv_table([
-            ("ᴛɪᴛʟᴇ", rich_esc(short(song["title"]))),
-            ("ᴅᴜʀᴀᴛɪᴏɴ", rich_esc(song.get("duration", "?"))),
-            ("ʙʏ", rich_esc(song["requester"])),
+            (lang["kv_title"], rich_esc(short(song["title"]))),
+            (lang["kv_duration"], rich_esc(song.get("duration", "?"))),
+            (lang["kv_by"], rich_esc(song["requester"])),
         ])
-        + _support_updates_pills()
+        + support_updates_pills(lang)
     )
 
 
-def _now_playing_kb(elapsed: float, total: float) -> InlineKeyboardMarkup:
-    bar = progress_bar(elapsed, total)
-    btns = [
-        InlineKeyboardButton("▷", callback_data="resume"),
-        InlineKeyboardButton("II", callback_data="pause"),
-        InlineKeyboardButton("‣‣I", callback_data="skip"),
-        InlineKeyboardButton("▢", callback_data="stop"),
-    ]
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton(bar, callback_data="noop")],
-        btns,
-    ])
+def _now_playing_kb(elapsed: float, total: float, chat_id=None, lang=None) -> str:
+    """Player buttons as rich HTML — append to the message content."""
+    return player_controls_kb(elapsed, total, chat_id, lang)
+
+
+_panel_content: dict = {}
+
+
+def get_panel_content(chat_id: int, message_id: int):
+    return _panel_content.get((chat_id, message_id))
 
 
 # ─────────────────────────────────────────────
 # PROGRESS UPDATER
 # ─────────────────────────────────────────────
+
+
+_closed_panels: set = set()
+
+
+def mark_panel_closed(chat_id: int, message_id: int) -> None:
+    _closed_panels.add((chat_id, message_id))
+    _panel_content.pop((chat_id, message_id), None)
+
 
 async def _update_progress(
     chat_id: int,
@@ -130,11 +136,15 @@ async def _update_progress(
 
     while True:
 
+        if (chat_id, msg.id) in _closed_panels:
+            _closed_panels.discard((chat_id, msg.id))
+            break
+
         elapsed = min(time.time() - start_t, total)
-        kb = _now_playing_kb(elapsed, total)
+        kb = _now_playing_kb(elapsed, total, chat_id, chat_strings(chat_id))
 
         try:
-            await rich_edit(msg, content, reply_markup=kb)
+            await rich_edit(msg, content + kb)
 
         except Exception as e:
             if "MESSAGE_NOT_MODIFIED" not in str(e):
@@ -151,6 +161,8 @@ async def _update_progress(
 # ─────────────────────────────────────────────
 
 async def _ensure_vc(chat_id: int) -> bool:
+
+    lang = chat_strings(chat_id)
 
     try:
 
@@ -172,7 +184,7 @@ async def _ensure_vc(chat_id: int) -> bool:
         LOGGER.error(f"[VC] TelegramServerError: {e}")
         await rich_send(
             bot, chat_id,
-            rich_heading("❍ ᴠᴄ sᴛᴀʀᴛ ғᴀɪʟᴇᴅ (Telegram Server)", level=3)
+            rich_heading(lang["vc_start_failed_server_title"], level=3)
             + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
         return False
@@ -189,15 +201,15 @@ async def _ensure_vc(chat_id: int) -> bool:
         if "chat_admin_required" in err or "admin" in err:
             await rich_send(
                 bot, chat_id,
-                rich_heading("❍ ᴠᴄ sᴛᴀʀᴛ ᴘᴇʀᴍɪssɪᴏɴ ᴍɪssɪɴɢ", level=3)
-                + rich_note("ɢɪᴠᴇ ᴀssɪsᴛᴀɴᴛ » ᴍᴀɴᴀɢᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs, ᴀᴅᴍɪɴ ʀɪɢʜᴛs"),
+                rich_heading(lang["vc_perm_missing_title"], level=3)
+                + rich_note(lang["vc_perm_missing_note"]),
             )
             return False
 
         LOGGER.error(f"[VC ERROR] {e}")
         await rich_send(
             bot, chat_id,
-            rich_heading("❍ ᴠᴄ sᴛᴀʀᴛ ғᴀɪʟᴇᴅ", level=3)
+            rich_heading(lang["vc_start_failed_title"], level=3)
             + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
         return False
@@ -214,14 +226,15 @@ async def play_song(
 ) -> None:
 
     chat_id = int(chat_id)
+    lang = chat_strings(chat_id)
     url = song.get("url")
 
     if not url:
         return
 
     loading_text = (
-        rich_heading("❍ ʟᴏᴀᴅɪɴɢ...", level=3)
-        + rich_kv_table([("sᴏɴɢ", rich_esc(short(song['title'])))])
+        rich_heading(lang["loading_title"], level=3)
+        + rich_kv_table([(lang["kv_song"], rich_esc(short(song['title'])))])
     )
 
     try:
@@ -234,8 +247,13 @@ async def play_song(
     # RESOLVE STREAM
     # ─────────────────────────────────────────
 
+    is_video = song.get("video", False)
+
     try:
-        media_path = await resolve_stream(url)
+        if is_video:
+            media_path = await resolve_video_stream(url)
+        else:
+            media_path = await resolve_stream(url)
 
     except Exception as e:
         try:
@@ -245,12 +263,10 @@ async def play_song(
 
         await rich_send(
             bot, chat_id,
-            rich_heading("❍ ᴅᴏᴡɴʟᴏᴀᴅ ғᴀɪʟᴇᴅ", level=3)
+            rich_heading(lang["download_failed_title"], level=3)
             + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
         return
-
-    is_video = song.get("video", False)
 
     # ─────────────────────────────────────────
     # AUTO EFFECTS
@@ -322,7 +338,7 @@ async def play_song(
 
             await rich_send(
                 bot, chat_id,
-                rich_heading("❍ ᴘʟᴀʏʙᴀᴄᴋ ғᴀɪʟᴇᴅ (Telegram Server)", level=3)
+                rich_heading(lang["playback_failed_server_title"], level=3)
                 + rich_note(f"<code>{rich_esc(e)}</code>"),
             )
             return
@@ -366,9 +382,8 @@ async def play_song(
 
                 await rich_send(
                     bot, chat_id,
-                    rich_heading("❍ ᴠᴄ sᴛᴀʀᴛ ᴘᴇʀᴍɪssɪᴏɴ ᴍɪssɪɴɢ", level=3)
-                    + rich_note("ᴘʟᴇᴀsᴇ ɢɪᴠᴇ » ᴍᴀɴᴀɢᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs, ᴀᴅᴍɪɴ ʀɪɢʜᴛs · "
-                                "ᴀssɪsᴛᴀɴᴛ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ"),
+                    rich_heading(lang["vc_perm_missing_title"], level=3)
+                    + rich_note(lang["playback_perm_missing_note"]),
                 )
                 LOGGER.error(f"[ADMIN ERROR] {e}")
                 return
@@ -381,7 +396,7 @@ async def play_song(
 
             await rich_send(
                 bot, chat_id,
-                rich_heading("❍ ᴘʟᴀʏʙᴀᴄᴋ ғᴀɪʟᴇᴅ", level=3)
+                rich_heading(lang["effects_playback_failed_title"], level=3)
                 + rich_note(f"<code>{rich_esc(e)}</code>"),
             )
             LOGGER.error(f"[PLAY ERROR] {e}")
@@ -389,6 +404,12 @@ async def play_song(
 
     if not played:
         return
+
+    try:
+        from ShizuMusic.core.autoplay import schedule_prefetch
+        schedule_prefetch(chat_id, song)
+    except Exception:
+        pass
 
     # ─────────────────────────────────────────
     # RESET SEEK
@@ -411,7 +432,7 @@ async def play_song(
             increment_play_count,
         )
 
-        add_served_chat(chat_id)
+        add_served_chat(notify_chat(chat_id))      # never put a channel in the broadcast list
         requester_id = song.get("requester_id")
 
         if requester_id:
@@ -422,23 +443,22 @@ async def play_song(
     except Exception as db_err:
         LOGGER.warning(f"[DB ERROR] {db_err}")
 
-    # ─────────────────────────────────────────
-    # NOW PLAYING UI — one genuine rich message (heading + embedded
-    # thumbnail + table). This message is edited every ~18s for the
-    # progress bar, so it has to stay a true rich text message rather
-    # than a photo caption (captions can never carry rich blocks).
-    # ─────────────────────────────────────────
+
 
     total = parse_dur(song.get("duration", "0:00"))
-    content = _now_playing_content(song)
-    kb = _now_playing_kb(0, total)
+    content = _now_playing_content(song, lang, is_thumbnail_enabled(chat_id))
+    kb = _now_playing_kb(0, total, chat_id, lang)
 
     try:
-        pmsg = await rich_edit(message, content, reply_markup=kb)
+        pmsg = await rich_edit(message, content + kb)
         if pmsg is None:
             pmsg = message
     except Exception:
-        pmsg = await rich_send(bot, chat_id, content, reply_markup=kb)
+        pmsg = await rich_send(bot, chat_id, content + kb)
+
+    _panel_content[(chat_id, pmsg.id)] = content
+    # channel play: the panel lives in the group but its buttons drive the channel VC
+    register_panel(pmsg.chat.id, pmsg.id, chat_id)
 
     asyncio.create_task(
         _update_progress(
@@ -454,16 +474,16 @@ async def play_song(
     # LOGGER
     # ─────────────────────────────────────────
 
-    if config.LOGGER_ID:
+    if logger_active():
+        en = get_string(DEFAULT_LANG)
         logger_content = (
-            rich_heading(
-                "🎧 #ɴᴏᴡᴘʟᴀʏɪɴɢ",
-                level=3
-            )
+            rich_heading(en["logger_nowplaying_title"], level=3)
             + rich_kv_table([
-                ("ᴛɪᴛʟᴇ", rich_esc(song.get("title", "?"))),
-                ("ᴅᴜʀᴀᴛɪᴏɴ", rich_esc(song.get("duration", "?"))),
-                ("ʙʏ", rich_esc(song.get("requester", "?"))),
+                (en["kv_title"], rich_esc(song.get("title", "?"))),
+                (en["kv_duration"], rich_esc(song.get("duration", "?"))),
+                (en["kv_by"], rich_esc(song.get("requester", "?"))),
+                (en["kv_chat_name"], rich_esc(await _chat_name(chat_id, message))),
+                (en["kv_chat_id"], f"<code>{chat_id}</code>"),
             ])
         )
 
@@ -474,3 +494,17 @@ async def play_song(
                 logger_content,
             )
         )
+
+
+async def _chat_name(chat_id: int, message=None) -> str:
+    """Best-effort chat title for the log message (group title / user's name)."""
+    chat = getattr(message, "chat", None)
+    name = getattr(chat, "title", None) or getattr(chat, "first_name", None)
+    # channel play: the panel message sits in the group, but the log should name the channel
+    if name and getattr(chat, "id", chat_id) == chat_id:
+        return str(name)
+    try:
+        chat = await bot.get_chat(chat_id)
+        return str(getattr(chat, "title", None) or getattr(chat, "first_name", None) or chat_id)
+    except Exception:
+        return str(chat_id)

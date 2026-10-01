@@ -1,10 +1,16 @@
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
 #
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+#                   © 2026 BAD MUNDA
+#
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
 
 import asyncio
 import os
@@ -15,12 +21,14 @@ import psutil
 import speedtest
 from pyrogram import filters
 from pyrogram.enums import ParseMode
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from pyrogram.types import Message
 
 import config
 from ShizuMusic import bot, assistant, bot_start_time
 from ShizuMusic.modules.block import user_allowed
-from ShizuMusic.utils.rich_ui import (
+from ShizuMusic.utils.buttons import support_kb as supp_markup
+from ShizuMusic.utils.language import chat_strings
+from richgram import (
     rich_esc,
     rich_heading,
     rich_img,
@@ -29,22 +37,17 @@ from ShizuMusic.utils.rich_ui import (
 )
 
 
-def supp_markup():
-    return InlineKeyboardMarkup([[
-        InlineKeyboardButton(text="🍬 sᴜᴘᴘᴏʀᴛ 🍬", url=config.SUPPORT_GROUP),
-    ]])
-
-
 # ── /ping ──────────────────────────────────────────────────────────────────────
 
 @bot.on_message(filters.command("ping") & user_allowed)
 async def ping_cmd(client, message: Message) -> None:
 
     chat_id = message.chat.id
+    lang    = chat_strings(chat_id)
     start   = time.perf_counter()
     pm      = await rich_send(
         bot, chat_id,
-        rich_heading(f"❍ {rich_esc(client.me.first_name)} ɪs ᴘɪɴɢɪɴɢ...", level=3),
+        rich_heading(lang["ping_pinging"].format(rich_esc(client.me.first_name)), level=3),
     )
     latency = round((time.perf_counter() - start) * 1000)
     uptime  = str(timedelta(seconds=int(time.time() - bot_start_time)))
@@ -73,19 +76,19 @@ async def ping_cmd(client, message: Message) -> None:
         pass
 
     caption = (
-        rich_heading(f"🏓 ᴘᴏɴɢ : {latency}ms", level=3)
+        rich_heading(lang["ping_title"].format(latency), level=3)
         + rich_img(config.PING_IMG_URL)
         + rich_kv_table([
-            ("ᴜᴘᴛɪᴍᴇ", f"<code>{uptime}</code>"),
-            ("ʀᴀᴍ", f"<code>{ram:.2f} MB</code>"),
-            ("ᴄᴘᴜ", f"<code>{cpu}%</code>"),
-            ("ᴅɪsᴋ", f"<code>{disk_str}</code>"),
-            ("ᴘʏᴛɢᴄ", f"<code>{pytg}ms</code>"),
+            (lang["kv_uptime"], f"<code>{uptime}</code>"),
+            (lang["kv_ram"],    f"<code>{ram:.2f} MB</code>"),
+            (lang["kv_cpu"],    f"<code>{cpu}%</code>"),
+            (lang["kv_disk"],   f"<code>{disk_str}</code>"),
+            (lang["kv_pytgc"],  f"<code>{pytg}ms</code>"),
         ])
-        + f"<p>❍ ʙʏ » <a href=\"{config.SUPPORT_GROUP}\">sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></p>"
+        + lang["ping_footer_by"].format(config.SUPPORT_GROUP)
     )
 
-    await rich_send(bot, chat_id, caption, reply_markup=supp_markup())
+    await rich_send(bot, chat_id, caption + supp_markup(lang))
 
 
 # ── /speedtest ─────────────────────────────────────────────────────────────────
@@ -109,14 +112,15 @@ def _run_speedtest(m):
 async def speedtest_cmd(client, message: Message) -> None:
 
     chat_id = message.chat.id
-    m = await rich_send(bot, chat_id, rich_heading("❍ sᴛᴀʀᴛɪɴɢ sᴘᴇᴇᴅ ᴛᴇsᴛ, ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...", level=3))
+    lang = chat_strings(chat_id)
+    m = await rich_send(bot, chat_id, rich_heading(lang["speedtest_starting"], level=3))
 
     loop   = asyncio.get_event_loop()
     result = await loop.run_in_executor(None, _run_speedtest, m)
 
     if result is None:
-        from ShizuMusic.utils.rich_ui import rich_edit
-        await rich_edit(m, rich_heading("❍ sᴘᴇᴇᴅᴛᴇsᴛ ғᴀɪʟᴇᴅ, ᴘʟᴇᴀsᴇ ᴛʀʏ ᴀɢᴀɪɴ", level=3))
+        from richgram import rich_edit
+        await rich_edit(m, rich_heading(lang["speedtest_failed"], level=3))
         return
 
     download = result["download"] / 1_000_000
@@ -131,7 +135,7 @@ async def speedtest_cmd(client, message: Message) -> None:
     share    = result["share"]
 
     caption = (
-        rich_heading("⚡ sᴘᴇᴇᴅᴛᴇsᴛ ʀᴇsᴜʟᴛs", level=3)
+        rich_heading(lang["speedtest_title"], level=3)
         + rich_img(share)
         + rich_kv_table([
             ("ɪsᴘ", f"<code>{rich_esc(isp)}</code>"),
@@ -148,12 +152,12 @@ async def speedtest_cmd(client, message: Message) -> None:
             ("ᴅᴏᴡɴʟᴏᴀᴅ", f"<code>{download:.2f} Mbps</code>"),
             ("ᴜᴘʟᴏᴀᴅ", f"<code>{upload:.2f} Mbps</code>"),
         ], headers=["sᴘᴇᴇᴅ", ""])
-        + f"<p>❍ ʙʏ » <a href=\"{config.SUPPORT_GROUP}\">sʜɪᴢᴜ-ᴍᴜsɪᴄ™</a></p>"
+        + lang["ping_footer_by"].format(config.SUPPORT_GROUP)
     )
 
     try:
         await m.delete()
     except Exception:
         pass
-    await rich_send(bot, chat_id, caption, reply_markup=supp_markup())
+    await rich_send(bot, chat_id, caption + supp_markup(lang))
 

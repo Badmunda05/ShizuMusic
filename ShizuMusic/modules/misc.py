@@ -1,10 +1,16 @@
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
 #
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+#                   © 2026 BAD MUNDA
+#
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
 
 """
 Utility commands:
@@ -13,16 +19,14 @@ Utility commands:
 """
 
 import config
-from pyrogram import enums, filters
-from pyrogram.types import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    Message,
-)
+from pyrogram import filters
+from pyrogram.types import Message
 
 from ShizuMusic import bot
 from ShizuMusic.modules.block import user_allowed
-from ShizuMusic.utils.rich_ui import (
+from ShizuMusic.utils.buttons import repo_kb
+from ShizuMusic.utils.language import chat_strings
+from richgram import (
     rich_details,
     rich_heading,
     rich_kv_table,
@@ -38,37 +42,11 @@ SOURCE_URL = "https://github.com/Badmunda05/ShizuMusic/fork"
 @bot.on_message(filters.command("repo") & user_allowed)
 async def repo_cmd(_, message: Message) -> None:
 
-    kb = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton(
-                    "🍡 sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ 🍡",
-                    url=SOURCE_URL,
-                    style=enums.ButtonStyle.PRIMARY,
-                ),
-                InlineKeyboardButton(
-                    "🔱 ғᴏʀᴋ 🔱",
-                    url=SOURCE_URL,
-                    style=enums.ButtonStyle.PRIMARY,
-                ),
-            ],
-            [
-                InlineKeyboardButton(
-                    "🍬 sᴜᴘᴘᴏʀᴛ 🍬",
-                    url=config.SUPPORT_GROUP,
-                    style=enums.ButtonStyle.SUCCESS,
-                ),
-                InlineKeyboardButton(
-                    "🍹 ᴜᴘᴅᴀᴛᴇs 🍹",
-                    url=config.UPDATES_CHANNEL,
-                    style=enums.ButtonStyle.SUCCESS,
-                ),
-            ],
-        ]
-    )
+    lang = chat_strings(message.chat.id)
+    kb = repo_kb(SOURCE_URL, lang)
 
     content = (
-        rich_heading("🍡 sʜɪᴢᴜᴍᴜsɪᴄ sᴏᴜʀᴄᴇ", level=3)
+        rich_heading(lang["repo_title"], level=3)
         + "<p>❍ ᴏᴘᴇɴ sᴏᴜʀᴄᴇ ᴍᴜsɪᴄ ʙᴏᴛ, ᴅᴇᴠᴇʟᴏᴘᴇᴅ ʙʏ <b>ʙᴀᴅ ᴍᴜɴᴅᴀ</b> ❤️</p>"
         + rich_details(
             "⚡ ʜᴏsᴛɪɴɢ sᴜᴘᴘᴏʀᴛ",
@@ -79,11 +57,11 @@ async def repo_cmd(_, message: Message) -> None:
             open=True,
         )
         + rich_note(
-            f"❍ <a href='{SOURCE_URL}'>ɢɪᴛʜᴜʙ ʀᴇᴘᴏ</a> — ғᴇᴇʟ ғʀᴇᴇ ᴛᴏ ʜɪᴛ ⭐ ᴏɴ ɢɪᴛʜᴜʙ!"
+            f"{lang['repo_note']} <a href='{SOURCE_URL}'>ɢɪᴛʜᴜʙ ʀᴇᴘᴏ</a>"
         )
     )
 
-    await rich_reply(message, content, reply_markup=kb)
+    await rich_reply(message, content + kb)
 
 
 # ── /id ────────────────────────────────────────────────────────────────────────
@@ -153,4 +131,4 @@ async def id_cmd(client, message: Message) -> None:
     )
 
     await rich_reply(message, content)
-  
+

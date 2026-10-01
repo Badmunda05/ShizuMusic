@@ -1,10 +1,16 @@
-# --------------------------------------------------------------------------------
-#  ShizuMusic © 2026
-#  Developed by Bad Munda ❤️
+# ═══════════════════════════════════════════════════════════════
+#                     🎵 SHIZUMUSIC
 #
-#  Unauthorized copying, editing, re-uploading or removing credits
-#  from this source code is strictly prohibited.
-# --------------------------------------------------------------------------------
+#                   © 2026 BAD MUNDA
+#
+#                Developed with ❤️ by Bad Munda
+#
+#             Do not remove or alter the original credits.
+#
+#           Copyright © 2026 Bad Munda. All rights reserved.
+#
+#              
+# ═══════════════════════════════════════════════════════════════
 
 import asyncio
 import os
@@ -14,10 +20,12 @@ from pyrogram.enums import ParseMode
 from pyrogram.types import Message
 
 from ShizuMusic import LOGGER, bot, call_py
+from ShizuMusic.core.channels import target_chat
 from ShizuMusic.core.queue import peek_current
 from ShizuMusic.modules.block import group_allowed, user_allowed
 from ShizuMusic.utils.formatters import short
-from ShizuMusic.utils.rich_ui import (
+from ShizuMusic.utils.language import chat_strings
+from richgram import (
     rich_edit,
     rich_esc,
     rich_heading,
@@ -174,23 +182,25 @@ async def apply_effects_now(chat_id: int, message: Message, *, seek_sec: int = -
     from ShizuMusic.utils.youtube import resolve_stream
     from ShizuMusic.modules.seek import get_current_position, set_seek_state
 
+    lang = chat_strings(chat_id)
+
     song = peek_current(chat_id)
     if not song:
-        await rich_send(bot, chat_id, rich_heading("❍ ɴᴏ sᴏɴɢ ɪs ᴄᴜʀʀᴇɴᴛʟʏ ᴘʟᴀʏɪɴɢ", level=3))
+        await rich_send(bot, chat_id, rich_heading(lang["effects_no_song_title"], level=3))
         return
 
     state = _get(chat_id)
     speed = state["speed"]
     bass  = state["bass"]
 
-    pm = await rich_send(bot, chat_id, rich_heading("❍ ᴀᴘᴘʟʏɪɴɢ ᴇғғᴇᴄᴛs, ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...", level=3))
+    pm = await rich_send(bot, chat_id, rich_heading(lang["effects_applying_title"], level=3))
 
     try:
         src = await resolve_stream(song["url"])
     except Exception as e:
         await rich_edit(
             pm,
-            rich_heading("❍ sᴛʀᴇᴀᴍ ʀᴇsᴏʟᴠᴇ ғᴀɪʟᴇᴅ", level=3)
+            rich_heading(lang["effects_resolve_failed_title"], level=3)
             + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
         return
@@ -200,7 +210,7 @@ async def apply_effects_now(chat_id: int, message: Message, *, seek_sec: int = -
     except Exception as e:
         await rich_edit(
             pm,
-            rich_heading("❍ ғғᴍᴘᴇɢ ᴇʀʀᴏʀ", level=3)
+            rich_heading(lang["effects_ffmpeg_error_title"], level=3)
             + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
         return
@@ -212,25 +222,25 @@ async def apply_effects_now(chat_id: int, message: Message, *, seek_sec: int = -
     except Exception as e:
         await rich_edit(
             pm,
-            rich_heading("❍ ᴘʟᴀʏʙᴀᴄᴋ ғᴀɪʟᴇᴅ", level=3)
+            rich_heading(lang["effects_playback_failed_title"], level=3)
             + rich_note(f"<code>{rich_esc(e)}</code>"),
         )
         return
 
     set_seek_state(chat_id, pos)
 
-    speed_label = f"{speed}x" if speed != 1.0 else "ɴᴏʀᴍᴀʟ (1.0x)"
-    bass_label  = f"{bass} dB ʙᴏᴏsᴛ" if bass > 0 else "ᴏғғ"
+    speed_label = f"{speed}x" if speed != 1.0 else lang["effects_speed_normal_label"]
+    bass_label  = lang["effects_bass_boost_label"].format(bass) if bass > 0 else lang["effects_bass_off_label"]
     pos_label   = f"{pos // 60}:{pos % 60:02d}"
 
     await rich_edit(
         pm,
-        rich_heading("❍ ᴇғғᴇᴄᴛs ᴀᴘᴘʟɪᴇᴅ ✓", level=3)
+        rich_heading(lang["effects_applied_title"], level=3)
         + rich_kv_table([
-            ("sᴏɴɢ", rich_esc(short(song['title']))),
-            ("ᴘᴏsɪᴛɪᴏɴ", f"<code>{pos_label}</code>"),
-            ("sᴘᴇᴇᴅ", f"<code>{speed_label}</code>"),
-            ("ʙᴀss", f"<code>{bass_label}</code>"),
+            (lang["kv_song"], rich_esc(short(song['title']))),
+            (lang["kv_position"], f"<code>{pos_label}</code>"),
+            (lang["kv_speed"], f"<code>{speed_label}</code>"),
+            (lang["kv_bass"], f"<code>{bass_label}</code>"),
         ]),
     )
 
@@ -258,26 +268,26 @@ async def maybe_apply_effects(chat_id: int, file_path: str) -> str:
 
 @bot.on_message(
     filters.group
-    & filters.regex(r"^/speed(?:@\w+)?\s+(?P<val>[\d.]+)$")
+    & filters.regex(r"^/c?speed(?:@\w+)?\s+(?P<val>[\d.]+)$")
     & group_allowed & user_allowed
 )
 async def speed_cmd(_, message: Message) -> None:
-    chat_id = message.chat.id
+    chat_id = await target_chat(message)
+    if chat_id is None:
+        return
+    lang = chat_strings(chat_id)
     try:
         val = round(float(message.matches[0].group("val")), 2)
     except ValueError:
         await rich_send(
             bot, chat_id,
-            rich_heading("❍ ɪɴᴠᴀʟɪᴅ ᴠᴀʟᴜᴇ", level=3)
-            + rich_kv_table([("ᴜsᴀɢᴇ", "<code>/speed 1.5</code>")]),
+            rich_heading(lang["effects_invalid_value_title"], level=3)
+            + rich_kv_table([(lang["kv_usage"], "<code>/speed 1.5</code>")]),
         )
         return
 
     if not (0.25 <= val <= 4.0):
-        await rich_send(
-            bot, chat_id,
-            rich_heading("❍ sᴘᴇᴇᴅ ᴍᴜsᴛ ʙᴇ ʙᴇᴛᴡᴇᴇɴ 0.25 ᴀɴᴅ 4.0", level=3),
-        )
+        await rich_send(bot, chat_id, rich_heading(lang["effects_speed_range_title"], level=3))
         return
 
     set_speed(chat_id, val)
@@ -290,11 +300,13 @@ async def speed_cmd(_, message: Message) -> None:
 
 @bot.on_message(
     filters.group
-    & filters.regex(r"^/speedreset(?:@\w+)?$")
+    & filters.regex(r"^/c?speedreset(?:@\w+)?$")
     & group_allowed & user_allowed
 )
 async def speedreset_cmd(_, message: Message) -> None:
-    chat_id = message.chat.id
+    chat_id = await target_chat(message)
+    if chat_id is None:
+        return
     set_speed(chat_id, SPEED_DEFAULT)
     try:
         await message.delete()
@@ -305,26 +317,26 @@ async def speedreset_cmd(_, message: Message) -> None:
 
 @bot.on_message(
     filters.group
-    & filters.regex(r"^/bass(?:@\w+)?\s+(?P<val>\d+)$")
+    & filters.regex(r"^/c?bass(?:@\w+)?\s+(?P<val>\d+)$")
     & group_allowed & user_allowed
 )
 async def bass_cmd(_, message: Message) -> None:
-    chat_id = message.chat.id
+    chat_id = await target_chat(message)
+    if chat_id is None:
+        return
+    lang = chat_strings(chat_id)
     try:
         val = int(message.matches[0].group("val"))
     except ValueError:
         await rich_send(
             bot, chat_id,
-            rich_heading("❍ ɪɴᴠᴀʟɪᴅ ᴠᴀʟᴜᴇ", level=3)
-            + rich_kv_table([("ᴜsᴀɢᴇ", "<code>/bass 10</code>")]),
+            rich_heading(lang["effects_invalid_value_title"], level=3)
+            + rich_kv_table([(lang["kv_usage"], "<code>/bass 10</code>")]),
         )
         return
 
     if not (1 <= val <= 20):
-        await rich_send(
-            bot, chat_id,
-            rich_heading("❍ ʙᴀss ᴍᴜsᴛ ʙᴇ ʙᴇᴛᴡᴇᴇɴ 1 ᴀɴᴅ 20", level=3),
-        )
+        await rich_send(bot, chat_id, rich_heading(lang["effects_bass_range_title"], level=3))
         return
 
     set_bass(chat_id, val)
@@ -337,11 +349,13 @@ async def bass_cmd(_, message: Message) -> None:
 
 @bot.on_message(
     filters.group
-    & filters.regex(r"^/bassoff(?:@\w+)?$")
+    & filters.regex(r"^/c?bassoff(?:@\w+)?$")
     & group_allowed & user_allowed
 )
 async def bassoff_cmd(_, message: Message) -> None:
-    chat_id = message.chat.id
+    chat_id = await target_chat(message)
+    if chat_id is None:
+        return
     set_bass(chat_id, BASS_DEFAULT)
     try:
         await message.delete()
@@ -352,78 +366,78 @@ async def bassoff_cmd(_, message: Message) -> None:
 
 @bot.on_message(
     filters.group
-    & filters.regex(r"^/effecton(?:@\w+)?$")
+    & filters.regex(r"^/c?effecton(?:@\w+)?$")
     & group_allowed & user_allowed
 )
 async def effecton_cmd(_, message: Message) -> None:
-    chat_id = message.chat.id
+    chat_id = await target_chat(message)
+    if chat_id is None:
+        return
+    lang = chat_strings(chat_id)
     set_enabled(chat_id, True)
     state       = _get(chat_id)
-    speed_label = f"{state['speed']}x" if state['speed'] != 1.0 else "ɴᴏʀᴍᴀʟ (1.0x)"
-    bass_label  = f"{state['bass']} dB" if state['bass'] > 0 else "ᴏғғ"
+    speed_label = f"{state['speed']}x" if state['speed'] != 1.0 else lang["effects_speed_normal_label"]
+    bass_label  = f"{state['bass']} dB" if state['bass'] > 0 else lang["effects_bass_off_label"]
     await rich_send(
         bot, chat_id,
-        rich_heading("❍ ᴇғғᴇᴄᴛs ᴇɴᴀʙʟᴇᴅ ✓", level=3)
-        + rich_kv_table([("sᴘᴇᴇᴅ", f"<code>{speed_label}</code>"), ("ʙᴀss", f"<code>{bass_label}</code>")])
-        + rich_note("ᴀʟʟ sᴏɴɢs ɪɴ ᴛʜɪs ɢʀᴏᴜᴘ ᴡɪʟʟ ɴᴏᴡ ᴘʟᴀʏ ᴡɪᴛʜ ᴇғғᴇᴄᴛs. "
-                    "ᴜsᴇ /effectoff ᴛᴏ ᴅɪsᴀʙʟᴇ."),
+        rich_heading(lang["effects_enabled_title"], level=3)
+        + rich_kv_table([(lang["kv_speed"], f"<code>{speed_label}</code>"), (lang["kv_bass"], f"<code>{bass_label}</code>")])
+        + rich_note(lang["effects_enabled_note"]),
     )
 
 
 @bot.on_message(
     filters.group
-    & filters.regex(r"^/effectoff(?:@\w+)?$")
+    & filters.regex(r"^/c?effectoff(?:@\w+)?$")
     & group_allowed & user_allowed
 )
 async def effectoff_cmd(_, message: Message) -> None:
-    chat_id = message.chat.id
+    chat_id = await target_chat(message)
+    if chat_id is None:
+        return
+    lang = chat_strings(chat_id)
     set_enabled(chat_id, False)
     await rich_send(
         bot, chat_id,
-        rich_heading("❍ ᴇғғᴇᴄᴛs ᴅɪsᴀʙʟᴇᴅ ✓", level=3)
-        + rich_note("sᴏɴɢs ᴡɪʟʟ ɴᴏᴡ ᴘʟᴀʏ ɴᴏʀᴍᴀʟʟʏ ɪɴ ᴛʜɪs ɢʀᴏᴜᴘ. sᴘᴇᴇᴅ + ʙᴀss "
-                    "sᴇᴛᴛɪɴɢs ᴀʀᴇ ᴋᴇᴘᴛ — ᴜsᴇ /effecton ᴛᴏ ʀᴇ-ᴇɴᴀʙʟᴇ."),
+        rich_heading(lang["effects_disabled_title"], level=3)
+        + rich_note(lang["effects_disabled_note"]),
     )
 
 
 @bot.on_message(
     filters.group
-    & filters.regex(r"^/effects(?:@\w+)?$")
+    & filters.regex(r"^/c?effects(?:@\w+)?$")
     & group_allowed & user_allowed
 )
 async def effects_status_cmd(_, message: Message) -> None:
-    chat_id     = message.chat.id
+    chat_id = await target_chat(message)
+    if chat_id is None:
+        return
+    lang        = chat_strings(chat_id)
     state       = _get(chat_id)
     speed       = state["speed"]
     bass        = state["bass"]
     enabled     = state["enabled"]
 
-    speed_label = f"{speed}x" if speed != 1.0 else "ɴᴏʀᴍᴀʟ (1.0x)"
-    bass_label  = f"{bass} dB ʙᴏᴏsᴛ" if bass > 0 else "ᴏғғ"
-    mode_label  = "ᴏɴ — ᴀʟʟ sᴏɴɢs ᴀғғᴇᴄᴛᴇᴅ 🟢" if enabled else "ᴏғғ — ᴍᴀɴᴜᴀʟ ᴘᴇʀ sᴏɴɢ 🔴"
+    speed_label = f"{speed}x" if speed != 1.0 else lang["effects_speed_normal_label"]
+    bass_label  = lang["effects_bass_boost_label"].format(bass) if bass > 0 else lang["effects_bass_off_label"]
+    mode_label  = lang["effects_mode_on_label"] if enabled else lang["effects_mode_off_label"]
 
     song        = peek_current(chat_id)
-    song_label  = rich_esc(short(song["title"])) if song else "ɴᴏᴛʜɪɴɢ ᴘʟᴀʏɪɴɢ"
+    song_label  = rich_esc(short(song["title"])) if song else lang["effects_nothing_playing"]
 
     await rich_send(
         bot, chat_id,
-        rich_heading(f"❍ ᴇғғᴇᴄᴛs sᴛᴀᴛᴜs — {rich_esc(message.chat.title)}", level=3)
+        rich_heading(lang["effects_status_title"].format(rich_esc(message.chat.title)), level=3)
         + rich_kv_table([
-            ("ɴᴏᴡ ᴘʟᴀʏɪɴɢ", song_label),
-            ("ᴍᴏᴅᴇ", f"<code>{mode_label}</code>"),
-            ("sᴘᴇᴇᴅ", f"<code>{speed_label}</code>"),
-            ("ʙᴀss ʙᴏᴏsᴛ", f"<code>{bass_label}</code>"),
+            (lang["kv_now_playing"], song_label),
+            (lang["kv_mode"], f"<code>{mode_label}</code>"),
+            (lang["kv_speed"], f"<code>{speed_label}</code>"),
+            (lang["kv_bass_boost"], f"<code>{bass_label}</code>"),
         ])
         + rich_kv_table(
-            [
-                ("/speed 1.5", "sᴇᴛ sᴘᴇᴇᴅ (0.25–4.0)"),
-                ("/speedreset", "ʙᴀᴄᴋ ᴛᴏ ɴᴏʀᴍᴀʟ sᴘᴇᴇᴅ"),
-                ("/bass 10", "ʙᴀss ʙᴏᴏsᴛ (1–20 ᴅʙ)"),
-                ("/bassoff", "ʀᴇᴍᴏᴠᴇ ʙᴀss ʙᴏᴏsᴛ"),
-                ("/effecton", "ᴀʟʟ sᴏɴɢs ɢᴇᴛ ᴇғғᴇᴄᴛs"),
-                ("/effectoff", "ᴍᴀɴᴜᴀʟ ᴍᴏᴅᴇ ᴏɴʟʏ"),
-            ],
-            headers=["ᴄᴏᴍᴍᴀɴᴅ", "ᴅᴇsᴄʀɪᴘᴛɪᴏɴ"],
+            lang["effects_help_rows"],
+            headers=[lang["kv_command"], lang["kv_description"]],
         ),
 )
 
