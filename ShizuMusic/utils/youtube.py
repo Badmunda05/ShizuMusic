@@ -30,6 +30,7 @@ from ShizuMusic.utils.formatters import sec_to_iso
 logger = logging.getLogger(__name__)
 
 _file_cache: dict[str, str] = {}
+_video_cache: dict[str, str] = {}
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -172,6 +173,32 @@ async def resolve_stream(url: str) -> str:
         return downloaded
 
     raise Exception("Shruti API download failed. Please try again.")
+
+
+async def resolve_video_stream(url: str) -> str:
+    """Resolve a YouTube URL or video ID to a local MP4 (audio + video) file path."""
+    if os.path.exists(url) and os.path.isfile(url):
+        return url
+
+    if url in _video_cache and os.path.exists(_video_cache[url]):
+        logger.info("[shruti] Video cache hit")
+        return _video_cache[url]
+
+    video_id  = _extract_video_id(url)
+    file_path = os.path.join(DOWNLOAD_DIR, f"{video_id}.mp4")
+
+    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+        _video_cache[url] = file_path
+        return file_path
+
+    logger.info(f"[shruti] Downloading video: {video_id}")
+    downloaded = await download_video(url)
+    if downloaded:
+        _video_cache[url] = downloaded
+        logger.info(f"[shruti] Video done — {os.path.getsize(downloaded) // 1024} KB")
+        return downloaded
+
+    raise Exception("Shruti API video download failed. Please try again.")
 
 
 # ═════════════════════════════════════════════════════════════════════════════
