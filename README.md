@@ -4,7 +4,7 @@
 <img src="https://files.catbox.moe/f084wg.png" alt="ShizuMusic" width="100%">
 
 **First open-source Telegram VC music bot.**
-Fast • Smooth • Powerful — runs free on Render, Koyeb, Railway & Heroku.
+Fast • Smooth • Powerful — runs on Render, Koyeb, Railway, Heroku, Voroa & any VPS.
 
 Powered by [Pyrogram](https://github.com/pyrogram/pyrogram), [Py-TgCalls](https://github.com/pytgcalls/pytgcalls) & [Richgram](https://github.com/Badmunda05/richgram)
 
@@ -40,6 +40,15 @@ Powered by [Pyrogram](https://github.com/pyrogram/pyrogram), [Py-TgCalls](https:
 [![Railway](https://img.shields.io/badge/Deploy-Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)](https://railway.app/new/template?template=https://github.com/Badmunda05/ShizuMusic)
 
 </div>
+
+### ☁️ Voroa ([app.getvoroa.com](https://app.getvoroa.com/))
+
+Voroa deploys straight from GitHub and uses this repo's `Dockerfile` automatically — no extra config file needed.
+
+1. Fork this repo, then in Voroa connect GitHub → **New service** → pick the repo & branch.
+2. Service type: **Background worker** (or Web service — the built-in health server binds `0.0.0.0:$PORT` so both work).
+3. **Environment → paste `.env`** — copy everything from `sample.env` and fill in your values *before* the first deploy.
+4. Deploy. Logs show up in the Voroa dashboard.
 
 ### 🖥️ VPS (Ubuntu 20.04+ / Debian 11+)
 
@@ -87,7 +96,7 @@ API_URL=            # your download API base url (optional fallback)
 API_KEY=            # your download API key (optional)
 USE_COOKIES=        # True: cookies first, API fallback | False: API first (default False if API set, else True)
 COOKIES_URL=        # batbin.me cookie links, space separated (for yt-dlp)
-PORT=               # default: 10000 (Render / Koyeb)
+PORT=               # default: 10000 (Render / Koyeb / Voroa set it automatically)
 ```
 
 > ⚙️ Limits like `MAX_DURATION_SECONDS` (30 min), `QUEUE_LIMIT` (20), `COOLDOWN` (10s) and playlist limits are set directly in `config.py`.
