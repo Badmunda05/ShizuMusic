@@ -15,8 +15,11 @@
 import asyncio
 import logging
 import os
+import random
 import re
-from typing import Union
+import shutil
+import sys
+from typing import Optional, Union
 
 import aiofiles
 import aiohttp
@@ -65,81 +68,208 @@ def time_to_seconds(time) -> int:
 
 
 # ═════════════════════════════════════════════════════════════════════════════
-# DOWNLOAD HELPERS (New API — single-step direct stream)
+# COOKIES  (batbin.me links in COOKIES_URL  +  any *.txt already in cookies/)
 # ═════════════════════════════════════════════════════════════════════════════
 
-async def download_song(link: str) -> str:
-    """Download audio via Shruti API. Returns local file path or None on failure."""
-    video_id = _extract_video_id(link)
-    if not video_id or len(video_id) < 3:
+_ID_RE = re.compile(r"^[A-Za-z0-9_-]{3,64}$")
+_cookie_warned = False
+
+
+def _get_cookie_file() -> Optional[str]:
+    """Random cookie file from COOKIES_DIR, or None when there is none."""
+    global _cookie_warned
+    try:
+        files = [
+            os.path.join(COOKIES_DIR, f)
+            for f in os.listdir(COOKIES_DIR)
+            if f.endswith(".txt")
+        ]
+    except OSError:
+        files = []
+    if not files:
+        if not _cookie_warned:
+            _cookie_warned = True
+            logger.warning("[cookies] No cookie files found; downloads might fail.")
         return None
+    return random.choice(files)
 
-    os.makedirs(DOWNLOAD_DIR, exist_ok=True)
-    file_path = os.path.join(DOWNLOAD_DIR, f"{video_id}.mp3")
 
-    # Disk cache
-    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
-        return file_path
+async def save_cookies() -> int:
+    """Fetch every COOKIES_URL (batbin.me) into COOKIES_DIR. Returns files saved."""
+    if not COOKIES_URL:
+        return 0
+    os.makedirs(COOKIES_DIR, exist_ok=True)
+    saved = 0
+    async with aiohttp.ClientSession() as session:
+        for url in COOKIES_URL:
+            name = url.rstrip("/").split("/")[-1]
+            # never use a user-supplied string as a path unless it is plain
+            if not re.fullmatch(r"[A-Za-z0-9_-]+", name):
+                logger.warning(f"[cookies] Skipping invalid link: {url}")
+                continue
+            try:
+                async with session.get(
+                    f"https://batbin.me/raw/{name}",
+                    timeout=aiohttp.ClientTimeout(total=60),
+                ) as resp:
+                    if resp.status != 200:
+                        logger.warning(f"[cookies] Failed to fetch {name}: HTTP {resp.status}")
+                        continue
+                    text = await resp.text()
+                if not text.strip():
+                    logger.warning(f"[cookies] {name} is empty")
+                    continue
+                async with aiofiles.open(os.path.join(COOKIES_DIR, f"{name}.txt"), "w") as f:
+                    await f.write(text)
+                saved += 1
+            except Exception as e:
+                logger.warning(f"[cookies] Failed to fetch {name}: {e}")
+    logger.info(f"[cookies] Saved {saved}/{len(COOKIES_URL)} cookie file(s) in {COOKIES_DIR}/")
+    return saved
 
+
+# ═════════════════════════════════════════════════════════════════════════════
+# DOWNLOAD HELPERS  (USE_COOKIES=True  → yt-dlp+cookies first, API fallback)
+#                   (USE_COOKIES=False → API first, plain yt-dlp fallback)
+# ═════════════════════════════════════════════════════════════════════════════
+
+def _cached(video_id: str, video: bool) -> Optional[str]:
+    for ext in (("mp4",) if video else ("mp3", "webm")):
+        path = os.path.join(DOWNLOAD_DIR, f"{video_id}.{ext}")
+        if os.path.exists(path) and os.path.getsize(path) > 0:
+            return path
+    return None
+
+
+async def _download_via_api(video_id: str, video: bool) -> Optional[str]:
+    """Download through API_URL/download?url=<id>&type=audio|video&api_key=..."""
+    if not (API_URL and API_KEY):
+        return None
+    path = os.path.join(DOWNLOAD_DIR, f"{video_id}.{'mp4' if video else 'mp3'}")
+    tmp = path + ".part"
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                f"{YT_API_URL}/download",
-                params={"url": video_id, "type": "audio", "api_key": YT_API_KEY},
+                f"{API_URL}/download",
+                params={"url": video_id, "type": "video" if video else "audio", "api_key": API_KEY},
                 timeout=aiohttp.ClientTimeout(total=YT_STREAM_TIMEOUT),
             ) as resp:
                 if resp.status != 200:
-                    logger.warning(f"[shruti] Audio download failed: HTTP {resp.status}")
+                    logger.warning(f"[api] Download failed: HTTP {resp.status}")
                     return None
-                async with aiofiles.open(file_path, "wb") as f:
+                async with aiofiles.open(tmp, "wb") as f:
                     async for chunk in resp.content.iter_chunked(131072):
                         await f.write(chunk)
 
-        if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
-            return file_path
-        return None
-
+        size = os.path.getsize(tmp) if os.path.exists(tmp) else 0
+        bad = size == 0
+        if not bad and size < 4096:  # tiny file: probably a JSON/HTML error body
+            with open(tmp, "rb") as fh:
+                bad = fh.read(1) in (b"{", b"<", b"[")
+        if bad:
+            logger.warning("[api] No media returned (check API_URL / API_KEY)")
+            _cleanup(tmp)
+            return None
+        os.replace(tmp, path)
+        logger.info(f"[api] Downloaded {video_id} ({size // 1024} KB)")
+        return path
     except Exception as e:
-        logger.error(f"[shruti] download_song error: {e}")
-        _cleanup(file_path)
+        logger.error(f"[api] download error: {e}")
+        _cleanup(tmp)
         return None
 
 
-async def download_video(link: str) -> str:
-    """Download video via Shruti API. Returns local file path or None on failure."""
+async def _download_ytdlp(video_id: str, video: bool) -> Optional[str]:
+    """Download with yt-dlp, using a random cookie file when USE_COOKIES is on."""
+    cmd = [
+        sys.executable, "-m", "yt_dlp",
+        "--quiet", "--no-warnings", "--no-playlist", "--geo-bypass",
+        "--no-overwrites", "--no-check-certificates",
+        "-o", os.path.join(DOWNLOAD_DIR, "%(id)s.%(ext)s"),
+    ]
+    cookie_copy = None
+    if USE_COOKIES:
+        cookie = _get_cookie_file()
+        if cookie:
+            # yt-dlp rewrites its cookie file; give it a private copy
+            cookie_copy = os.path.join(COOKIES_DIR, f".tmp_{video_id}_{os.getpid()}")
+            try:
+                shutil.copyfile(cookie, cookie_copy)
+                cmd += ["--cookies", cookie_copy]
+            except OSError:
+                cookie_copy = None
+    if video:
+        cmd += ["-f", "(bestvideo[height<=?720][width<=?1280][ext=mp4])+(bestaudio)",
+                "--merge-output-format", "mp4"]
+    else:
+        cmd += ["-f", "bestaudio[ext=webm][acodec=opus]/bestaudio"]
+    cmd += ["--", f"https://www.youtube.com/watch?v={video_id}"]
+
+    proc = None
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.DEVNULL,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        _, err = await asyncio.wait_for(proc.communicate(), timeout=YT_STREAM_TIMEOUT)
+        if proc.returncode != 0:
+            tail = (err or b"").decode(errors="ignore").strip().splitlines()[-1:] or [""]
+            logger.warning(f"[yt-dlp] failed for {video_id} (exit {proc.returncode}): {tail[0]}")
+            return None
+        found = _cached(video_id, video)
+        if found:
+            logger.info(f"[yt-dlp] Downloaded {video_id}")
+        return found
+    except asyncio.TimeoutError:
+        logger.warning(f"[yt-dlp] timed out for {video_id}")
+        if proc and proc.returncode is None:
+            proc.kill()
+        return None
+    except Exception as e:
+        logger.error(f"[yt-dlp] error: {e}")
+        return None
+    finally:
+        if cookie_copy:
+            _cleanup(cookie_copy)
+
+
+async def _download(link: str, video: bool) -> Optional[str]:
     video_id = _extract_video_id(link)
-    if not video_id or len(video_id) < 3:
+    if not _ID_RE.match(video_id or ""):
         return None
 
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
-    file_path = os.path.join(DOWNLOAD_DIR, f"{video_id}.mp4")
+    have = _cached(video_id, video)
+    if have:
+        return have
 
-    # Disk cache
-    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
-        return file_path
+    api_set = bool(API_URL and API_KEY)
 
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(
-                f"{YT_API_URL}/download",
-                params={"url": video_id, "type": "video", "api_key": YT_API_KEY},
-                timeout=aiohttp.ClientTimeout(total=YT_STREAM_TIMEOUT),
-            ) as resp:
-                if resp.status != 200:
-                    logger.warning(f"[shruti] Video download failed: HTTP {resp.status}")
-                    return None
-                async with aiofiles.open(file_path, "wb") as f:
-                    async for chunk in resp.content.iter_chunked(131072):
-                        await f.write(chunk)
+    if api_set and not USE_COOKIES:           # API first (fast start)
+        got = await _download_via_api(video_id, video)
+        if got:
+            return got
+        logger.info(f"[yt] API failed, trying yt-dlp for {video_id}")
 
-        if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
-            return file_path
-        return None
+    got = await _download_ytdlp(video_id, video)
+    if got:
+        return got
 
-    except Exception as e:
-        logger.error(f"[shruti] download_video error: {e}")
-        _cleanup(file_path)
-        return None
+    if api_set and USE_COOKIES:               # cookies failed → API fallback
+        logger.info(f"[yt] yt-dlp failed, trying API for {video_id}")
+        return await _download_via_api(video_id, video)
+    return None
+
+
+async def download_song(link: str) -> Optional[str]:
+    """Download audio. Returns local file path or None on failure."""
+    return await _download(link, video=False)
+
+
+async def download_video(link: str) -> Optional[str]:
+    """Download video (mp4). Returns local file path or None on failure."""
+    return await _download(link, video=True)
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -152,27 +282,16 @@ async def resolve_stream(url: str) -> str:
     if os.path.exists(url) and os.path.isfile(url):
         return url
 
-    # In-memory cache
     if url in _file_cache and os.path.exists(_file_cache[url]):
-        logger.info("[shruti] Cache hit")
+        logger.info("[yt] Cache hit")
         return _file_cache[url]
 
-    video_id  = _extract_video_id(url)
-    file_path = os.path.join(DOWNLOAD_DIR, f"{video_id}.mp3")
-
-    # Disk cache
-    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
-        _file_cache[url] = file_path
-        return file_path
-
-    logger.info(f"[shruti] Downloading: {video_id}")
     downloaded = await download_song(url)
     if downloaded:
         _file_cache[url] = downloaded
-        logger.info(f"[shruti] Done — {os.path.getsize(downloaded) // 1024} KB")
         return downloaded
 
-    raise Exception("Shruti API download failed. Please try again.")
+    raise Exception("Download failed (cookies/API). Please try again.")
 
 
 async def resolve_video_stream(url: str) -> str:
@@ -181,24 +300,15 @@ async def resolve_video_stream(url: str) -> str:
         return url
 
     if url in _video_cache and os.path.exists(_video_cache[url]):
-        logger.info("[shruti] Video cache hit")
+        logger.info("[yt] Video cache hit")
         return _video_cache[url]
 
-    video_id  = _extract_video_id(url)
-    file_path = os.path.join(DOWNLOAD_DIR, f"{video_id}.mp4")
-
-    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
-        _video_cache[url] = file_path
-        return file_path
-
-    logger.info(f"[shruti] Downloading video: {video_id}")
     downloaded = await download_video(url)
     if downloaded:
         _video_cache[url] = downloaded
-        logger.info(f"[shruti] Video done — {os.path.getsize(downloaded) // 1024} KB")
         return downloaded
 
-    raise Exception("Shruti API video download failed. Please try again.")
+    raise Exception("Video download failed (cookies/API). Please try again.")
 
 
 # ═════════════════════════════════════════════════════════════════════════════

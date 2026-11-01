@@ -3,7 +3,6 @@
   "description": "Shizu Music — Free Telegram VC Music Bot that runs easily on Render, Railway, Koyeb & Heroku.",
   "repository": "https://github.com/Badmunda05/ShizuMusic",
   "logo": "https://files.catbox.moe/9kwxtu.png",
-
   "keywords": [
     "telegram",
     "music",
@@ -13,116 +12,113 @@
     "pyrogram",
     "shizumusic"
   ],
-
   "env": {
     "API_ID": {
       "description": "Your Telegram API_ID from https://my.telegram.org",
       "required": true
     },
-
     "API_HASH": {
       "description": "Your Telegram API_HASH from https://my.telegram.org",
       "required": true
     },
-
     "BOT_TOKEN": {
       "description": "Your Telegram Bot Token from @BotFather",
       "required": true
     },
-
     "STRING_SESSION": {
       "description": "Pyrogram String Session for Assistant Account",
       "required": true
     },
-
     "MONGO_DB_URL": {
       "description": "MongoDB Database URL",
       "required": true
     },
-
     "OWNER_ID": {
       "description": "Your Telegram User ID",
       "required": true
     },
-
+    "API_URL": {
+      "description": "Optional download API base URL (your own API). Used as fallback when USE_COOKIES=True, or first when USE_COOKIES=False",
+      "required": false
+    },
+    "API_KEY": {
+      "description": "Optional download API key for API_URL",
+      "required": false
+    },
+    "USE_COOKIES": {
+      "description": "True: yt-dlp with cookies first, API is the fallback. False: API first (fast start), plain yt-dlp if API fails. Default: False when API_URL+API_KEY are set, otherwise True",
+      "required": false
+    },
+    "COOKIES_URL": {
+      "description": "batbin.me cookie file links (space separated) for yt-dlp",
+      "required": false
+    },
     "LOGGER_ID": {
       "description": "Logger Group/Channel ID",
       "required": false
     },
-
     "BOT_NAME": {
       "description": "Your Bot Name",
       "required": false
     },
-
     "BOT_LINK": {
       "description": "Your Bot Username Link",
       "required": false
     },
-
     "UPDATES_CHANNEL": {
       "description": "Updates Channel Link",
       "required": false
     },
-
     "SUPPORT_GROUP": {
       "description": "Support Group Link",
       "required": false
     },
-
     "START_PHOTOS": {
       "description": "Start Image url",
       "required": false
     },
-
     "PING_IMG_URL": {
       "description": "Ping Command Image URL",
       "required": false
     },
-
     "SESSION_NAME": {
       "description": "Pyrogram Session Name",
       "required": false,
       "value": "ShizuMusic"
     },
-
     "PORT": {
       "description": "Port Number",
       "required": false,
       "value": "10000"
     },
-
     "MAX_DURATION_SECONDS": {
       "description": "Maximum Song Duration Limit",
       "required": false,
       "value": "1800"
     },
-
     "QUEUE_LIMIT": {
       "description": "Maximum Queue Limit",
       "required": false,
       "value": "20"
     },
-
     "COOLDOWN": {
       "description": "Command Cooldown Time",
       "required": false,
       "value": "10"
     }
   },
-      "buildpacks": [
-          {
-              "url": "heroku/python"
-          },
-          {
-              "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
-          }
-      ],
-      "formation": {
-          "worker": {
-              "quantity": 1,
-              "size": "basic"
-          }
-      }
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    },
+    {
+      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
+    }
+  ],
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "basic"
+    }
   }
-  
+}

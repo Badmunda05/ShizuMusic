@@ -36,6 +36,18 @@ services:
       - name: LOGGER_ID
         value: ""
 
+      - name: API_URL
+        value: ""
+
+      - name: API_KEY
+        value: ""
+
+      - name: USE_COOKIES
+        value: ""
+
+      - name: COOKIES_URL
+        value: ""
+
       - name: BOT_NAME
         value: ""
 

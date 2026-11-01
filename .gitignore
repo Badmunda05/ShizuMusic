@@ -9,3 +9,6 @@ __pycache__/
 *.pyc
 bot_workspace/
 *.bak
+
+cookies/
+downloads/

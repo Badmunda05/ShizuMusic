@@ -47,33 +47,33 @@ def _lbl(lang: Optional[dict], key: str, default: str) -> str:
     return rich_esc(_t(lang, key, default))
 
 
-def random_style() -> str:
+def random_style() -> Optional[str]:
     """Random button colour — changes on every redraw (the panel refreshes every ~18s)."""
-    return random.choice(["success", "danger", "primary"])
+    return random.choice(["success", "danger", None])
 
 
-def _bar_style(elapsed: float, total: float) -> str:
+def _bar_style(elapsed: float, total: float) -> Optional[str]:
     """Progress-bar colour follows the progress, same bands as the inline-keyboard player."""
     pct = int((elapsed / total) * 100) if total else 0
     if pct <= 10:
-        return "primary"
+        return None
     if pct < 20:
         return "success"
     if pct < 30:
         return "danger"
     if pct < 40:
-        return "primary"
+        return None
     if pct < 50:
         return "success"
     if pct < 60:
         return "danger"
     if pct < 70:
-        return "primary"
+        return None
     if pct < 80:
         return "success"
     if pct < 95:
         return "danger"
-    return "primary"
+    return None
 
 
 def _row(*buttons: str) -> str:
@@ -136,11 +136,10 @@ def support_updates_pills(lang: Optional[dict] = None) -> str:
     """Inline 'Support' / 'Updates' pill buttons for rich messages (localized)."""
     return (
         "<p>"
-        f'<tg-button type="url" style="primary" url="{config.SUPPORT_GROUP}">'
-        f'{_t(lang, "pill_support", "🍬 sᴜᴘᴘᴏʀᴛ")}</tg-button> '
-        f'<tg-button type="url" style="success" url="{config.UPDATES_CHANNEL}">'
-        f'{_t(lang, "pill_updates", "🍹 ᴜᴘᴅᴀᴛᴇs")}</tg-button>'
-        "</p>"
+        + _url_btn(_t(lang, "pill_support", "🍬 sᴜᴘᴘᴏʀᴛ"), config.SUPPORT_GROUP, random_style())
+        + " "
+        + _url_btn(_t(lang, "pill_updates", "🍹 ᴜᴘᴅᴀᴛᴇs"), config.UPDATES_CHANNEL, random_style())
+        + "</p>"
     )
 
 

@@ -229,6 +229,9 @@ if __name__ == "__main__":
 
     # 11. Notify owner
     loop = asyncio.get_event_loop()
+    if config.USE_COOKIES and config.COOKIES_URL:
+        from ShizuMusic.utils.youtube import save_cookies
+        loop.run_until_complete(save_cookies())
     loop.run_until_complete(_notify_owner(me, ASSISTANT_USERNAME))
 
     # 12. Watchdog

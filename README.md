@@ -71,8 +71,6 @@ BOT_TOKEN=          # @BotFather
 OWNER_ID=           # your Telegram user ID
 STRING_SESSION=     # Pyrogram session of the assistant account
 MONGO_DB_URL=       # MongoDB connection string
-YT_API_URL=         # external API url for downloads
-YT_API_KEY=         # external API key
 ```
 
 ### Optional
@@ -85,6 +83,10 @@ SUPPORT_GROUP=      # support group link
 UPDATES_CHANNEL=    # updates channel link
 PING_IMG_URL=       # image shown in /ping
 SESSION_NAME=       # default: ShizuMusic
+API_URL=            # your download API base url (optional fallback)
+API_KEY=            # your download API key (optional)
+USE_COOKIES=        # True: cookies first, API fallback | False: API first (default False if API set, else True)
+COOKIES_URL=        # batbin.me cookie links, space separated (for yt-dlp)
 PORT=               # default: 10000 (Render / Koyeb)
 ```
 

@@ -29,6 +29,18 @@ services:
       - key: LOGGER_ID
         sync: false
 
+      - key: API_URL
+        sync: false
+
+      - key: API_KEY
+        sync: false
+
+      - key: USE_COOKIES
+        sync: false
+
+      - key: COOKIES_URL
+        sync: false
+
       - key: BOT_NAME
         sync: false
 
