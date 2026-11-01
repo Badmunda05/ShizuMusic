@@ -25,12 +25,32 @@ PING_IMG_URL     = os.getenv("PING_IMG_URL", "https://files.catbox.moe/ddzvc0.jp
 SESSION_NAME     = os.getenv("SESSION_NAME", "ShizuMusic")
 PORT             = int(os.getenv("PORT", 10000))
 
-# ── API config ────────────────────────────────────────────────────────────────
-YT_API_URL        = os.environ.get("YT_API_URL", "https://api.shrutibots.site")
-YT_API_KEY        = os.environ.get("YT_API_KEY", "ShrutiBotsLaL92ySOXsj4xl4k34Jv")  # Get from @SHRUTIAPIBOT on Telegram
-DOWNLOAD_DIR          = "downloads"
+# ── Download config (cookies first, API as fallback) ─────────────────────────
+# USE_COOKIES=True  : yt-dlp + cookies first, download API is the fallback
+# USE_COOKIES=False : download API first, plain yt-dlp only if the API fails
+# Default: False when API_URL + API_KEY are set, otherwise True.
+# No API is hard-coded here — set your own via env (API_URL / API_KEY).
+API_URL   = (os.getenv("API_URL") or os.getenv("YT_API_URL") or "").strip().rstrip("/")
+API_KEY   = (os.getenv("API_KEY") or os.getenv("YT_API_KEY") or "").strip()
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    val = os.getenv(name)
+    if val is None or val.strip() == "":
+        return default
+    return val.strip().lower() in ("1", "true", "yes", "on")
+
+
+USE_COOKIES = _env_bool("USE_COOKIES", not (API_URL and API_KEY))
+# batbin.me links to cookie files (space / comma / newline separated)
+COOKIES_URL = [
+    u for u in os.getenv("COOKIES_URL", "").replace(",", " ").split()
+    if "batbin.me" in u
+]
+COOKIES_DIR       = "cookies"
+DOWNLOAD_DIR      = "downloads"
 YT_TOKEN_TIMEOUT  = 10    # seconds — fetch download token
-YT_STREAM_TIMEOUT = 900   # 15 min  — stream long songs
+YT_STREAM_TIMEOUT = 900   # 15 min  — download / stream long songs
 
 # ── NSFW Moderation API ─────────────────────────────────────────────────────
 #NSFW_API_URL = os.getenv("NSFW_API_URL", "https://ai-moderation-api-khyr.onrender.com")

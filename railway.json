@@ -20,6 +20,11 @@
     "OWNER_ID": "",
     "LOGGER_ID": "",
 
+    "API_URL": "",
+    "API_KEY": "",
+    "USE_COOKIES": "",
+    "COOKIES_URL": "",
+
     "BOT_NAME": "",
     "BOT_LINK": "",
     "UPDATES_CHANNEL": "",
