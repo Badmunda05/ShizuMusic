@@ -9,7 +9,7 @@ ntgcalls>=2.2.4,<3.0.0
 # ── Telegram Client ──────────────────────
 # Bot API 10.3
 kurigram
-richgram
+richgram==0.2.0
 tgcrypto==1.2.5
 httpx[http2]==0.28.1
 
